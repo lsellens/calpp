@@ -27,6 +27,7 @@
 #include <calcl.h>
 #include <cassert>
 #include <cstring>
+#include <cstdio>
 #include <stdexcept>
 #include <vector>
 #include <map>

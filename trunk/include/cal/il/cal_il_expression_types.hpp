@@ -54,6 +54,8 @@ public:
 
 protected:    
     using base_type::index;
+
+public:
     using base_type::resultCode;
 
 public:
@@ -92,6 +94,8 @@ public:
 
 protected:    
     using base_type::index;
+
+public:
     using base_type::resultCode;
 
 public:
@@ -135,6 +139,8 @@ public:
 
 protected:    
     using base_type::index;
+
+public:
     using base_type::resultCode;
 
 public:

@@ -54,8 +54,10 @@ protected:
     int                     input_index;    
     expression_closure_type _e;
     using base_type::index;
+
+public:
     using base_type::resultCode;
-                        
+
 public:
     input_expression( int idx, const E& e ) : base_type(), input_index(idx), _e(e)
     {
@@ -94,8 +96,8 @@ protected:
     expression_closure_type _e;
     std::string             _reg_name;
     using base_type::index;
-                        
-protected:                        
+
+protected:
     template<class E1>
     void iEmitCode( const E1& e ) const
     {
@@ -103,7 +105,7 @@ protected:
         emitCode(Source::code,Source::code.stream());
         Source::code << boost::format("mov %s,%s\n") % resultCode() % e.resultCode();
     }
-                            
+
 public:
     explicit indexed_expression( const std::string& name, expression_type& e ) : base_type(), _e(e), _reg_name(name)
     {
@@ -176,8 +178,10 @@ protected:
     int                     lds_index;
     expression_closure_type _e;
     using base_type::index;
+
+public:
     using base_type::resultCode;
-                        
+
 protected:
     template<class E1>
     void iEmitCode( const E1& e ) const
@@ -267,8 +271,10 @@ protected:
     expression1_closure_type    _e1;
     expression2_closure_type    _e2;
     using base_type::index;
+
+public:
     using base_type::resultCode;
-                        
+
 protected:
     template<class E>
     void iEmitCode( const E& e ) const
@@ -395,10 +401,10 @@ protected:
 protected:
     data_type _data;
     using base_type::index;
-    
+
 public:
     explicit value( const component_type& v0 ) : base_type()
-    {        
+    {
         _data.hex.assign(0);
         _data.base[0] = v0;
         if( _data.base.size()>1 ) _data.base[1] = v0;
@@ -464,6 +470,8 @@ protected:
     
 protected:
     using base_type::index;
+
+public:
     using base_type::resultCode;
 
 protected:
