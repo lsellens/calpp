@@ -32,6 +32,10 @@
 #include <vector>
 #include <map>
 
+#ifndef _MSC_VER
+  #include <stdint.h>
+#endif
+
 #define __CAL_DONT_USE_TYPE_TRAITS 1
 
 #ifndef __CAL_DONT_USE_TYPE_TRAITS
@@ -92,6 +96,12 @@ namespace cal {
 class Device;
 
 namespace detail {
+
+#ifndef _MSC_VER
+  typedef uint8_t byte_type;
+#else
+  typedef unsigned __int8 byte_type;
+#endif
 
 enum CALTypeInfoEnum {
     CAL_TYPE_CALDEVICE,
@@ -790,7 +800,7 @@ class ProgramData
 public:
     CALimage                handle_;
     Context                 context_;
-    std::vector<uint8_t>    buffer_;
+    std::vector<byte_type>    buffer_;
     int                     type_;
 
 public:
@@ -920,8 +930,8 @@ public:
 
         // data
         Memory          mem;
-        uint8_t         data[16];
-        uint8_t         *ptr;
+        byte_type         data[16];
+        byte_type         *ptr;
 
         argument_data() : name(), cb_index(-1), cb_offset(0), cb_size(0), ptr(NULL) {}
         argument_data( const std::string& _name ) : name(_name), cb_index(-1), cb_offset(0), cb_size(0), ptr(NULL) {}
@@ -1016,13 +1026,13 @@ public:
         }
     }
 
-    void mapCB( std::vector<uint8_t*>& cb_buffer )
+    void mapCB( std::vector<byte_type*>& cb_buffer )
     {
         CALuint                 pitch;
         
         cb_buffer.clear();
         for(unsigned i=0;i<cb_.size();i++) {
-            cb_buffer.push_back((uint8_t*)cb_[i].map(pitch));
+            cb_buffer.push_back((byte_type*)cb_[i].map(pitch));
         }
     }
 
@@ -1076,7 +1086,7 @@ public:
     }
     */
 
-    void copyData( std::vector<uint8_t*> cb_buffer )
+    void copyData( std::vector<byte_type*> cb_buffer )
     {        
         for(unsigned i=0;i<arg_.size();i++) {
             if( arg_[i].cb_index<0 ) continue;
@@ -1089,7 +1099,7 @@ public:
     void prepareKernel( CALcontext context )
     {
         std::vector<CALname>    arg_name,cb_name;
-        std::vector<uint8_t*>   cb_buffer;
+        std::vector<byte_type*>   cb_buffer;
         CALresult               r;
         CALmodule               module;
 
@@ -1167,7 +1177,7 @@ protected:
         if( sizeof(val)>16 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index<0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
 
-        union { T s; uint8_t d[16]; } conv;
+        union { T s; detail::byte_type d[16]; } conv;
 
         conv.s = val;
         std::memcpy( data().arg_[index].data, conv.d, 16 );
@@ -1266,7 +1276,7 @@ public:
         if( sizeof(val)>16 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index<0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
 
-        union { T s; uint8_t d[16]; } conv;
+        union { T s; detail::byte_type d[16]; } conv;
 
         conv.s = val;
         std::memcpy( data().arg_[index].data, conv.d, 16 );
@@ -1280,7 +1290,7 @@ public:
         if( index<0 || index>=(int)data().arg_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index<0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);        
         
-        data().arg_[index].ptr = (uint8_t*)pval;
+        data().arg_[index].ptr = (detail::byte_type*)pval;
         if( size>0 ) data().arg_[index].cb_size = size;
     }
 

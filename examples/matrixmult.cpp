@@ -18,6 +18,10 @@
  *
  */
 
+#ifdef _MSC_VER
+  #pragma warning( disable : 4522 )
+#endif
+
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <cal/cal.hpp>
