@@ -28,6 +28,7 @@
 #include <cal/il/cal_il_misc.hpp>
 
 #ifdef __CAL_HPP
+  #include <boost/cstdint.hpp>
   #include <boost/array.hpp>
 #endif
 
@@ -157,9 +158,9 @@ inline ::cal::NDRange make_flat_local( const ::cal::NDRange& _local )
     return local;
 }
 
-inline boost::array<uint32_t,4> make_flat_cb0( const ::cal::NDRange& global, const ::cal::NDRange& local )
+inline boost::array<boost::uint32_t,4> make_flat_cb0( const ::cal::NDRange& global, const ::cal::NDRange& local )
 {
-    boost::array<uint32_t,4>    result;
+    boost::array<boost::uint32_t,4>    result;
 
     result[0] = local.width;
     result[1] = local.height;

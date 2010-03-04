@@ -4,9 +4,27 @@ and second is implementation of OpenCL like language for efficient coding of CAL
 
 CAL++ library depends on boost library ( www.boost.org ). To generate build files cmake is used ( http://www.cmake.org/ ).
 
-To install ( first go to package directory )
 
-    update path to ATI SDK in file CMakeList.txt ( line 9 )
+INSTALLATION ( Windows + Visual C++ )
+
+    Install ATI stream SDK ( http://developer.amd.com/gpu/ATIStreamSDK/Pages/default.aspx )
+    Install cmake ( http://www.cmake.org/ )
+    Install boost ( http://www.boostpro.com/download )
+
+    Start cmake-gui. Choose CAL++ directory as source code path and build the binaries path.
+    Select Visual Studio as generator.
+    Press Configure and later Generate.
+
+    Start Visual C++ and open CALPP project file.  Compile examples using build command.
+
+INSTALLATION ( Linux )
+    Install ATI stream SDK ( http://developer.amd.com/gpu/ATIStreamSDK/Pages/default.aspx )
+    Install cmake and boost.
+
+    Ensure that enviroment variable ATISTREAMSDKROOT points to ATI stream SDK directory.
+
+    Go to CAL++ directory 
+    From command line enter commands
 
     cmake .
     make

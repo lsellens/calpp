@@ -25,6 +25,7 @@
 
 #include <map>
 #include <sstream>
+#include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/array.hpp>
 
@@ -39,7 +40,7 @@ protected:
 protected:
     int                                     next_literal_index;
     std::map<int,std::pair<int,int> >       input_data;
-    std::map<boost::array<uint32_t,4>,int>  literal_data;
+    std::map<boost::array<boost::uint32_t,4>,int>  literal_data;
     std::stringstream                       code_stream;
         
 public:
@@ -54,7 +55,7 @@ protected:
             _out << boost::format("dcl_resource_id(%i)_type(%id,unnorm)_fmtx(float)_fmty(float)_fmtz(float)_fmtw(float)\n") % iinput->first % iinput->second.first;
         }
 
-        std::map<boost::array<uint32_t,4>,int>::iterator    iliteral;
+        std::map<boost::array<boost::uint32_t,4>,int>::iterator    iliteral;
 
         for(iliteral=literal_data.begin();iliteral!=literal_data.end();++iliteral) {
             _out << boost::format("dcl_literal l%i, 0x%x, 0x%x, 0x%x, 0x%x\n") % iliteral->second % iliteral->first[0] % iliteral->first[1] % iliteral->first[2] % iliteral->first[3];
@@ -86,7 +87,7 @@ public:
 
         code_stream.str(std::string());
         
-        boost::array<uint32_t,4>    data;
+        boost::array<boost::uint32_t,4>    data;
         data.assign(0);
         literal_data[data]=next_literal_index++;        
         data.assign(0xFFFFFFFF);
@@ -105,9 +106,9 @@ public:
         input_data[input_index] = std::make_pair(dim,size);
     }
 
-    int getLiteral( const boost::array<uint32_t,4>& data )
+    int getLiteral( const boost::array<boost::uint32_t,4>& data )
     {
-        std::map<boost::array<uint32_t,4>,int>::iterator    idata;
+        std::map<boost::array<boost::uint32_t,4>,int>::iterator    idata;
 
         idata = literal_data.find(data);
         if( idata!=literal_data.end() ) return idata->second;

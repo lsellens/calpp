@@ -396,7 +396,7 @@ public:
        
 protected:
     typedef typename value_type::component_type         component_type;
-    typedef union data_type_union { boost::array<component_type,value_type::component_count> base; boost::array<uint32_t,4> hex; } data_type;
+    typedef union data_type_union { boost::array<component_type,value_type::component_count> base; boost::array<boost::uint32_t,4> hex; } data_type;
 
 protected:
     data_type _data;
@@ -466,7 +466,7 @@ public:
     
 protected:
     typedef typename value_type::component_type         component_type;
-    typedef union data_type_union { boost::array<component_type,value_type::component_count> base; boost::array<uint32_t,4> hex; } data_type;
+    typedef union data_type_union { boost::array<component_type,value_type::component_count> base; boost::array<boost::uint32_t,4> hex; } data_type;
     
 protected:
     using base_type::index;

@@ -23,6 +23,8 @@
 #ifndef __CAL_IL_BASE_TYPES_H
 #define __CAL_IL_BASE_TYPES_H
 
+#include <boost/cstdint.hpp>
+
 namespace cal {
 namespace il {
 
@@ -46,7 +48,7 @@ struct invalid_swizzle
 
 struct uint_type
 {
-    typedef uint32_t   component_type;
+    typedef boost::uint32_t  component_type;
     
     static const int type_size  = 1;
     static const int component_count = 1;
@@ -55,7 +57,7 @@ struct uint_type
 
 struct uint2_type
 {
-    typedef uint32_t   component_type;
+    typedef boost::uint32_t   component_type;
     
     static const int type_size  = 2;
     static const int component_count = 2;
@@ -64,7 +66,7 @@ struct uint2_type
 
 struct uint4_type
 {
-    typedef uint32_t   component_type;
+    typedef boost::uint32_t   component_type;
     
     static const int type_size  = 4;
     static const int component_count = 4;
@@ -73,7 +75,7 @@ struct uint4_type
 
 struct int_type
 {
-    typedef int32_t   component_type;
+    typedef boost::int32_t   component_type;
     
     static const int type_size  = 1;
     static const int component_count = 1;
@@ -82,7 +84,7 @@ struct int_type
 
 struct int2_type
 {
-    typedef int32_t   component_type;
+    typedef boost::int32_t   component_type;
     
     static const int type_size  = 2;
     static const int component_count = 2;
@@ -91,7 +93,7 @@ struct int2_type
 
 struct int4_type
 {
-    typedef int32_t   component_type;
+    typedef boost::int32_t   component_type;
     
     static const int type_size  = 4;
     static const int component_count = 4;
