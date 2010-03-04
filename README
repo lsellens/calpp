@@ -9,11 +9,11 @@ INSTALLATION ( Windows + Visual C++ )
 
     Install ATI stream SDK ( http://developer.amd.com/gpu/ATIStreamSDK/Pages/default.aspx )
     Install cmake ( http://www.cmake.org/ )
-    Install boost ( http://www.boostpro.com/download )
+    Install boost ( http://www.boostpro.com/download ) ( CALPP examples require data_time component )
 
     Start cmake-gui. Choose CAL++ directory as source code path and build the binaries path.
-    Select Visual Studio as generator.
-    Press Configure and later Generate.
+    Press Configure ( select Visual Studio as generator ).
+    Press Generate
 
     Start Visual C++ and open CALPP project file.  Compile examples using build command.
 

@@ -1,3 +1,7 @@
+Version 0.8b
+    Compilation fixes for Visual C++
+    Improved cmake files
+
 Version 0.8a
     Compilation fixes for gcc 4.4
 
