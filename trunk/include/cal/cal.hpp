@@ -337,7 +337,7 @@ struct CALcontext_helper
 
     static void registerCallback( CALcontext context, void* ptr, const callback_functor& func )
     {
-        release_callback_[context][ptr] = func;
+        release_callback_[context].insert(std::make_pair(ptr,func));
     }
 
     static void unregisterCallback( CALcontext context, void* ptr )
