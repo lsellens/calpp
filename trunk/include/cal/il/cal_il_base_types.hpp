@@ -171,6 +171,21 @@ template<> struct base_cal_type<float4_type> { typedef float4_type value; };
 template<> struct base_cal_type<double_type> { typedef double_type value; };
 template<> struct base_cal_type<double2_type> { typedef double2_type value; };
 
+template<typename B,int W>
+struct resize_base_type {};
+
+template<> struct resize_base_type<int_type,1> { typedef int_type value; };
+template<> struct resize_base_type<int_type,2> { typedef int2_type value; };
+template<> struct resize_base_type<int_type,4> { typedef int4_type value; };
+
+template<> struct resize_base_type<uint_type,1> { typedef uint_type value; };
+template<> struct resize_base_type<uint_type,2> { typedef uint2_type value; };
+template<> struct resize_base_type<uint_type,4> { typedef uint4_type value; };
+
+template<> struct resize_base_type<float_type,1> { typedef float_type value; };
+template<> struct resize_base_type<float_type,2> { typedef float2_type value; };
+template<> struct resize_base_type<float_type,4> { typedef float4_type value; };
+
 } // detail
 
 } // il

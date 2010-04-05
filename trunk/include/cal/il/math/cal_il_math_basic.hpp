@@ -92,6 +92,13 @@ variable<typename E1::value_type> round( const detail::expression<E1>& e1 )
     return detail::round(e1(),typename E1::value_type());
 }
 
+template<class E1,class E2>
+detail::binary<E1,E2,detail::cal_binary_ldexp<typename E1::value_type,typename E2::value_type> > ldexp( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
+{
+    typedef detail::binary<E1,E2,detail::cal_binary_ldexp<typename E1::value_type,typename E2::value_type> > expression_type;
+    return expression_type( e1(), e2() );
+}
+
 } // il
 } // cal
 
