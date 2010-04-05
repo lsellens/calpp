@@ -28,6 +28,8 @@
 #include <cassert>
 #include <cstring>
 #include <cstdio>
+#include <ostream>
+#include <cstdlib>
 #include <stdexcept>
 #include <vector>
 #include <map>
@@ -313,63 +315,62 @@ protected:
 
 struct CALcontext_helper
 {
+
     typedef std::pointer_to_binary_function<void*,CALcontext,void>          callback_functor;
     typedef std::map<void*,callback_functor>                                ptrcall_container;
     typedef std::map<CALcontext,ptrcall_container>                          callback_container;
 
     typedef CALcontext handle_type;    
-    static callback_container release_callback_;
+
+    template<int N>
+    struct release_callback
+    {
+        static callback_container data;
+    };
 
     static void release(CALcontext context)
     {
         callback_container::iterator    imap;
         ptrcall_container::iterator     icall;
 
-        imap = release_callback_.find(context);
-        if( imap==release_callback_.end() ) return;
+        imap = release_callback<0>::data.find(context);
+        if( imap==release_callback<0>::data.end() ) return;
 
         for(icall=imap->second.begin();icall!=imap->second.end();++icall) {
             icall->second(icall->first,context);
         }
      
-        release_callback_.erase(imap);
+        release_callback<0>::data.erase(imap);
     }
 
     static void registerCallback( CALcontext context, void* ptr, const callback_functor& func )
     {
-        release_callback_[context].insert(std::make_pair(ptr,func));
+        release_callback<0>::data[context].insert(std::make_pair(ptr,func));
     }
 
     static void unregisterCallback( CALcontext context, void* ptr )
     {
-        release_callback_[context].erase(ptr);
+        release_callback<0>::data[context].erase(ptr);
     }
 };
 
-CALcontext_helper::callback_container   CALcontext_helper::release_callback_;
+template<int N>
+CALcontext_helper::callback_container   CALcontext_helper::release_callback<N>::data;
 
 } // namespace detail
 
 class Error : public std::exception
 {
 private:
+    template<int N>
+    struct error_text
+    {
+        static const char* data[CAL_RESULT_WARNING+1];
+    };
+
+private:
     CALresult           err_;
-    static const char*  error_text[CAL_RESULT_WARNING+1];
-    /*
-    static const char*  error_text[CAL_RESULT_WARNING] = {
-        "No error",        
-        "Operational error",        
-        "Parameter passed in is invalid",
-        "Function used properly but currently not supported",
-        "Stateful operation requested has already been performed",
-        "CAL function was called without CAL being initialized",
-        "A handle parameter is invalid",
-        "A name parameter is invalid",
-        "An asynchronous operation is still pending",
-        "The resource in question is still in use",
-        "Compiler generated a warning" };
-    */
-       
+
 public:
     Error(CALresult err ) : err_(err)
     {}
@@ -379,13 +380,14 @@ public:
     virtual const char *what() const throw ()
     {
         if( err_<0 || err_>CAL_RESULT_WARNING ) return "Unknown";
-        return error_text[err_];
+        return error_text<0>::data[err_];
     }
 
     const CALresult err() const { return err_; }
 };
 
-const char* Error::error_text[CAL_RESULT_WARNING+1] = {
+template<int N>
+const char* Error::error_text<N>::data[CAL_RESULT_WARNING+1] = {
         "No error",        
         "Operational error",        
         "Parameter passed in is invalid",
@@ -800,7 +802,7 @@ class ProgramData
 public:
     CALimage                handle_;
     Context                 context_;
-    std::vector<byte_type>    buffer_;
+    std::vector<byte_type>  buffer_;
     int                     type_;
 
 public:
@@ -854,11 +856,14 @@ public:
 class Program : public detail::shared_data<detail::ProgramData>
 {
 private:
-    static std::ostream*   log_stream_ptr_;
+    template<int N>
+    struct log_stream {
+        static std::ostream*   ptr_;
+    };
 
     static void outputToStream( const char* txt )
     {
-        if( log_stream_ptr_ ) (*log_stream_ptr_) << txt;
+        if( log_stream<0>::ptr_ ) (*log_stream<0>::ptr_) << txt;
     }
 
 public:
@@ -904,14 +909,15 @@ public:
 
     void disassemble( std::ostream& out ) const
     {
-        log_stream_ptr_ = &out;
+        log_stream<0>::ptr_ = &out;
         calclDisassembleImage(data().handle_, &outputToStream);        
     }
 
     friend class Kernel;
 };
 
-std::ostream* Program::log_stream_ptr_=NULL;
+template<int N>
+std::ostream* Program::log_stream<N>::ptr_=NULL;
 
 class KernelFunctor;
 class CommandQueue;
@@ -1227,7 +1233,7 @@ public:
 
         if( name.size()<3 || name[0]!='c' || name[1]!='b' )  throw Error(CAL_RESULT_INVALID_PARAMETER);
         
-        cb_index = strtol(&name[2], &endptr, 10);
+        cb_index = std::strtol(&name[2], &endptr, 10);
         if( endptr!=(&name[0]+name.size()) ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         
         data().arg_.resize(index+1);
@@ -1840,7 +1846,7 @@ typename detail::param_traits<detail::CAL_TYPE_CALMODULE,Name>::param_type Kerne
     return value;
 }
 
-void Init()
+inline void Init()
 {
     CALresult   r;
 
@@ -1848,7 +1854,7 @@ void Init()
     if( r!=CAL_RESULT_OK ) throw Error(r);
 }
 
-void Shutdown()
+inline void Shutdown()
 {
     CALresult   r;
 

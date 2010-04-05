@@ -502,6 +502,7 @@ struct cal_binary_shr<uint4_type,uint_type>
 };
 
 
+
 //
 // bitwise or
 //
@@ -782,6 +783,288 @@ struct cal_binary_bitor<double2_type,uint4_type>
         return (boost::format("ior %1%,%2%,%3%\n") % r % s0 % s1).str();
     }
 };
+
+//
+// bitwise xor
+//
+
+template<class S1,class S2>
+struct cal_binary_bitxor
+{
+    typedef invalid_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        BOOST_STATIC_ASSERT(sizeof(S1) != sizeof(S1));
+        return std::string();
+    }    
+};
+
+template<>
+struct cal_binary_bitxor<int_type,int_type>
+{
+    typedef int_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<int_type,uint_type>
+{
+    typedef int_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<int2_type,int2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<int2_type,uint2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<int4_type,int4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<int4_type,uint4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<uint_type,int_type>
+{
+    typedef uint_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<uint_type,uint_type>
+{
+    typedef uint_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<uint2_type,int2_type>
+{
+    typedef uint2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<uint2_type,uint2_type>
+{
+    typedef uint2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<uint4_type,int4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<uint4_type,uint4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<float_type,int_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<float_type,uint_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<float2_type,int2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<float2_type,uint2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<float4_type,int4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<float4_type,uint4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<double_type,int2_type>
+{
+    typedef double_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<double_type,uint2_type>
+{
+    typedef double_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<double2_type,int4_type>
+{
+    typedef double2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %1%,%2%,%3%\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_bitxor<double2_type,uint4_type>
+{
+    typedef double2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("ixor %1%,%2%,%3%\n") % r % s0 % s1).str();
+    }
+};
+
 
 //
 // bitwise and

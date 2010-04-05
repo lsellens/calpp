@@ -300,6 +300,13 @@ detail::binary<E1,E2,detail::cal_binary_bitor<typename E1::value_type,typename E
 }
 
 template<class E1,class E2>
+detail::binary<E1,E2,detail::cal_binary_bitxor<typename E1::value_type,typename E2::value_type> > operator^( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
+{
+    typedef detail::binary<E1,E2,detail::cal_binary_bitxor<typename E1::value_type,typename E2::value_type> > expression_type;
+    return expression_type( e1(), e2() );
+}
+
+template<class E1,class E2>
 detail::binary<E1,E2,detail::cal_binary_bitand<typename E1::value_type,typename E2::value_type> > operator&( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
 {
     typedef detail::binary<E1,E2,detail::cal_binary_bitand<typename E1::value_type,typename E2::value_type> > expression_type;
@@ -316,7 +323,7 @@ detail::binary<E1,E2,detail::cal_binary_shl<typename E1::value_type,typename E2:
 template<class E1,class E2>
 detail::binary<E1,E2,detail::cal_binary_shr<typename E1::value_type,typename E2::value_type> > operator>>( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
 {
-    typedef detail::binary<E1,E2,detail::cal_binary_shl<typename E1::value_type,typename E2::value_type> > expression_type;
+    typedef detail::binary<E1,E2,detail::cal_binary_shr<typename E1::value_type,typename E2::value_type> > expression_type;
     return expression_type( e1(), e2() );
 }
 
