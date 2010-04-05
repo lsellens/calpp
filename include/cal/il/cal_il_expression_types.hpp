@@ -286,13 +286,6 @@ detail::binary<E1,E2,detail::cal_binary_mod<typename E1::value_type,typename E2:
 }
 
 template<class E1,class E2>
-detail::binary<E1,E2,detail::cal_binary_ldexp<typename E1::value_type,typename E2::value_type> > ldexp( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
-{
-    typedef detail::binary<E1,E2,detail::cal_binary_ldexp<typename E1::value_type,typename E2::value_type> > expression_type;
-    return expression_type( e1(), e2() );
-}
-
-template<class E1,class E2>
 detail::binary<E1,E2,detail::cal_binary_bitor<typename E1::value_type,typename E2::value_type> > operator|( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
 {
     typedef detail::binary<E1,E2,detail::cal_binary_bitor<typename E1::value_type,typename E2::value_type> > expression_type;
@@ -424,14 +417,6 @@ mad( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const d
     return expression_type(e1(),e2(),e3());
 }
 
-template<class E1,class E2,class E3>
-detail::ternary<E1,E2,E3,detail::cal_ternary_cmov_logical<typename E1::value_type,typename E2::value_type,typename E3::value_type> >
-select( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const detail::expression<E3>& e3 )
-{
-    typedef detail::ternary<E1,E2,E3,detail::cal_ternary_cmov_logical<typename E1::value_type,typename E2::value_type,typename E3::value_type> > expression_type;
-    return expression_type(e1(),e2(),e3());
-}
-
 template<class E>
 detail::register_address<E> operator+( const detail::expression<E>& e, int offset )
 {
@@ -454,72 +439,6 @@ template<class E>
 detail::register_address<E> operator-( const detail::register_address<E>& r, int offset )
 {
     return detail::register_address<E>(r._e,r._offset-offset);
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<int1_type,typename E1::value_type> > convert_int1( const detail::expression<E1>& e1 )
-{
-    return cast_type<int1_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<int2_type,typename E1::value_type> > convert_int2( const detail::expression<E1>& e1 )
-{
-    return cast_type<int2_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<int4_type,typename E1::value_type> > convert_int4( const detail::expression<E1>& e1 )
-{
-    return cast_type<int4_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<uint1_type,typename E1::value_type> > convert_uint1( const detail::expression<E1>& e1 )
-{
-    return cast_type<uint1_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<uint2_type,typename E1::value_type> > convert_uint2( const detail::expression<E1>& e1 )
-{
-    return cast_type<uint2_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<uint4_type,typename E1::value_type> > convert_uint4( const detail::expression<E1>& e1 )
-{
-    return cast_type<uint4_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<float1_type,typename E1::value_type> > convert_float1( const detail::expression<E1>& e1 )
-{
-    return cast_type<float1_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<float2_type,typename E1::value_type> > convert_float2( const detail::expression<E1>& e1 )
-{
-    return cast_type<float2_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<float4_type,typename E1::value_type> > convert_float4( const detail::expression<E1>& e1 )
-{
-    return cast_type<float4_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<double1_type,typename E1::value_type> > convert_double1( const detail::expression<E1>& e1 )
-{
-    return cast_type<double1_type>(e1());
-}
-
-template<class E1>
-detail::unary<E1,detail::cal_unary_cast<double2_type,typename E1::value_type> > convert_double2( const detail::expression<E1>& e1 )
-{
-    return cast_type<double2_type>(e1());
 }
 
 } // il

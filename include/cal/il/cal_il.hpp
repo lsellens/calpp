@@ -30,5 +30,6 @@
 #include <cal/il/cal_il_flowcontrol.hpp>
 #include <cal/il/cal_il_misc.hpp>
 #include <cal/il/cal_il_flat2d.hpp>
+#include <cal/il/cal_il_ocl_functions.hpp>
 
 #endif

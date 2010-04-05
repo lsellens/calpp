@@ -38,10 +38,15 @@
   #include <stdint.h>
 #endif
 
-#define __CAL_DONT_USE_TYPE_TRAITS 1
+#define __CAL_DONT_USE_TYPE_TRAITS  1
+#define __CAL_USE_NON_BLOCKING_WAIT 1
 
 #ifndef __CAL_DONT_USE_TYPE_TRAITS
   #include <type_traits>
+#endif
+
+#ifdef __CAL_USE_NON_BLOCKING_WAIT
+  #include <cal_ext.h>
 #endif
 
 enum CALInfoEnum {
@@ -1329,6 +1334,27 @@ public:
 
 class CommandQueue : public detail::shared_data<detail::CommandQueueData>
 {
+#ifdef __CAL_USE_NON_BLOCKING_WAIT
+private:
+    typedef CALresult (CALAPIENTRYP PFNCALCTXWAITFOREVENTS)(CALcontext ctx, CALevent *event, CALuint num, CALuint flags);
+
+    PFNCALCTXWAITFOREVENTS getWaitForEventFunction()
+    {
+        static PFNCALCTXWAITFOREVENTS func=NULL;
+        static bool checked = false;
+
+        if( checked ) return func;
+
+        checked = true;
+
+        if (calExtSupported((CALextid)0x8009) == CAL_RESULT_OK) {
+            calExtGetProc((CALextproc*)&func, (CALextid)0x8009, "calCtxWaitForEvents");
+        }
+
+        return func;
+    }
+#endif
+
 public:
     CommandQueue() : detail::shared_data<detail::CommandQueueData>()
     {
@@ -1389,7 +1415,7 @@ public:
 
         r = calCtxRunProgram(&_event,data().handle_,func,&rect);
         if( r!=CAL_RESULT_OK ) throw Error(r);
-        
+
         if( event ) *event = Event(_event);
     }
 
@@ -1401,7 +1427,7 @@ public:
 
         const_cast<Memory&>(src).attach(data().handle_);
         dst.attach(data().handle_);
-        
+
         r = calMemCopy(&_event,data().handle_,src.getMem(data().handle_),dst.getMem(data().handle_),0);
         if( r!=CAL_RESULT_OK ) throw Error(r);
 
@@ -1414,16 +1440,34 @@ public:
 
         if( !event() ) return;
 
+#ifdef __CAL_USE_NON_BLOCKING_WAIT
+        PFNCALCTXWAITFOREVENTS calCtxWaitForEvents = getWaitForEventFunction();
+        if( calCtxWaitForEvents ) {
+            r = calCtxWaitForEvents(data().handle_,(CALevent*)&event(),1,0);
+            if( r!=CAL_RESULT_OK ) throw Error(r);
+            return;
+        }
+#endif
+
         while( 1 ) {       
             r = calCtxIsEventDone(data().handle_,event());
             if( r!=CAL_RESULT_PENDING ) break;
         }
 
-        if( r!=CAL_RESULT_OK ) throw Error(r);        
+        if( r!=CAL_RESULT_OK ) throw Error(r);
     }
 
     void waitForEvents( const std::vector<Event>& events )
     {
+#ifdef __CAL_USE_NON_BLOCKING_WAIT
+        PFNCALCTXWAITFOREVENTS calCtxWaitForEvents = getWaitForEventFunction();
+        if( calCtxWaitForEvents ) {
+            CALresult r = calCtxWaitForEvents(data().handle_,(CALevent*)&events[0],events.size(),0);
+            if( r!=CAL_RESULT_OK ) throw Error(r);
+            return;
+        }
+#endif
+
         for(unsigned i=0;i<events.size();i++) {
             CALresult   r;
             r = calCtxIsEventDone(data().handle_,events[i]());
