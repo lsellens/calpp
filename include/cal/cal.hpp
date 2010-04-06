@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __CAL_HPP
-#define __CAL_HPP
+#ifndef __CAL_HPP__
+#define __CAL_HPP__
 
 #include <cal.h>
 #include <calcl.h>
@@ -78,6 +78,7 @@ enum CALInfoEnum {
     CAL_DEVICE_AVAILLOCALRAM,          /**< Amount of available local GPU RAM in megabytes */
     CAL_DEVICE_AVAILUNCACHEDREMOTERAM, /**< Amount of available uncached remote GPU memory in megabytes */
     CAL_DEVICE_AVAILCACHEDREMOTERAM,   /**< Amount of available cached remote GPU memory in megabytes */
+    CAL_DEVICE_INDEX,
     CAL_CONTEXT_DEVICES,
     CAL_KERNEL_MAXSCRATCHREGSNEEDED,   /**< Maximum number of scratch regs needed */ 
     CAL_KERNEL_NUMSHAREDGPRUSER,       /**< Number of shared GPRs */
@@ -152,11 +153,26 @@ struct info_traits<CAL_TYPE_CALDEVICE,CALdevicestatus>
     }
 };
 
+struct CALDeviceInfoHelper
+{
+    CALuint index;
+};
+
+template<>
+struct info_traits<CAL_TYPE_CALDEVICE,CALDeviceInfoHelper>
+{
+    static CALresult getInfo(CALDeviceInfoHelper& info, CALdevice dev, CALuint ordinal )
+    {
+        info.index = ordinal;
+        return CAL_RESULT_OK;
+    }
+};
 
 template <int handle_name, int param_name>
 struct param_traits {};
 
 #define __PARAM_NAME_INFO1(F) \
+    F(CAL_TYPE_CALDEVICE,CAL_DEVICE_INDEX,CALuint,CALDeviceInfoHelper,index)                         /**< Device index */ \
     F(CAL_TYPE_CALDEVICE,CAL_DEVICE_TARGET,CALtarget,CALdeviceinfo,target)                           /**< Device Kernel ISA  */ \
     F(CAL_TYPE_CALDEVICE,CAL_DEVICE_MAXRESOURCE1DWIDTH,CALuint,CALdeviceinfo,maxResource1DWidth)     /**< Maximum resource 1D width */ \
     F(CAL_TYPE_CALDEVICE,CAL_DEVICE_MAXRESOURCE2DWIDTH,CALuint,CALdeviceinfo,maxResource2DWidth)     /**< Maximum resource 2D width */ \

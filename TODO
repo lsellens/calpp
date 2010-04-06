@@ -1,7 +1,5 @@
 1. Check exact behaviour of double compare instuctions ( FIXME in cal_il_relop.hpp )
 
-2. "Templetize" some static variables ( so only include files are required )
-
 3. UAVs support.
 
 4. Make more user friendly code for IL creation functions.
