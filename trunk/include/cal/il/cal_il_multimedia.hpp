@@ -34,7 +34,7 @@ detail::ternary<E1,E2,E3,detail::cal_ternary_bitalign<typename E1::value_type,ty
 bitalign( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const detail::expression<E3>& e3 )
 {
     typedef detail::ternary<E1,E2,E3,detail::cal_ternary_bitalign<typename E1::value_type,typename E2::value_type,typename E3::value_type> > expression_type;
-    return expression_type(e1,e2,e3);
+    return expression_type(e1(),e2(),e3());
 }
 
 template<class E1,class E2,class E3>
@@ -42,7 +42,7 @@ detail::ternary<E1,E2,E3,detail::cal_ternary_bytealign<typename E1::value_type,t
 bytealign( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const detail::expression<E3>& e3 )
 {
     typedef detail::ternary<E1,E2,E3,detail::cal_ternary_bytealign<typename E1::value_type,typename E2::value_type,typename E3::value_type> > expression_type;
-    return expression_type(e1,e2,e3);
+    return expression_type(e1(),e2(),e3());
 }
 
 } // il

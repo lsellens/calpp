@@ -44,10 +44,19 @@ struct cal_ternary_bitalign {
     {
         typedef boost::is_same<S1,S2> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
-        BOOST_STATIC_ASSERT( S1::type_size==1 ); // FIXME: is this right or again bug in IL docs ?
-        BOOST_STATIC_ASSERT( S3::type_size==1 );
+        BOOST_STATIC_ASSERT( S1::type_size==S3::type_size ); 
+        BOOST_STATIC_ASSERT( S1::component_count==S3::component_count );
 
-        return (boost::format("bitalign %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+        std::string    res;
+
+        for(int i=1;i<=S1::component_count;i++) {
+            res += (boost::format("bitalign %1%,%2%,%3%,%4%\n") % mask_output(make_swizzle(r,i,0,0,0)) 
+                                                                % make_swizzle(s0,i,0,0,0) 
+                                                                % make_swizzle(s1,i,0,0,0) 
+                                                                % make_swizzle(s2,i,0,0,0) ).str();
+        }
+
+        return res;
     }
 };
 
@@ -64,10 +73,19 @@ struct cal_ternary_bytealign {
     {
         typedef boost::is_same<S1,S2> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
-        BOOST_STATIC_ASSERT( S1::type_size==1 ); // FIXME: is this right or again bug in IL docs ?
-        BOOST_STATIC_ASSERT( S3::type_size==1 );
+        BOOST_STATIC_ASSERT( S1::type_size==S3::type_size ); 
+        BOOST_STATIC_ASSERT( S1::component_count==S3::component_count );
 
-        return (boost::format("bytealign %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+        std::string    res;
+
+        for(int i=1;i<=S1::component_count;i++) {
+            res += (boost::format("bytealign %1%,%2%,%3%,%4%\n") % mask_output(make_swizzle(r,i,0,0,0)) 
+                                                                 % make_swizzle(s0,i,0,0,0) 
+                                                                 % make_swizzle(s1,i,0,0,0) 
+                                                                 % make_swizzle(s2,i,0,0,0) ).str();
+        }
+
+        return res;
     }
 };
 

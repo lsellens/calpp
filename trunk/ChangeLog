@@ -1,3 +1,9 @@
+svn
+    Various bug fixes
+    ability to use target device information ( wavefront size, device type, etc ) for code generation
+    rotate function
+    non-blocking waiting for event completion
+
 Version 0.8b
     Compilation fixes for Visual C++
     Improved cmake files

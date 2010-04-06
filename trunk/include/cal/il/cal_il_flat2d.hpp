@@ -27,7 +27,7 @@
 #include <cal/il/cal_il_types.hpp>
 #include <cal/il/cal_il_misc.hpp>
 
-#ifdef __CAL_HPP
+#ifdef __CAL_HPP__
   #include <boost/cstdint.hpp>
   #include <boost/array.hpp>
 #endif
@@ -117,7 +117,7 @@ inline uint1 get_group_id( int i )
     return named_variable<uint1>("vThreadGrpIdFlat.x") / get_num_groups(1);
 }
 
-#ifdef __CAL_HPP
+#ifdef __CAL_HPP__
 
 inline void make_flat( ::cal::NDRange& global, ::cal::NDRange& local, const ::cal::NDRange& _global, const ::cal::NDRange& _local )
 {
