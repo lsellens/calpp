@@ -1,4 +1,4 @@
-svn
+Version 0.85
     Various bug fixes
     ability to use target device information ( wavefront size, device type, etc ) for code generation
     rotate function

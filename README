@@ -30,6 +30,9 @@ INSTALLATION ( Linux )
     make
     ( optional ) make install
 
+OPTIONAL INSTALLATION
+    Just copy content of include directory to appropriate destination ( on Unix /usr/local/include/ ).
+
 1. C++ wrapper for CAL ( file include/cal/cal.hpp )
 
 This wrapper closely reassembles OpenCL C++ bindings. There are some minor changes to better match CAL library.
