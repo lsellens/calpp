@@ -231,6 +231,14 @@ void show_result( int dev, int step )
     std::cout << format("Device %i: sequential read width %i: execution time %.2f ms, achieved %.2f gbytes/s\n") % dev % (THREADS_PER_GRP/step) % tms % gbytes;
 }
 
+void release_gpu_resources()
+{
+    _queue   = CommandQueue();
+    _kernel  = Kernel();
+    _context = Context();
+    _program = Program();
+}
+
 int main( int argc, char* argv[] )
 {
     int dev_count;
@@ -275,6 +283,7 @@ int main( int argc, char* argv[] )
     */
     
 
+    release_gpu_resources();
     cal::Shutdown();
 
     return 0;

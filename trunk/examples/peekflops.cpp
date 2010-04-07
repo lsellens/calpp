@@ -194,12 +194,19 @@ void show_result( int dev )
     std::cout << format("Device %i: execution time %.2f ms, achieved %.2f gflops\n") % dev % tms % gflops;
 }
 
+void release_gpu_resources()
+{
+    _queue   = CommandQueue();
+    _kernel  = Kernel();
+    _context = Context();
+    _program = Program();
+}
+
 int main( int argc, char* argv[] )
 {
     int dev_count;
     
     cal::Init();
-
     dev_count = init();
 
     for(int i=0;i<dev_count;i++) {
@@ -209,6 +216,7 @@ int main( int argc, char* argv[] )
         show_result(i);
     }
 
+    release_gpu_resources();
     cal::Shutdown();
 
     return 0;

@@ -484,13 +484,23 @@ void vector_quantization()
 }
 
 
+void release_gpu_resources()
+{
+    _queue   = CommandQueue();
+    _kernel_findnearest  = Kernel();
+    _kernel_reducematrix = Kernel();
+    _context = Context();
+    _program = Program();
+}
+
 int main( int argc, char* argv[] )
 {
     cal::Init();    
     init();
-        
+
     vector_quantization();
-        
+
+    release_gpu_resources();
     cal::Shutdown();
 
     return 0;
