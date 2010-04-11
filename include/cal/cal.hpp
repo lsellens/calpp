@@ -557,13 +557,22 @@ public:
 namespace detail {
 class MemoryData
 {
+public: 
+    struct map_info
+    {
+        void*   ptr;
+        int     counter;
+        CALuint pitch;
+
+        map_info( void* _ptr, int _counter, CALuint _pitch ) : ptr(_ptr), counter(_counter), pitch(_pitch) {}
+    };
 public:
-    CALresource                 handle_;
-    std::map<CALcontext,CALmem> mem_;
-    int                         width_,height_;
-    void*                       map_;
-    int                         map_use_;
-    CALuint                     pitch_;
+    std::map<CALdevice,CALresource> handle_;
+    std::map<CALcontext,CALmem>     mem_;
+    std::vector<Device>             device_;
+    int                             width_,height_;
+    std::map<CALdevice,map_info>    map_;
+    bool                            remote_;
 
 protected:
     void registerContext( CALcontext context ) const
@@ -597,7 +606,7 @@ protected:
     }
 
 public:
-    MemoryData() : handle_(0), width_(0), height_(0), map_(NULL), map_use_(0), pitch_(0) {}
+    MemoryData() : width_(0), height_(0), remote_(false) {}
     ~MemoryData()
     {
         unregisterContext();
@@ -605,17 +614,22 @@ public:
         std::map<CALcontext,CALmem>::iterator   imem;
         for(imem=mem_.begin();imem!=mem_.end();++imem) calCtxReleaseMem(imem->first,imem->second);
 
-        if( handle_ ) calResFree(handle_);
+        std::map<CALdevice,CALresource>::iterator ihandle;
+        for(ihandle=handle_.begin();ihandle!=handle_.end();++ihandle) calResFree(ihandle->second);
     }
 
-    void attach( CALcontext context )
+    void attach( CALcontext context, CALdevice device )
     {
         if( isAttached(context) ) return;
 
+        std::map<CALdevice,CALresource>::iterator ihandle;
         CALmem      mem;
         CALresult   r;
 
-        r = calCtxGetMem(&mem,context,handle_);
+        ihandle = remote_?handle_.find(0):handle_.find(device);
+        if( ihandle==handle_.end() ) throw Error(CAL_RESULT_ERROR);
+
+        r = calCtxGetMem(&mem,context,ihandle->second);
         if( r!=CAL_RESULT_OK ) throw Error(r);
 
         mem_.insert( std::make_pair(context,mem) );
@@ -637,37 +651,89 @@ public:
         return imem->second;
     }
 
-    CALvoid* map( CALuint& pitch )
+    CALvoid* map2( CALuint& pitch, CALdevice device )
     {
-        if( map_ ) {
-            map_use_++;
-            pitch = pitch_;
-            return map_;
+        std::map<CALdevice,map_info>::iterator imap;
+
+        imap = map_.find(device);
+        if( imap==map_.end() ) throw Error(CAL_RESULT_NOT_INITIALIZED);
+
+        if( imap->second.ptr ) {
+            imap->second.counter++;
+            pitch = imap->second.pitch;
+            return imap->second.ptr;
         }
-        
+
+        std::map<CALdevice,CALresource>::iterator ihandle;
         CALresult   r;
         CALvoid*    ptr;
 
-        r = calResMap(&ptr,&pitch_,handle_,0);
+        ihandle = handle_.find(device);
+        if( ihandle==handle_.end() ) throw Error(CAL_RESULT_ERROR);
+
+        r = calResMap(&ptr,&imap->second.pitch,ihandle->second,0);
         if( r!=CAL_RESULT_OK ) throw Error(r);
 
-        map_     = ptr;
-        map_use_ = 1;
-        pitch    = pitch_;
-        
+        imap->second.ptr     = ptr;
+        imap->second.counter = 1;
+        pitch                = imap->second.pitch;
+
         return ptr;
     }
 
-    void unmap()
+    void unmap2( CALdevice device )
     {
-        if( !map_ ) return;
-        if( --map_use_>0 ) return;
+        std::map<CALdevice,map_info>::iterator imap;
 
+        imap = map_.find(device);
+        if( imap==map_.end() ) throw Error(CAL_RESULT_NOT_INITIALIZED);
+
+        if( imap->second.ptr==NULL ) return;
+        if( --imap->second.counter>0 ) return;
+
+        std::map<CALdevice,CALresource>::iterator ihandle;
         CALresult   r;
-        r = calResUnmap(handle_);
+
+        ihandle = handle_.find(device);
+        if( ihandle==handle_.end() ) throw Error(CAL_RESULT_ERROR);
+
+        r = calResUnmap(ihandle->second);
         if( r!=CAL_RESULT_OK ) throw Error(r);
 
-        map_ = NULL;        
+        imap->second.ptr = NULL;
+    }
+
+    CALvoid* map( CALuint& pitch, int idx=0 )
+    {
+        return map2( pitch, remote_?0:device_[idx]() );
+    }
+
+    void unmap( int idx=0 )
+    {
+        return unmap2( remote_?0:device_[idx]() );
+    }
+
+    void addDevices( const std::vector<Device>& device )
+    {
+        device_ = device;
+        if( !remote_ ) {
+            for(unsigned i=0;i<device.size();i++) {
+                map_.insert( std::make_pair(device[i](),map_info(NULL,0,0)) );
+            }
+        } else map_.insert( std::make_pair((CALdevice)0,map_info(NULL,0,0)) );
+    }
+
+    CALresource getHandle( int idx ) const
+    {
+        std::map<CALdevice,CALresource>::const_iterator ihandle;
+        CALdevice                                 device;
+
+        device = remote_?0:device_[idx]();
+
+        ihandle = handle_.find(device);
+        if( ihandle==handle_.end() ) throw Error(CAL_RESULT_ERROR);
+
+        return ihandle->second;
     }
 };
 } // detail
@@ -675,9 +741,11 @@ public:
 class Memory : public detail::shared_data<detail::MemoryData>
 {
 protected:
-    void attach( CALcontext context ) { data().attach(context); }
+    void attach( CALcontext context, CALdevice device ) { data().attach(context,device); }
     bool isAttached( CALcontext context ) const { return data().isAttached(context); }
-    
+    CALvoid* map2( CALuint& pitch, CALdevice device ) { return data().map2(pitch,device); }
+    void unmap2( CALdevice device ) { data().unmap2(device); }
+
 public:
     Memory() : detail::shared_data<detail::MemoryData>()
     {
@@ -691,17 +759,17 @@ public:
     {
     }
 
-    CALvoid* map( CALuint& pitch )
+    CALvoid* map( CALuint& pitch, int idx=0 )
     {
-        return data().map(pitch);
+        return data().map(pitch,idx);
     }
 
-    void unmap()
+    void unmap( int idx=0 )
     {
-        data().unmap();
+        data().unmap(idx);
     }
 
-    CALresource operator()() const { return data().handle_; }
+    CALresource operator()( int idx ) const { return data().getHandle(idx); }
     CALmem getMem( CALcontext context ) const { return data().getMem(context); }
 
     friend class detail::KernelData;
@@ -719,7 +787,7 @@ class Image1D : public Image
 {
 public:
     Image1D() : Image()
-    {       
+    {
     }
 
     Image1D( const Image1D& rhs ) : Image(rhs)
@@ -727,33 +795,42 @@ public:
     }
 
     Image1D( const Context& context, CALuint width, CALformat format, CALuint flags, bool remote=false ) : Image()
-    {        
-        CALresult   r;
-        CALresource res;
+    {
+        CALresult                r;
 
         createInstance();
 
-        if( remote ) {
+        if( !remote ) {
+            CALresource              res;
+            std::vector<CALresource> _res;
+
+            for(unsigned i=0;i<context.data().devices_.size();i++) {
+               r = calResAllocLocal1D(&res,context.data().devices_[i](),width,format,flags);
+               if( r!=CAL_RESULT_OK ) {
+                   for(unsigned j=0;j<_res.size();j++) calResFree(_res[i]);
+                   throw Error(r);
+               }
+               _res.push_back(res);
+            }
+
+            for(unsigned i=0;i<_res.size();i++) 
+                data().handle_.insert( std::make_pair(context.data().devices_[i](), _res[i]) );
+        } else {
             std::vector<CALdevice>  devices;
+            CALresource             res;
+
             for(unsigned i=0;i<context.data().devices_.size();i++) devices.push_back(context.data().devices_[i]());
             r = calResAllocRemote1D(&res,&devices[0],devices.size(),width,format,flags);
-        } else r = calResAllocLocal1D(&res,context.data().devices_[0](),width,format,flags);
-        if( r!=CAL_RESULT_OK ) throw Error(r);
+            if( r!=CAL_RESULT_OK ) throw Error(r);
 
-        data().handle_ = res;
+            data().handle_.insert( std::make_pair((CALdevice)0,res) );
+        }
+        data().remote_ = remote;
+        data().addDevices(context.data().devices_);
         data().width_  = width;
     }
 
     int getWidth() const { return data().width_; }
-
-    /*
-    Image1D& operator=( const Image1D& rhs )
-    {        
-        Image::operator=(rhs);
-        width_ = rhs.width_;
-        return *this;
-    }
-    */
 };
 
 class Image2D : public Image
@@ -764,18 +841,37 @@ public:
     Image2D( const Context& context, CALuint width, CALuint height, CALformat format, CALuint flags, bool remote=false ) : Image()
     {
         CALresult   r;
-        CALresource res;        
 
-        createInstance();        
+        createInstance();
 
-        if( remote ) {
+        if( !remote ) {
+            CALresource              res;
+            std::vector<CALresource> _res;
+
+            for(unsigned i=0;i<context.data().devices_.size();i++) {
+               r = calResAllocLocal2D(&res,context.data().devices_[i](),width,height,format,flags);
+               if( r!=CAL_RESULT_OK ) {
+                   for(unsigned j=0;j<_res.size();j++) calResFree(_res[i]);
+                   throw Error(r);
+               }
+               _res.push_back(res);
+            }
+
+            for(unsigned i=0;i<_res.size();i++) 
+                data().handle_.insert( std::make_pair(context.data().devices_[i](), _res[i]) );
+        } else {
             std::vector<CALdevice>  devices;
+            CALresource             res;
+
             for(unsigned i=0;i<context.data().devices_.size();i++) devices.push_back(context.data().devices_[i]());
             r = calResAllocRemote2D(&res,&devices[0],devices.size(),width,height,format,flags);
-        } else r = calResAllocLocal2D(&res,context.data().devices_[0](),width,height,format,flags);
-        if( r!=CAL_RESULT_OK ) throw Error(r);
+            if( r!=CAL_RESULT_OK ) throw Error(r);
 
-        data().handle_ = res;
+            data().handle_.insert( std::make_pair((CALdevice)0,res) );
+        }
+
+        data().remote_ = remote;
+        data().addDevices(context.data().devices_);
         data().width_  = width;
         data().height_ = height;
     }
@@ -1041,15 +1137,15 @@ public:
         }
     }
 
-    void attachAll( CALcontext context )
+    void attachAll( CALcontext context, CALdevice device )
     {
         for(unsigned i=0;i<arg_.size();i++) {
             if( arg_[i].cb_index>=0 ) continue;
-            arg_[i].mem.attach(context);
+            arg_[i].mem.attach(context,device);
         }
 
         for(unsigned i=0;i<cb_.size();i++) {
-            cb_[i].attach(context);
+            cb_[i].attach(context,device);
         }
     }
 
@@ -1123,7 +1219,7 @@ public:
         }
     }
 
-    void prepareKernel( CALcontext context )
+    void prepareKernel( CALcontext context, CALdevice device )
     {
         std::vector<CALname>    arg_name,cb_name;
         std::vector<byte_type*>   cb_buffer;
@@ -1131,7 +1227,7 @@ public:
         CALmodule               module;
 
         allocCB();
-        attachAll(context);
+        attachAll(context,device);
 
         mapCB(cb_buffer);
         copyData(cb_buffer);
@@ -1193,7 +1289,7 @@ public:
     typedef argument_data arg;
 
 protected:
-    void prepareKernel( CALcontext context ) { data().prepareKernel(context); }
+    void prepareKernel( CALcontext context, CALdevice device ) { data().prepareKernel(context,device); }
     CALfunc getFunc( CALcontext context ) { return data().getFunc(context); }
 
 #ifndef __CAL_DONT_USE_TYPE_TRAITS
@@ -1335,6 +1431,7 @@ class CommandQueueData
 {
 public:
     CALcontext  handle_;
+    Device      device_;
 
 public:
     CommandQueueData() : handle_(0) {}
@@ -1389,8 +1486,9 @@ public:
         if( r!=CAL_RESULT_OK ) throw Error(r);
 
         data().handle_ = ctx;
+        data().device_ = device;
     }
-    
+
     void enqueueNDRangeKernel( Kernel& kernel, const NDRange& global, const NDRange& local, Event* event = NULL)
     {
         CALevent        _event;
@@ -1398,9 +1496,9 @@ public:
         CALprogramGrid  grid;
 
         assert( local.width>0 && local.height>0 && local.depth>0 );
-               
-        kernel.prepareKernel(data().handle_);
-        
+
+        kernel.prepareKernel(data().handle_,data().device_());
+
         grid.func            = kernel.getFunc(data().handle_);
         grid.gridBlock       = local;
         grid.gridSize.width  = (global.width+local.width-1)/local.width;
@@ -1410,7 +1508,7 @@ public:
 
         r = calCtxRunProgramGrid(&_event,data().handle_,&grid);
         if( r!=CAL_RESULT_OK ) throw Error(r);
-        
+
         if( event ) *event = Event(_event);
     }
 
@@ -1420,9 +1518,9 @@ public:
         CALresult       r;
         CALfunc         func;
         CALdomain       rect;
-               
-        kernel.prepareKernel(data().handle_);
-        
+
+        kernel.prepareKernel(data().handle_,data().device_());
+
         func        = kernel.getFunc(data().handle_);
         rect.x      = 0;
         rect.y      = 0;
@@ -1441,13 +1539,23 @@ public:
         CALevent    _event;
         CALresult   r;
 
-        const_cast<Memory&>(src).attach(data().handle_);
-        dst.attach(data().handle_);
+        const_cast<Memory&>(src).attach(data().handle_,data().device_());
+        dst.attach(data().handle_,data().device_());
 
         r = calMemCopy(&_event,data().handle_,src.getMem(data().handle_),dst.getMem(data().handle_),0);
         if( r!=CAL_RESULT_OK ) throw Error(r);
 
         if( event ) *event=Event(_event);
+    }
+
+    void* mapMemObject( Memory& mem, CALuint& pitch )
+    {
+        return mem.map2(pitch,data().device_());
+    }
+
+    void unmapMemObject( Memory& mem )
+    {
+        mem.unmap2(data().device_());
     }
 
     void waitForEvent( const Event& event )
