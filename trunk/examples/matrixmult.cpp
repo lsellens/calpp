@@ -157,7 +157,7 @@ void fillMatrix( Image2D& m, float v )
     width  = 4*m.getWidth();
     height = m.getHeight();
 
-    line = (float*)m.map(pitch);
+    line = (float*)_queue.mapMemObject(m,pitch);
 
     for(int i=0;i<height;i++) {
         ptr = line;
@@ -165,7 +165,7 @@ void fillMatrix( Image2D& m, float v )
         line += 4*pitch;
     }
 
-    m.unmap();
+    _queue.unmapMemObject(m);
 }
 
 void printMatrix( Image2D& m )
@@ -177,7 +177,7 @@ void printMatrix( Image2D& m )
     width  = 4*m.getWidth();
     height = m.getHeight();
 
-    line = (float*)m.map(pitch);
+    line = (float*)_queue.mapMemObject(m,pitch);
 
     for(int i=0;i<height;i++) {
         ptr = line;
@@ -188,7 +188,7 @@ void printMatrix( Image2D& m )
         line += 4*pitch;
     }
 
-    m.unmap();
+    _queue.unmapMemObject(m);
 }
 
 int init()
@@ -223,11 +223,6 @@ int init()
 
     _C  = Image2D( _context, WIDTH/4, HEIGHT, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );    
 
-    fillMatrix(_A0,2);
-    fillMatrix(_A1,2);
-    fillMatrix(_B0,4);
-    fillMatrix(_B1,4);
-
     return devices.size();
 }
 
@@ -235,6 +230,11 @@ void setup( int dev )
 {
     std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
     _queue = CommandQueue(_context,devices[dev]);
+
+    fillMatrix(_A0,2);
+    fillMatrix(_A1,2);
+    fillMatrix(_B0,4);
+    fillMatrix(_B1,4);
 }
 
 void run()
