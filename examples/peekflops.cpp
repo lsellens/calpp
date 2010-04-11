@@ -84,7 +84,7 @@ std::string create_kernel_peekperf()
 //
 
 Context         _context;
-Program    	_program;
+Program         _program;
 Kernel          _kernel;
 CommandQueue    _queue;
 

@@ -1,4 +1,6 @@
-SVN
+Version 0.86
+    Improvements to memory handling. Memory object allocates CAL resource for each device in Context.
+    The proper resource for device is later selected by CommandQueue object.
 
 Version 0.85
     Various bug fixes

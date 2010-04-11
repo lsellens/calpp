@@ -118,7 +118,7 @@ void fillMatrix( Image2D& m, float v )
     width  = 4*m.getWidth();
     height = m.getHeight();
 
-    line = (float*)m.map(pitch);
+    line = (float*)_queue.mapMemObject(m,pitch);
 
     for(int i=0;i<height;i++) {
         ptr = line;
@@ -128,7 +128,7 @@ void fillMatrix( Image2D& m, float v )
         line += 4*pitch;
     }
 
-    m.unmap();
+    _queue.unmapMemObject(m);
 }
 
 void printMatrix( Image2D& m )
@@ -140,7 +140,7 @@ void printMatrix( Image2D& m )
     width  = 4*m.getWidth();
     height = m.getHeight();
 
-    line = (float*)m.map(pitch);
+    line = (float*)_queue.mapMemObject(m,pitch);
 
     for(int i=0;i<height;i++) {
         ptr = line;
@@ -152,7 +152,7 @@ void printMatrix( Image2D& m )
         line += 4*pitch;
     }
 
-    m.unmap();
+    _queue.unmapMemObject(m);
 }
 
 int init()

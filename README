@@ -11,6 +11,9 @@ INSTALLATION ( Windows + Visual C++ )
     Install cmake ( http://www.cmake.org/ )
     Install boost ( http://www.boostpro.com/download ) ( CALPP examples require data_time component )
 
+    Ensure that enviroment variable ATISTREAMSDKROOT points to ATI stream SDK directory. 
+    Sometimes there is problem if directory in ATISTREAMSDKROOT doesn't end with '\'
+
     Start cmake-gui. Choose CAL++ directory as source code path and build the binaries path.
     Press Configure ( select Visual Studio as generator ).
     Press Generate
@@ -22,6 +25,7 @@ INSTALLATION ( Linux )
     Install cmake and boost.
 
     Ensure that enviroment variable ATISTREAMSDKROOT points to ATI stream SDK directory.
+    Sometimes there is problem if directory in ATISTREAMSDKROOT doesn't end with '/'
 
     Go to CAL++ directory 
     From command line enter commands
@@ -41,8 +45,8 @@ All classes reside in cal namespace.
 - at the moment only error reporting by exceptions is supported.
 - function Init() must be called before any CAL function is used.
 - function Shutdown() must be called at the end of program execution.
-- CommandQueue::enqueueMap* is moved to Memory::map ( it doesn't make sense to use CommandQueue if it's totally unnecesery )
-- CommandQueue::enqueueUnmap* is moved to Memory::unmap ( the same as above )
+- CommandQueue::enqueueMap* is changed to CommandQueue::mapMemoryObject, also there is map, unmap method in Memory object
+- CommandQueue::enqueueUnmap* is changed to CommandQueue::unmapMemoryObject 
 - CommandQueue::enqueueReadBuffer, CommandQueue::enqueueWriteBuffer are removed ( doesn't make sense to use them with CAL, but if required could be emulated with use of Map/Unamp and memcpy )
 - CommandQueue::enqueueCopyBuffer is asynchronous to the kernel execution 
 - CommandQueue::enqueueNDRangeKernel( Kernel& kernel, const NDRange& global, const NDRange& local, Event* event = NULL) is used to execute compute shaders.
@@ -55,7 +59,7 @@ All classes reside in cal namespace.
 - kernel name argument in the class Kernel constructor must be "main" ( CAL doesn't support different name ).
 - class Kernel handles allocation and initialization of constant buffers ( based on data from setArgBind functions )
 
-IL kernel doesn't have explicit list of kernel parameters ( as opposed to OpenCL ). This is why we need to do explicit bindings.
+IL kernel doesn't have explicit list of kernel parameters ( opposed to OpenCL ). This is why we need to do explicit bindings.
 To do this class Kernel has following methods.
 
 - void setArgBind( int index, const std::string& name )
@@ -63,6 +67,8 @@ To do this class Kernel has following methods.
 - void setArgBind( int index, const std::string& name, int cb_offset, int cb_size=0 )
     binds argument 'index' to constant buffer register. 
     Name must be 'cbX' ( X=0..14 ), offset is position in bytes from start of cbX buffer, size is argument size in bytes
+
+The binding must be done only once after kernel creation.
 
 Example:
     _kernel = Kernel(_program,"main");
