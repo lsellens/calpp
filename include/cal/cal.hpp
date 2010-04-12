@@ -39,7 +39,7 @@
 #endif
 
 #define __CAL_DONT_USE_TYPE_TRAITS  1
-#define __CAL_USE_NON_BLOCKING_WAIT 1
+//#define __CAL_USE_NON_BLOCKING_WAIT 1
 
 #ifndef __CAL_DONT_USE_TYPE_TRAITS
   #include <type_traits>
