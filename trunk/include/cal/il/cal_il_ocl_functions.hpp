@@ -111,10 +111,10 @@ variable<typename E1::value_type> rotate( const detail::expression<E1>& e1, cons
 {
 #if defined(__CAL_H__)
     if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
-       return bitalign(e1(),e1(),e2());
+       return bitalign(e1(),e1(),value<typename E2::value_type>(32)-e2());
     }
 #endif
-    return (e1()<<e2()) | (e1() >> (variable<typename E2::value_type>(32)-e2()));
+    return (e1()<<e2()) | (e1() >> (value<typename E2::value_type>(32)-e2()));
 }
 
 template<class E1>

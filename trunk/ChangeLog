@@ -1,3 +1,7 @@
+Version 0.86.3
+    rotate bug fix
+    Non blocking wait disabled by default. To enable __CAL_USE_NON_BLOCKING_WAIT must be defined
+
 Version 0.86.2
     small bug fix to rotate
 
