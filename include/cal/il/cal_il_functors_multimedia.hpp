@@ -23,8 +23,9 @@
 #ifndef __CAL_IL_FUNCTORS_MULTIMEDIA_H
 #define __CAL_IL_FUNCTORS_MULTIMEDIA_H
 
-#include <boost/format.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/format.hpp>
 #include <cal/il/cal_il_base_types.hpp>
 
 namespace cal {

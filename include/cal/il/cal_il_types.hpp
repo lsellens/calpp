@@ -25,6 +25,7 @@
 
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
 #include <cal/il/cal_il_source.hpp>
 #include <cal/il/cal_il_swizzle.hpp>
 #include <cal/il/cal_il_expression_swizzle.hpp>

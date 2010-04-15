@@ -24,6 +24,7 @@
 #define __CAL_IL_EXPRESSION_TYPES_H
 
 #include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
 #include <boost/format.hpp>
 #include <cal/il/cal_il_functors.hpp>
 #include <cal/il/cal_il_expression_swizzle.hpp>
