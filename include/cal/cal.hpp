@@ -39,7 +39,7 @@
 #endif
 
 #define __CAL_DONT_USE_TYPE_TRAITS  1
-//#define __CAL_USE_NON_BLOCKING_WAIT 1
+#define __CAL_USE_NON_BLOCKING_WAIT 1
 
 #ifndef __CAL_DONT_USE_TYPE_TRAITS
   #include <type_traits>
@@ -655,6 +655,8 @@ public:
     {
         std::map<CALdevice,map_info>::iterator imap;
 
+        if( remote_ ) device=0;
+
         imap = map_.find(device);
         if( imap==map_.end() ) throw Error(CAL_RESULT_NOT_INITIALIZED);
 
@@ -685,6 +687,8 @@ public:
     {
         std::map<CALdevice,map_info>::iterator imap;
 
+        if( remote_ ) device=0;
+
         imap = map_.find(device);
         if( imap==map_.end() ) throw Error(CAL_RESULT_NOT_INITIALIZED);
 
@@ -705,12 +709,12 @@ public:
 
     CALvoid* map( CALuint& pitch, int idx=0 )
     {
-        return map2( pitch, remote_?0:device_[idx]() );
+        return map2( pitch, device_[idx]() );
     }
 
     void unmap( int idx=0 )
     {
-        return unmap2( remote_?0:device_[idx]() );
+        return unmap2( device_[idx]() );
     }
 
     void addDevices( const std::vector<Device>& device )
