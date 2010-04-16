@@ -25,6 +25,7 @@
 
 #include <cal.h>
 #include <calcl.h>
+#include <cal_ext.h>
 #include <cassert>
 #include <cstring>
 #include <cstdio>
@@ -39,15 +40,12 @@
 #endif
 
 #define __CAL_DONT_USE_TYPE_TRAITS  1
-#define __CAL_USE_NON_BLOCKING_WAIT 1
+//#define __CAL_USE_NON_BLOCKING_WAIT 1
 
 #ifndef __CAL_DONT_USE_TYPE_TRAITS
   #include <type_traits>
 #endif
 
-#ifdef __CAL_USE_NON_BLOCKING_WAIT
-  #include <cal_ext.h>
-#endif
 
 enum CALInfoEnum {
     CAL_DEVICE_TARGET,               /**< Device Kernel ISA  */ 
@@ -97,6 +95,10 @@ enum CALInfoEnum {
 
 enum CALTargetTypeEnum {
     CAL_DEVICE_TYPE_GPU
+};
+
+enum CALresallocflagsextensionEnum {
+    CAL_RESALLOC_REMOTE = 128
 };
 
 namespace cal {
@@ -377,6 +379,35 @@ struct CALcontext_helper
 
 template<int N>
 CALcontext_helper::callback_container   CALcontext_helper::release_callback<N>::data;
+
+
+template<int N>
+struct cal_extension_table
+{
+    typedef CALresult (CALAPIENTRYP PFNCALCTXWAITFOREVENTS)(CALcontext ctx, CALevent *event, CALuint num, CALuint flags);
+
+    PFNCALCTXWAITFOREVENTS calCtxWaitForEvents;
+    PFNCALRESCREATE1D      calResCreate1D;
+    PFNCALRESCREATE2D      calResCreate2D;
+
+    static cal_extension_table data;
+
+    cal_extension_table() : calCtxWaitForEvents(NULL), calResCreate1D(NULL), calResCreate2D(NULL) {}
+
+    void init()
+    {
+        if (calExtSupported((CALextid)0x8009) == CAL_RESULT_OK) {
+            calExtGetProc((CALextproc*)&calCtxWaitForEvents, (CALextid)0x8009, "calCtxWaitForEvents");
+        }
+
+        if (calExtSupported(CAL_EXT_RES_CREATE) == CAL_RESULT_OK) {
+            calExtGetProc((CALextproc*)&calResCreate1D, CAL_EXT_RES_CREATE, "calResCreate1D");
+            calExtGetProc((CALextproc*)&calResCreate2D, CAL_EXT_RES_CREATE, "calResCreate2D");
+        }
+    }
+};
+
+template<int N> cal_extension_table<N> cal_extension_table<N>::data;
 
 } // namespace detail
 
@@ -798,11 +829,15 @@ public:
     {
     }
 
-    Image1D( const Context& context, CALuint width, CALformat format, CALuint flags, bool remote=false ) : Image()
+    Image1D( const Context& context, CALuint width, CALformat format, CALuint flags ) : Image()
     {
-        CALresult                r;
+        CALresult  r;
+        bool       remote;
 
         createInstance();
+
+        remote = flags&(CALuint)CAL_RESALLOC_REMOTE;
+        flags  &= ~(CALuint)CAL_RESALLOC_REMOTE;
 
         if( !remote ) {
             CALresource              res;
@@ -834,6 +869,39 @@ public:
         data().width_  = width;
     }
 
+    // Create pinned memory image
+    // there must be one item in host_ptr for each device in context
+    // addresses in host_ptr must be aligned to 256 byte boundary ( 4096 on Vista )
+    // there is limit on total amount of pinned memory ( depends on system - 32MB to 64MB )
+    Image1D( const Context& context, CALuint width, CALformat format, CALuint flags, std::vector<CALvoid*> host_ptr, int size ) : Image()
+    {
+        CALresource              res;
+        std::vector<CALresource> _res;
+        CALresult                r;
+
+        createInstance();
+
+        if( !detail::cal_extension_table<0>::data.calResCreate1D ) throw Error(CAL_RESULT_NOT_SUPPORTED);
+        if( host_ptr.size()!=context.data().devices_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
+
+        for(unsigned i=0;i<context.data().devices_.size();i++) {
+           r = detail::cal_extension_table<0>::data.calResCreate1D(&res,context.data().devices_[i](),host_ptr[i],width,format,size,flags);
+           if( r!=CAL_RESULT_OK ) {
+               for(unsigned j=0;j<_res.size();j++) calResFree(_res[i]);
+               throw Error(r);
+           }
+           _res.push_back(res);
+        }
+
+        for(unsigned i=0;i<_res.size();i++) 
+            data().handle_.insert( std::make_pair(context.data().devices_[i](), _res[i]) );
+
+        data().remote_ = false;
+        data().addDevices(context.data().devices_);
+        data().width_  = width;
+    }
+
+
     int getWidth() const { return data().width_; }
 };
 
@@ -842,11 +910,15 @@ class Image2D : public Image
 public:
     Image2D() : Image() {}
     Image2D( const Image2D& rhs ) : Image(rhs) {}
-    Image2D( const Context& context, CALuint width, CALuint height, CALformat format, CALuint flags, bool remote=false ) : Image()
+    Image2D( const Context& context, CALuint width, CALuint height, CALformat format, CALuint flags ) : Image()
     {
         CALresult   r;
+        bool        remote;
 
         createInstance();
+
+        remote = flags&(CALuint)CAL_RESALLOC_REMOTE;
+        flags  &= ~(CALuint)CAL_RESALLOC_REMOTE;
 
         if( !remote ) {
             CALresource              res;
@@ -878,6 +950,38 @@ public:
         data().addDevices(context.data().devices_);
         data().width_  = width;
         data().height_ = height;
+    }
+
+    // Create pinned memory image
+    // there must be one item in host_ptr for each device in context
+    // addresses in host_ptr must be aligned to 256 byte boundary ( 4096 on Vista )
+    // there is limit on total amount of pinned memory ( depends on system - 32MB to 64MB )
+    Image2D( const Context& context, CALuint width, CALuint height, CALformat format, CALuint flags, std::vector<CALvoid*> host_ptr, int size ) : Image()
+    {
+        CALresource              res;
+        std::vector<CALresource> _res;
+        CALresult                r;
+
+        createInstance();
+
+        if( !detail::cal_extension_table<0>::data.calResCreate2D ) throw Error(CAL_RESULT_NOT_SUPPORTED);
+        if( host_ptr.size()!=context.data().devices_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
+
+        for(unsigned i=0;i<context.data().devices_.size();i++) {
+           r = detail::cal_extension_table<0>::data.calResCreate2D(&res,context.data().devices_[i](),host_ptr[i],width,height,format,size,flags);
+           if( r!=CAL_RESULT_OK ) {
+               for(unsigned j=0;j<_res.size();j++) calResFree(_res[i]);
+               throw Error(r);
+           }
+           _res.push_back(res);
+        }
+
+        for(unsigned i=0;i<_res.size();i++) 
+            data().handle_.insert( std::make_pair(context.data().devices_[i](), _res[i]) );
+
+        data().remote_ = false;
+        data().addDevices(context.data().devices_);
+        data().width_  = width;
     }
 
     int getWidth() const { return data().width_; }
@@ -1451,27 +1555,6 @@ public:
 
 class CommandQueue : public detail::shared_data<detail::CommandQueueData>
 {
-#ifdef __CAL_USE_NON_BLOCKING_WAIT
-private:
-    typedef CALresult (CALAPIENTRYP PFNCALCTXWAITFOREVENTS)(CALcontext ctx, CALevent *event, CALuint num, CALuint flags);
-
-    PFNCALCTXWAITFOREVENTS getWaitForEventFunction()
-    {
-        static PFNCALCTXWAITFOREVENTS func=NULL;
-        static bool checked = false;
-
-        if( checked ) return func;
-
-        checked = true;
-
-        if (calExtSupported((CALextid)0x8009) == CAL_RESULT_OK) {
-            calExtGetProc((CALextproc*)&func, (CALextid)0x8009, "calCtxWaitForEvents");
-        }
-
-        return func;
-    }
-#endif
-
 public:
     CommandQueue() : detail::shared_data<detail::CommandQueueData>()
     {
@@ -1569,15 +1652,14 @@ public:
         if( !event() ) return;
 
 #ifdef __CAL_USE_NON_BLOCKING_WAIT
-        PFNCALCTXWAITFOREVENTS calCtxWaitForEvents = getWaitForEventFunction();
-        if( calCtxWaitForEvents ) {
-            r = calCtxWaitForEvents(data().handle_,(CALevent*)&event(),1,0);
+        if( detail::cal_extension_table<0>::data.calCtxWaitForEvents ) {
+            r = detail::cal_extension_table<0>::data.calCtxWaitForEvents(data().handle_,(CALevent*)&event(),1,0);
             if( r!=CAL_RESULT_OK ) throw Error(r);
             return;
         }
 #endif
 
-        while( 1 ) {       
+        while( 1 ) {
             r = calCtxIsEventDone(data().handle_,event());
             if( r!=CAL_RESULT_PENDING ) break;
         }
@@ -1588,9 +1670,8 @@ public:
     void waitForEvents( const std::vector<Event>& events )
     {
 #ifdef __CAL_USE_NON_BLOCKING_WAIT
-        PFNCALCTXWAITFOREVENTS calCtxWaitForEvents = getWaitForEventFunction();
-        if( calCtxWaitForEvents ) {
-            CALresult r = calCtxWaitForEvents(data().handle_,(CALevent*)&events[0],events.size(),0);
+        if( detail::cal_extension_table<0>::data.calCtxWaitForEvents ) {
+            CALresult r = detail::cal_extension_table<0>::data.calCtxWaitForEvents(data().handle_,(CALevent*)&events[0],events.size(),0);
             if( r!=CAL_RESULT_OK ) throw Error(r);
             return;
         }
@@ -1602,6 +1683,18 @@ public:
             if( r!=CAL_RESULT_OK && r!=CAL_RESULT_PENDING ) throw Error(r);
             if( r==CAL_RESULT_PENDING ) i--;
         }
+    }
+
+    bool isEventDone( const Event& event )
+    {
+        CALresult   r;
+
+        if( !event() ) return true;
+
+        r = calCtxIsEventDone(data().handle_,event());
+        if( r!=CAL_RESULT_PENDING && r!=CAL_RESULT_OK ) throw Error(r);
+
+        return r!=CAL_RESULT_PENDING;
     }
 
     void flush()
@@ -2007,7 +2100,7 @@ typename detail::param_traits<detail::CAL_TYPE_CALMODULE,Name>::param_type Kerne
     CALmodule   module;
     CALfunc     func;
     CALresult   r;
-        
+
     module = data().loadModule(queue());
     func   = data().getFunc(queue());
     r = calModuleGetFuncInfo(&info,queue(),module,func);
@@ -2024,6 +2117,8 @@ inline void Init()
 
     r = calInit();
     if( r!=CAL_RESULT_OK ) throw Error(r);
+
+    detail::cal_extension_table<0>::data.init();
 }
 
 inline void Shutdown()
@@ -2031,7 +2126,7 @@ inline void Shutdown()
     CALresult   r;
 
     r = calShutdown();
-    if( r!=CAL_RESULT_OK ) throw Error(r);    
+    if( r!=CAL_RESULT_OK ) throw Error(r);
 }
 
 } // namespace cal
