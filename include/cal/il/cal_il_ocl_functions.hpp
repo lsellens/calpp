@@ -122,11 +122,11 @@ variable<typename E1::value_type> rotate( const detail::expression<E1>& e1, int 
 {
 #if defined(__CAL_H__)
     if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
-       return bitalign(e1(),e1(),value<typename detail::resize_base_type<uint_type,E1::value_type::component_count>::value>(32-shift));
+       return bitalign(e1(),e1(),value<uint_type>(32-shift));
     }
 #endif
-    return ( e1() << value<typename detail::resize_base_type<uint_type,E1::value_type::component_count>::value>(shift) ) |
-           ( e1() >> value<typename detail::resize_base_type<uint_type,E1::value_type::component_count>::value>(32-shift) );
+    return ( e1() << value<uint_type>(shift) ) |
+           ( e1() >> value<uint_type>(32-shift) );
 }
 
 } // il
