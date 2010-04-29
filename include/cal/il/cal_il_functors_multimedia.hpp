@@ -44,10 +44,9 @@ struct cal_ternary_bitalign {
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
     {
         typedef boost::is_same<S1,S2> assert_value;
-        typedef boost::is_same<S3,uint_type> assert_value1;
-        typedef boost::is_same<S3,int_type>  assert_value2;
         BOOST_STATIC_ASSERT( assert_value::value );
-        BOOST_STATIC_ASSERT( assert_value1::value || assert_value2::value ); 
+        BOOST_STATIC_ASSERT( S1::type_size==S3::type_size ); 
+        BOOST_STATIC_ASSERT( S1::component_count==S3::component_count );
 
         std::string    res;
 
@@ -55,7 +54,7 @@ struct cal_ternary_bitalign {
             res += (boost::format("bitalign %1%,%2%,%3%,%4%\n") % mask_output(make_swizzle(r,i,0,0,0)) 
                                                                 % make_swizzle(s0,i,0,0,0) 
                                                                 % make_swizzle(s1,i,0,0,0) 
-                                                                % make_swizzle(s2,1,0,0,0) ).str();
+                                                                % make_swizzle(s2,i,0,0,0) ).str();
         }
 
         return res;
@@ -73,11 +72,10 @@ struct cal_ternary_bytealign {
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
     {
-        typedef boost::is_same<S1,S2>        assert_value;
-        typedef boost::is_same<S3,uint_type> assert_value1;
-        typedef boost::is_same<S3,int_type>  assert_value2;
+        typedef boost::is_same<S1,S2> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
-        BOOST_STATIC_ASSERT( assert_value1::value || assert_value2::value ); 
+        BOOST_STATIC_ASSERT( S1::type_size==S3::type_size ); 
+        BOOST_STATIC_ASSERT( S1::component_count==S3::component_count );
 
         std::string    res;
 
@@ -85,7 +83,7 @@ struct cal_ternary_bytealign {
             res += (boost::format("bytealign %1%,%2%,%3%,%4%\n") % mask_output(make_swizzle(r,i,0,0,0)) 
                                                                  % make_swizzle(s0,i,0,0,0) 
                                                                  % make_swizzle(s1,i,0,0,0) 
-                                                                 % make_swizzle(s2,1,0,0,0) ).str();
+                                                                 % make_swizzle(s2,i,0,0,0) ).str();
         }
 
         return res;

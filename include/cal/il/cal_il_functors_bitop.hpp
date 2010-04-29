@@ -26,6 +26,7 @@
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
 #include <cal/il/cal_il_base_types.hpp>
+#include <cal/il/cal_il_swizzle.hpp>
 
 namespace cal {
 namespace il {
@@ -221,6 +222,20 @@ struct cal_binary_shl<int2_type,int_type>
 };
 
 template<>
+struct cal_binary_shl<int2_type,int2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str();
+    }
+};
+
+
+template<>
 struct cal_binary_shl<int4_type,int_type>
 {
     typedef int4_type value_type;
@@ -231,6 +246,22 @@ struct cal_binary_shl<int4_type,int_type>
         return (boost::format("ishl %s,%s,%s\n") % r % s0 % s1).str();
     }
 };
+
+template<>
+struct cal_binary_shl<int4_type,int4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str() +
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,0,0,0) % make_swizzle(s1,3,0,0,0) ).str() +
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,0,0,0) % make_swizzle(s1,4,0,0,0) ).str();
+    }
+};
+
 
 template<>
 struct cal_binary_shl<int_type,uint_type>
@@ -257,6 +288,19 @@ struct cal_binary_shl<int2_type,uint_type>
 };
 
 template<>
+struct cal_binary_shl<int2_type,uint2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str();
+    }
+};
+
+template<>
 struct cal_binary_shl<int4_type,uint_type>
 {
     typedef int4_type value_type;
@@ -265,6 +309,21 @@ struct cal_binary_shl<int4_type,uint_type>
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
         return (boost::format("ishl %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_shl<int4_type,uint4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str() +
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,0,0,0) % make_swizzle(s1,3,0,0,0) ).str() +
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,0,0,0) % make_swizzle(s1,4,0,0,0) ).str();
     }
 };
 
@@ -293,6 +352,19 @@ struct cal_binary_shl<uint2_type,int_type>
 };
 
 template<>
+struct cal_binary_shl<uint2_type,int2_type>
+{
+    typedef uint2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str();
+    }
+};
+
+template<>
 struct cal_binary_shl<uint4_type,int_type>
 {
     typedef uint4_type value_type;
@@ -301,6 +373,21 @@ struct cal_binary_shl<uint4_type,int_type>
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
         return (boost::format("ishl %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_shl<uint4_type,int4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str() +
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,0,0,0) % make_swizzle(s1,3,0,0,0) ).str() +
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,0,0,0) % make_swizzle(s1,4,0,0,0) ).str();
     }
 };
 
@@ -329,6 +416,19 @@ struct cal_binary_shl<uint2_type,uint_type>
 };
 
 template<>
+struct cal_binary_shl<uint2_type,uint2_type>
+{
+    typedef uint2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str();
+    }
+};
+
+template<>
 struct cal_binary_shl<uint4_type,uint_type>
 {
     typedef uint4_type value_type;
@@ -337,6 +437,21 @@ struct cal_binary_shl<uint4_type,uint_type>
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
         return (boost::format("ishl %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_shl<uint4_type,uint4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str() +
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,0,0,0) % make_swizzle(s1,3,0,0,0) ).str() +
+                (boost::format("ishl %s,%s,%s\n") % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,0,0,0) % make_swizzle(s1,4,0,0,0) ).str();
     }
 };
 
@@ -382,6 +497,19 @@ struct cal_binary_shr<int2_type,int_type>
 };
 
 template<>
+struct cal_binary_shr<int2_type,int2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str();
+    }
+};
+
+template<>
 struct cal_binary_shr<int4_type,int_type>
 {
     typedef int4_type value_type;
@@ -390,6 +518,21 @@ struct cal_binary_shr<int4_type,int_type>
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
         return (boost::format("ishr %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_shr<int4_type,int4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str() +
+                (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,0,0,0) % make_swizzle(s1,3,0,0,0) ).str() +
+                (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,0,0,0) % make_swizzle(s1,4,0,0,0) ).str();
     }
 };
 
@@ -418,6 +561,19 @@ struct cal_binary_shr<int2_type,uint_type>
 };
 
 template<>
+struct cal_binary_shr<int2_type,uint2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str();
+    }
+};
+
+template<>
 struct cal_binary_shr<int4_type,uint_type>
 {
     typedef int4_type value_type;
@@ -426,6 +582,21 @@ struct cal_binary_shr<int4_type,uint_type>
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
         return (boost::format("ishr %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_shr<int4_type,uint4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str() +
+                (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,0,0,0) % make_swizzle(s1,3,0,0,0) ).str() +
+                (boost::format("ishr %s,%s,%s\n") % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,0,0,0) % make_swizzle(s1,4,0,0,0) ).str();
     }
 };
 
@@ -454,6 +625,19 @@ struct cal_binary_shr<uint2_type,int_type>
 };
 
 template<>
+struct cal_binary_shr<uint2_type,int2_type>
+{
+    typedef uint2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str();
+    }
+};
+
+template<>
 struct cal_binary_shr<uint4_type,int_type>
 {
     typedef uint4_type value_type;
@@ -462,6 +646,21 @@ struct cal_binary_shr<uint4_type,int_type>
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
         return (boost::format("ushr %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_shr<uint4_type,int4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str() +
+                (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,0,0,0) % make_swizzle(s1,3,0,0,0) ).str() +
+                (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,0,0,0) % make_swizzle(s1,4,0,0,0) ).str();
     }
 };
 
@@ -490,6 +689,19 @@ struct cal_binary_shr<uint2_type,uint_type>
 };
 
 template<>
+struct cal_binary_shr<uint2_type,uint2_type>
+{
+    typedef uint2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str();
+    }
+};
+
+template<>
 struct cal_binary_shr<uint4_type,uint_type>
 {
     typedef uint4_type value_type;
@@ -501,7 +713,20 @@ struct cal_binary_shr<uint4_type,uint_type>
     }
 };
 
+template<>
+struct cal_binary_shr<uint4_type,uint4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
 
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return  (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,0,0,0) % make_swizzle(s1,1,0,0,0) ).str() + 
+                (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,0,0,0) % make_swizzle(s1,2,0,0,0) ).str() +
+                (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,0,0,0) % make_swizzle(s1,3,0,0,0) ).str() +
+                (boost::format("ushr %s,%s,%s\n") % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,0,0,0) % make_swizzle(s1,4,0,0,0) ).str();
+    }
+};
 
 //
 // bitwise or
