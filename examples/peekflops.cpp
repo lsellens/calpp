@@ -32,16 +32,16 @@ using namespace boost;
 using namespace cal;
 using namespace cal::il;
 
-#define THREADS_PER_GRP 512
-#define NR_ITERATIONS   0x100000
-#define NR_MAD_INST     209
+#define MAX_THREADS_PER_GRP 512
+#define NR_ITERATIONS       0x100000
+#define NR_MAD_INST         209
 
 void kernel_peekperf()
-{    
+{
     global<float4>      result;
     float4              a,b;
     uint1               i;
-            
+
     a = float4(42);
     b = float4(42);
     i = uint1(NR_ITERATIONS);
@@ -60,17 +60,17 @@ void kernel_peekperf()
     result[get_global_id<uint1>()] = a+b;
 }
 
-std::string create_kernel_peekperf()
+std::string create_kernel_peekperf( int workgroup_size )
 {
     std::stringstream   code;
 
     code << "il_cs\n";
-    code << format("dcl_num_thread_per_group %i\n") % (int)THREADS_PER_GRP;
-    
+    code << format("dcl_num_thread_per_group %i\n") % workgroup_size;
+
     Source::begin();
     kernel_peekperf();
     Source::end();
-    
+
     Source::emitHeader(code);
     Source::emitCode(code);
 
@@ -87,6 +87,7 @@ Context         _context;
 Program         _program;
 Kernel          _kernel;
 CommandQueue    _queue;
+int             _dev_count;
 
 Image2D         _output;
 int             _nr_groups;
@@ -95,11 +96,17 @@ int             _exec_time;
 int init()
 {
    _context = Context(CAL_DEVICE_TYPE_GPU);
-        
+
     std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
-    
+    _dev_count =  devices.size();
+}
+
+void setup( int dev, int workgroup_size )
+{
+    std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
+
     // create program
-    std::string source = create_kernel_peekperf();
+    std::string source = create_kernel_peekperf(workgroup_size);
     //std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
@@ -109,27 +116,22 @@ int init()
     _kernel = Kernel(_program,"main");
     _kernel.setArgBind(0,"g[]");
 
-    return devices.size();
-}
-
-void setup( int dev )
-{
-    std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
     _nr_groups = devices[dev].getInfo<CAL_DEVICE_NUMBEROFSIMD>();
 
     _queue = CommandQueue(_context,devices[dev]);
 
-    // create output buffer    
-    _output = Image2D(_context, THREADS_PER_GRP, _nr_groups, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );
+    // create output buffer
+    int width = 64*((workgroup_size + 63)/64);
+    _output = Image2D(_context, width, _nr_groups, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );
 }
 
-void run()
+void run( int workgroup_size )
 {
     NDRange     global,local;
     Event       event;
-    
-    local  = NDRange(THREADS_PER_GRP);
-    global = NDRange(_nr_groups*THREADS_PER_GRP);
+
+    local  = NDRange(workgroup_size);
+    global = NDRange(_nr_groups*workgroup_size);
 
     posix_time::ptime t1 = posix_time::microsec_clock::local_time();
 
@@ -147,7 +149,7 @@ void run()
 void show_device_info( int dev )
 {
     std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
-    
+
     std::cout << format("Device            %i\n"
                         "target            %u\n"
                         "localRAM          %u MB\n"
@@ -184,36 +186,37 @@ void show_device_info( int dev )
     % devices[dev].getInfo<CAL_DEVICE_SURFACEALIGNMENT>();
 }
 
-void show_result( int dev )
+void show_result( int dev, int workgroup_size )
 {
 
     double tms    = (double)_exec_time/1000.;
-    double kflops = (double)((int64_t)8*(int64_t)NR_MAD_INST*(int64_t)NR_ITERATIONS*(int64_t)THREADS_PER_GRP*(int64_t)_nr_groups)/tms;
+    double kflops = (double)((int64_t)8*(int64_t)NR_MAD_INST*(int64_t)NR_ITERATIONS*(int64_t)workgroup_size*(int64_t)_nr_groups)/tms;
     double gflops = kflops/1000000.;
 
-    std::cout << format("Device %i: execution time %.2f ms, achieved %.2f gflops\n") % dev % tms % gflops;
+    std::cout << format("Device %i: workgroup size %i execution time %.2f ms, achieved %.2f gflops\n") % dev % workgroup_size % tms % gflops;
 }
 
 void release_gpu_resources()
 {
     _queue   = CommandQueue();
     _kernel  = Kernel();
-    _context = Context();
     _program = Program();
+    _context = Context();
 }
 
 int main( int argc, char* argv[] )
 {
-    int dev_count;
-    
     cal::Init();
-    dev_count = init();
+    init();
 
-    for(int i=0;i<dev_count;i++) {
+    for(int i=0;i<_dev_count;i++) {
         show_device_info(i);
-        setup(i);
-        run();
-        show_result(i);
+
+        for(int workgroup_size=8;workgroup_size<=MAX_THREADS_PER_GRP;workgroup_size*=2) {
+            setup(i,workgroup_size);
+            run(workgroup_size);
+            show_result(i,workgroup_size);
+        }
     }
 
     release_gpu_resources();
