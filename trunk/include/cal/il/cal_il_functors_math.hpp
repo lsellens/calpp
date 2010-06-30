@@ -1163,10 +1163,6 @@ struct cal_binary_div<double2_type,double2_type>
 // binary mod
 //
 
-//
-// div
-//
-
 template<class S1,class S2>
 struct cal_binary_mod
 {
@@ -1216,6 +1212,43 @@ struct cal_binary_mod<uint4_type,uint4_type>
         return (boost::format("umod %s,%s,%s\n") % r % s0 % s1).str();
     }
 };
+
+template<>
+struct cal_binary_mod<float_type,float_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("mod %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_mod<float2_type,float2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("mod %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
+template<>
+struct cal_binary_mod<float4_type,float4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format("mod %s,%s,%s\n") % r % s0 % s1).str();
+    }
+};
+
 
 //
 // ldexp
@@ -1412,6 +1445,67 @@ struct cal_ternary_mad<double2_type,double2_type,double2_type>
                                                         % make_swizzle(s2,1,2,0,0) % make_swizzle(s2,3,4,0,0)).str();
     }
 };
+
+//
+// rsq
+//
+
+template<class S1>
+struct cal_unary_rsq {
+    typedef invalid_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        BOOST_STATIC_ASSERT(sizeof(S1) != sizeof(S1));
+        return std::string();
+    }
+};
+
+template<>
+struct cal_unary_rsq<float_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("rsq %1%,%2%\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,1,1,1) ).str();
+    }
+};
+
+template<>
+struct cal_unary_rsq<float2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("rsq %1%,%2%\n"
+                              "rsq %3%,%4%\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,1,1,1)
+                                               % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,2,2,2) ).str();
+    }
+};
+
+template<>
+struct cal_unary_rsq<float4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("rsq %1%,%2%\n"
+                              "rsq %3%,%4%\n"
+                              "rsq %5%,%6%\n"
+                              "rsq %7%,%8%\n" ) % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,1,1,1)
+                                                % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,2,2,2)
+                                                % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,3,3,3)
+                                                % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,4,4,4) ).str();
+    }
+};
+
 
 } // detail
 } // il

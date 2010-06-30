@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <vector>
+#include <set>
 #include <map>
 
 #ifndef _MSC_VER
@@ -1040,14 +1041,18 @@ public:
     void buildFromSource( const std::vector<Device>& devices )
     {
         std::vector<CALobject>  object;
+        std::set<CALtarget>     target;
         CALimage                image;
         CALresult               r;
 
+        for(unsigned i=0;i<devices.size();++i)
+            target.insert( devices[i].getInfo<CAL_DEVICE_TARGET>() );
+
         try {
-            for(unsigned i=0;i<devices.size();++i) {
+            for(std::set<CALtarget>::iterator itarget=target.begin();itarget!=target.end();++itarget) {
                 CALobject   obj;
-        
-                r = calclCompile(&obj,(CALlanguage)type_,(CALchar*)&buffer_[0], devices[i].getInfo<CAL_DEVICE_TARGET>() );
+
+                r = calclCompile(&obj,(CALlanguage)type_,(CALchar*)&buffer_[0], *itarget );
                 if( r!=CAL_RESULT_OK ) throw Error(r);
                 object.push_back(obj);
             }
@@ -1060,7 +1065,7 @@ public:
         r = calclLink(&image,&object[0],object.size());
         for(unsigned i=0;i<object.size();++i)
             calclFreeObject(object[i]);
-        if( r!=CAL_RESULT_OK ) throw Error(r);        
+        if( r!=CAL_RESULT_OK ) throw Error(r);
 
         handle_ = image;
     }

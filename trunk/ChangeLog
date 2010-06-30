@@ -1,3 +1,9 @@
+Version 0.87
+    IL kernel link bug fix
+    support for pinned memory
+    new example - optimal n-body brute-force algorithm implementation
+    various bug fixes
+
 Version 0.86.3
     rotate bug fix
     Non blocking wait disabled by default. To enable __CAL_USE_NON_BLOCKING_WAIT must be defined

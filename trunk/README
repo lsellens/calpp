@@ -201,8 +201,8 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
     lds<basic_type> - class which allows accessing LDS. Constructor takes LDS id as argument. Operator () and [] allow accesing LDS data.
 
 - Compare operations
-    Any variables of the same basic type can be compared ( <,>,<=,>=,!=,== ). The comparisong result is of uintX type.
-    For C++ type of cmp operators result is bool. But quite often result of vector compare is used as the mask to bit ops. This is why uintX has been chosen as output type.
+    Any variables of the same basic type can be compared ( <,>,<=,>=,!=,== ). The comparison result is of uintX type.
+    In C++ comparison result type is bool. But quite often result of vector comparison is used as the mask to bit ops. This is why uintX has been chosen as output type.
 
 - Bit operations.
     Bit operations |,&,<<,>>,~ are available. Type returned by operators is the type of first argument. The second argument should be of uintX type.
@@ -274,6 +274,7 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
     floor
     tanh
     atanh
+    rsqrt
 
     <cal/il/cal_il_multimedia.hpp>
     bitalign
@@ -282,7 +283,7 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
 3. CAL++ examples
 
 - peekflops
-    Kernel executes huge numbers of mads to estimate peek GFLOPS for card.
+    Kernel executes huge numbers of mads to estimate peek FLOPS for card.
     In the kernel 'C for' is used for loop unroling.
 
 - matrixmul
@@ -292,6 +293,11 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
 
 - coalescingtest
     This is test kernel to verify coalescing behaviour of ATI cards.
+
+- nbody
+    Optimal (fastest possible) implementation of brute-force n-body algorithm on ATI GPU.
+    Achives 90% of peek operation count ( including required index computations gives 94% ).
+    It's 10-20x faster than OpenCL implementation in ATI SDK.
 
 - vectorquantization
     Implementations of vector quantization. It shows a little bit more advanced kernels and use of LDS.
