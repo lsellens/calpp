@@ -31,16 +31,12 @@ namespace il {
 
 namespace detail {
 
-template<typename S> struct if_code;
-template<typename S> struct break_code;
-template<typename S> struct continue_code;
-
-template<>
-struct if_code<int>
+template<int N>
+struct if_code
 {
     static const char* nz;
     static const char* z;
-    
+
     static const char* logicalnz;
     static const char* logicalz;
 
@@ -52,21 +48,21 @@ struct if_code<int>
     static const char* relop_gt;    
 };
 
-const char* if_code<int>::nz="ifnz %s\n";
-const char* if_code<int>::z="ifc_relop(eq) %s,l0.x\n";
+template<int N> const char* if_code<N>::nz="ifnz %s\n";
+template<int N> const char* if_code<N>::z="ifc_relop(eq) %s,l0.x\n";
     
-const char* if_code<int>::logicalnz="if_logicalnz %s\n";
-const char* if_code<int>::logicalz="if_logicalz %s\n";
+template<int N> const char* if_code<N>::logicalnz="if_logicalnz %s\n";
+template<int N> const char* if_code<N>::logicalz="if_logicalz %s\n";
 
-const char* if_code<int>::relop_lt="ifc_relop(lt) %s,%s\n";
-const char* if_code<int>::relop_le="ifc_relop(le) %s,%s\n";
-const char* if_code<int>::relop_ne="ifc_relop(ne) %s,%s\n";
-const char* if_code<int>::relop_eq="ifc_relop(eq) %s,%s\n";
-const char* if_code<int>::relop_ge="ifc_relop(ge) %s,%s\n";
-const char* if_code<int>::relop_gt="ifc_relop(gt) %s,%s\n";
+template<int N> const char* if_code<N>::relop_lt="ifc_relop(lt) %s,%s\n";
+template<int N> const char* if_code<N>::relop_le="ifc_relop(le) %s,%s\n";
+template<int N> const char* if_code<N>::relop_ne="ifc_relop(ne) %s,%s\n";
+template<int N> const char* if_code<N>::relop_eq="ifc_relop(eq) %s,%s\n";
+template<int N> const char* if_code<N>::relop_ge="ifc_relop(ge) %s,%s\n";
+template<int N> const char* if_code<N>::relop_gt="ifc_relop(gt) %s,%s\n";
 
-template<>
-struct break_code<int>
+template<int N> 
+struct break_code
 {
     static const char* nz;
     static const char* z;
@@ -82,22 +78,22 @@ struct break_code<int>
     static const char* relop_gt;
 };
 
-const char* break_code<int>::nz="breakc_relop(ne) %s,l0.x\n";
-const char* break_code<int>::z="breakc_relop(eq) %s,l0.x\n";
+template<int N> const char* break_code<N>::nz="breakc_relop(ne) %s,l0.x\n";
+template<int N> const char* break_code<N>::z="breakc_relop(eq) %s,l0.x\n";
     
-const char* break_code<int>::logicalnz="break_logicalnz %s\n";
-const char* break_code<int>::logicalz="break_logicalz %s\n";
+template<int N> const char* break_code<N>::logicalnz="break_logicalnz %s\n";
+template<int N> const char* break_code<N>::logicalz="break_logicalz %s\n";
 
-const char* break_code<int>::relop_lt="breakc_relop(lt) %s,%s\n";
-const char* break_code<int>::relop_le="breakc_relop(le) %s,%s\n";
-const char* break_code<int>::relop_ne="breakc_relop(ne) %s,%s\n";
-const char* break_code<int>::relop_eq="breakc_relop(eq) %s,%s\n";
-const char* break_code<int>::relop_ge="breakc_relop(ge) %s,%s\n";
-const char* break_code<int>::relop_gt="breakc_relop(gt) %s,%s\n";
+template<int N> const char* break_code<N>::relop_lt="breakc_relop(lt) %s,%s\n";
+template<int N> const char* break_code<N>::relop_le="breakc_relop(le) %s,%s\n";
+template<int N> const char* break_code<N>::relop_ne="breakc_relop(ne) %s,%s\n";
+template<int N> const char* break_code<N>::relop_eq="breakc_relop(eq) %s,%s\n";
+template<int N> const char* break_code<N>::relop_ge="breakc_relop(ge) %s,%s\n";
+template<int N> const char* break_code<N>::relop_gt="breakc_relop(gt) %s,%s\n";
 
 
-template<>
-struct continue_code<int>
+template<int N>
+struct continue_code
 {
     static const char* nz;
     static const char* z;
@@ -113,31 +109,31 @@ struct continue_code<int>
     static const char* relop_gt;
 };
 
-const char* continue_code<int>::nz="continuec_relop(ne) %s,l0.x\n";
-const char* continue_code<int>::z="continuec_relop(eq) %s,l0.x\n";
+template<int N> const char* continue_code<N>::nz="continuec_relop(ne) %s,l0.x\n";
+template<int N> const char* continue_code<N>::z="continuec_relop(eq) %s,l0.x\n";
     
-const char* continue_code<int>::logicalnz="continue_logicalnz %s\n";
-const char* continue_code<int>::logicalz="continue_logicalz %s\n";
+template<int N> const char* continue_code<N>::logicalnz="continue_logicalnz %s\n";
+template<int N> const char* continue_code<N>::logicalz="continue_logicalz %s\n";
 
-const char* continue_code<int>::relop_lt="continuec_relop(lt) %s,%s\n";
-const char* continue_code<int>::relop_le="continuec_relop(le) %s,%s\n";
-const char* continue_code<int>::relop_ne="continuec_relop(ne) %s,%s\n";
-const char* continue_code<int>::relop_eq="continuec_relop(eq) %s,%s\n";
-const char* continue_code<int>::relop_ge="continuec_relop(ge) %s,%s\n";
-const char* continue_code<int>::relop_gt="continuec_relop(gt) %s,%s\n";
+template<int N> const char* continue_code<N>::relop_lt="continuec_relop(lt) %s,%s\n";
+template<int N> const char* continue_code<N>::relop_le="continuec_relop(le) %s,%s\n";
+template<int N> const char* continue_code<N>::relop_ne="continuec_relop(ne) %s,%s\n";
+template<int N> const char* continue_code<N>::relop_eq="continuec_relop(eq) %s,%s\n";
+template<int N> const char* continue_code<N>::relop_ge="continuec_relop(ge) %s,%s\n";
+template<int N> const char* continue_code<N>::relop_gt="continuec_relop(gt) %s,%s\n";
 
 template<class E>
 void emit_if( const detail::expression<E>& e )
 {
-    emit_cmp( if_code<int>(), e() );
+    emit_cmp( if_code<0>(), e() );
 }
 
-void emit_else()
+inline void emit_else()
 {
     Source::code << "else\n";
 }
 
-void emit_endif()
+inline void emit_endif()
 {
     Source::code << "endif\n";
 }
@@ -145,10 +141,10 @@ void emit_endif()
 template<class E>
 void emit_break( const detail::expression<E>& e )
 {
-    emit_cmp( break_code<int>(), e() );
+    emit_cmp( break_code<0>(), e() );
 }
 
-void emit_break()
+inline void emit_break()
 {
     Source::code << "break\n";
 }
@@ -156,10 +152,10 @@ void emit_break()
 template<class E>
 void emit_continue( const detail::expression<E>& e )
 {
-    emit_cmp( continue_code<int>(), e() );
+    emit_cmp( continue_code<0>(), e() );
 }
 
-void emit_continue()
+inline void emit_continue()
 {
     Source::code << "continue\n";
 }
@@ -168,15 +164,15 @@ template<class E>
 void emit_while( const detail::expression<E>& e )
 {
     Source::code << "whileloop\n";
-    emit_cmp( break_code<int>(), e(), true );
+    emit_cmp( break_code<0>(), e(), true );
 }
 
-void emit_whileloop()
+inline void emit_whileloop()
 {
     Source::code << "whileloop\n";
 }
 
-void emit_endloop()
+inline void emit_endloop()
 {
     Source::code << "endloop\n";
 }

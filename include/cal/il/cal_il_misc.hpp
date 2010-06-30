@@ -77,13 +77,13 @@ inline void write_mem_fence( int type )
 template<class T> named_variable<T> get_global_id();
 
 template<>
-named_variable<uint1> get_global_id()
+inline named_variable<uint1> get_global_id()
 {
     return named_variable<uint1>("vAbsTidFlat");
 }
 
 template<>
-named_variable<uint4> get_global_id()
+inline named_variable<uint4> get_global_id()
 {
     return named_variable<uint4>("vAbsTid.xyzx");
 }
@@ -99,13 +99,13 @@ inline named_variable<uint1> get_global_id( int idx )
 template<class T> named_variable<T> get_local_id();
 
 template<>
-named_variable<uint1> get_local_id()
+inline named_variable<uint1> get_local_id()
 {
     return named_variable<uint1>("vTidInGrpFlat");
 }
 
 template<>
-named_variable<uint4> get_local_id()
+inline named_variable<uint4> get_local_id()
 {
     return named_variable<uint4>("vTidInGrp.xyzx");
 }
@@ -121,13 +121,13 @@ inline named_variable<uint1> get_local_id( int idx )
 template<class T> named_variable<T> get_group_id();
 
 template<>
-named_variable<uint1> get_group_id()
+inline named_variable<uint1> get_group_id()
 {
     return named_variable<uint1>("vThreadGrpIdFlat");
 }
 
 template<>
-named_variable<uint4> get_group_id()
+inline named_variable<uint4> get_group_id()
 {
     return named_variable<uint4>("vThreadGrpId.xyzx");
 }

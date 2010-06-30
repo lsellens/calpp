@@ -99,6 +99,13 @@ detail::binary<E1,E2,detail::cal_binary_ldexp<typename E1::value_type,typename E
     return expression_type( e1(), e2() );
 }
 
+template<class E1>
+detail::unary<E1,detail::cal_unary_rsq<typename E1::value_type> > rsqrt( const detail::expression<E1>& e1  )
+{
+    typedef detail::unary<E1,detail::cal_unary_rsq<typename E1::value_type> > expression_type;
+    return expression_type(e1);
+}
+
 } // il
 } // cal
 
