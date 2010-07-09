@@ -19,11 +19,16 @@
  */
 
 /*
- * Rewrite of matrix multiplication implementation presented by prunedtree ( http://forum.beyond3d.com/showthread.php?t=54842 )
- * Algorithm computes A^T * B. Matrices are in row splited format ( for matrix M even columns go to M0, odd to M1 ).
+ * Modification of matrix multiplication implementation presented by prunedtree ( http://forum.beyond3d.com/showthread.php?t=54842 ).
+ * Algorithm computes A^T * B. Matrices are in row format.
+ *
  * Changes to original version
+ * - different data layout ( without matrices split )
  * - using pixelshader for tiled workitem layout
  * - workitem position computed directly in code ( in prunedtree's code it is precomputed )
+ * - using sample offset ( proposed by nnsan http://galaxy.u-aizu.ac.jp/trac/note/wiki/MatrixMultiply )
+ * - using sample id ( no impact on performance )
+ * - without burst write ( reduced register usage )
  *
  */
 
@@ -35,6 +40,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <cal/cal.hpp>
 #include <cal/il/cal_il.hpp>
+#include <cal/il/cal_il_math.hpp>
 
 using namespace boost;
 using namespace cal;
@@ -45,8 +51,8 @@ using namespace cal::il;
 #define BX4 (BX/4)
 #define BY4 (BY/4)
 
-void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
-                       input2d<float4>& B0, input2d<float4>& B1, global<float4>& C, float1 xsize, float1 ysize )
+void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C, 
+                       const named_variable<float1>& xsize, const named_variable<float1>& ysize )
 {
     float4  R[BY][BX4],ta[2][BY4],tb[2][BX4],k;
     float2  p;
@@ -54,27 +60,40 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
 
     assert( BX==8 && BY==8 );
 
-    p = (named_variable<float2>("vWinCoord0.xy")-float2(0.5));
+    p = floor(named_variable<float2>("vWinCoord0.xy"))*float2(2,2);
 
     for(i=0;i<BY;i++) {
         for(j=0;j<BX4;j++) R[i][j]=float4(0);
     }
 
-    k  = float4( p.y(), p.x(), float1(-2), float1(-1) );
+    k = float4( p.x(), p.y(), float1(-2), float1(0) );
 
     il_whileloop {
-        k += float4(0,0,2,2);
+        k += float4(0,0,2,0);
         il_breakc( k.z()>=ysize );
 
-        ta[0][0] = A0[k.xz()];
-        ta[0][1] = A1[k.xz()];
-        tb[0][0] = B0[k.yz()];
-        tb[0][1] = B1[k.yz()];
+        /* this is the version with sampler id */
+        ta[0][0] = A(0)( k.y()  , k.z() );
+        ta[0][1] = A(1)( k.y()+1, k.z() );
+        tb[0][0] = B(2)( k.x()  , k.z() );
+        tb[0][1] = B(3)( k.x()+1, k.z() );
 
-        ta[1][0] = A0[k.xw()];
-        ta[1][1] = A1[k.xw()];
-        tb[1][0] = B0[k.yw()];
-        tb[1][1] = B1[k.yw()];
+        ta[1][0] = A(4)( k.y()  , k.z()+1 );
+        ta[1][1] = A(5)( k.y()+1, k.z()+1 );
+        tb[1][0] = B(6)( k.x()  , k.z()+1 );
+        tb[1][1] = B(7)( k.x()+1, k.z()+1 );
+
+        /* version without sampler id 
+        ta[0][0] = A( k.y()  , k.z() );
+        ta[0][1] = A( k.y()+1, k.z() );
+        tb[0][0] = B( k.x()  , k.z() );
+        tb[0][1] = B( k.x()+1, k.z() );
+
+        ta[1][0] = A( k.y()  , k.z()+1 );
+        ta[1][1] = A( k.y()+1, k.z()+1 );
+        tb[1][0] = B( k.x()  , k.z()+1 );
+        tb[1][1] = B( k.x()+1, k.z()+1 );
+        */
 
         for(i=0;i<BY4;i++) {
             for(j=0;j<BX4;j++) {
@@ -103,11 +122,10 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
     }
     il_endloop
 
+    /* this is the version with burst write
     uint1 s,step;
 
-    p = (named_variable<float2>("vWinCoord0.xy")-float2(0.5))*float2(BX4,BY);
-
-    s    = cast_type<uint1>(p.y()*xsize + p.x());
+    s    = cast_type<uint1>(p.y()*float1(4)*xsize + p.x());
     step = cast_type<uint1>(xsize);
 
     for(i=0;i<BY;i++) {
@@ -115,6 +133,24 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
             C[s+j] = R[i][j];
         }
         s += step;
+    }
+    */
+    uint4 s;
+    uint1 step;
+
+    s.x() = convert_uint1( p.y()*float1(4)*xsize + p.x() );
+    step  = convert_uint1(xsize);
+
+    s.y()  = s.x() + uint1(1);
+    s.zw() = s.xy() + uint2(step,step);
+
+    for(i=0;i<4;i++) {
+        C[s.x()] = R[2*i+0][0];
+        C[s.y()] = R[2*i+0][1];
+        C[s.z()] = R[2*i+1][0];
+        C[s.w()] = R[2*i+1][1];
+
+        if( i<3 ) s = s + uint4(step,step,step,step);
     }
 }
 
@@ -128,10 +164,10 @@ std::string create_kernel_matrixmul()
 
     Source::begin();
 
-    input2d<float4>    A0(0),A1(1),B0(2),B1(3);
+    input2d<float4>    A(0),B(1);
     global<float4>     C;
 
-    kernel_matrixmul(A0,A1,B0,B1,C,named_variable<float1>("cb0[0].x"),named_variable<float1>("cb0[0].y") );
+    kernel_matrixmul( A,B,C,named_variable<float1>("cb0[0].x"),named_variable<float1>("cb0[0].y") );
 
     Source::end();
 
@@ -156,7 +192,7 @@ Program         _program;
 Kernel          _kernel;
 CommandQueue    _queue;
 
-Image2D         _A0,_A1,_B0,_B1,_C;
+Image2D         _A,_B,_C;
 int             _exec_time;
 
 void fillMatrix( Image2D& m, float v )
@@ -210,7 +246,7 @@ int init()
 
     // create program
     std::string source = create_kernel_matrixmul();
-    //std::cout << source; // Uncomment to emit IL code
+    std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
     _program.disassemble(std::cout); // Uncomment to emit ISA code
@@ -220,17 +256,12 @@ int init()
     _kernel.setArgBind(0,"g[]");
     _kernel.setArgBind(1,"i0");
     _kernel.setArgBind(2,"i1");
-    _kernel.setArgBind(3,"i2");
-    _kernel.setArgBind(4,"i3");
-    _kernel.setArgBind(5,"cb0",0,4);
-    _kernel.setArgBind(6,"cb0",4,4);
+    _kernel.setArgBind(3,"cb0",0,4);
+    _kernel.setArgBind(4,"cb0",4,4);
 
     // allocate buffers
-    _A0 = Image2D( _context, WIDTH/8, HEIGHT, CAL_FORMAT_FLOAT_4, 0 );
-    _A1 = Image2D( _context, WIDTH/8, HEIGHT, CAL_FORMAT_FLOAT_4, 0 );
-
-    _B0 = Image2D( _context, WIDTH/8, HEIGHT, CAL_FORMAT_FLOAT_4, 0 );
-    _B1 = Image2D( _context, WIDTH/8, HEIGHT, CAL_FORMAT_FLOAT_4, 0 );
+    _A = Image2D( _context, WIDTH/4, HEIGHT, CAL_FORMAT_FLOAT_4, 0 );
+    _B = Image2D( _context, WIDTH/4, HEIGHT, CAL_FORMAT_FLOAT_4, 0 );
 
     _C  = Image2D( _context, WIDTH/4, HEIGHT, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );    
 
@@ -242,10 +273,8 @@ void setup( int dev )
     std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
     _queue = CommandQueue(_context,devices[dev]);
 
-    fillMatrix(_A0,2);
-    fillMatrix(_A1,2);
-    fillMatrix(_B0,4);
-    fillMatrix(_B1,4);
+    fillMatrix(_A,2);
+    fillMatrix(_B,4);
 }
 
 void run()
@@ -258,12 +287,10 @@ void run()
     posix_time::ptime t1 = posix_time::microsec_clock::local_time();
 
     _kernel.setArg(0,_C);
-    _kernel.setArg(1,_A0);
-    _kernel.setArg(2,_A1);
-    _kernel.setArg(3,_B0);
-    _kernel.setArg(4,_B1);
-    _kernel.setArg(5,(float)_C.getWidth());
-    _kernel.setArg(6,(float)_C.getHeight());
+    _kernel.setArg(1,_A);
+    _kernel.setArg(2,_B);
+    _kernel.setArg(3,(float)_C.getWidth());
+    _kernel.setArg(4,(float)_C.getHeight());
 
     for(int i=0;i<ITER_COUNT;i++) {
         _queue.enqueueNDRangeKernel( _kernel, rect, &event );
