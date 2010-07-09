@@ -164,10 +164,11 @@ class register_address
 {
 protected:
     typedef register_address<E>                     self_type;
+
+public:
     typedef const E                                 expression_type;
     typedef typename E::const_closure_type          expression_closure_type;
-    
-public:
+
     typedef typename E::value_type                  value_type;
     typedef const self_type                         const_closure_type;
     typedef self_type                               closure_type;
@@ -181,20 +182,22 @@ public:
     {
         typedef boost::is_same<typename E::value_type,int_type> assert_v1;
         typedef boost::is_same<typename E::value_type,uint_type> assert_v2;
-        BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value );        
+        typedef boost::is_same<typename E::value_type,float_type> assert_v3;
+        BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value || assert_v3::value );
     }
     explicit register_address( expression_type& e, int offset ) : _e(e), _offset(offset)
     {
         typedef boost::is_same<typename E::value_type,int_type> assert_v1;
         typedef boost::is_same<typename E::value_type,uint_type> assert_v2;
-        BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value );        
+        typedef boost::is_same<typename E::value_type,float_type> assert_v3;
+        BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value || assert_v3::value );
     }
     register_address( const register_address<E>& rhs ) : _e(rhs._e), _offset(rhs._offset) {}
     ~register_address() {}
 
     void emitCode( Source& prg, std::ostream& _out ) const
     {
-        _e.emitCode(prg,_out);                
+        _e.emitCode(prg,_out);
     }
 
     std::string resultCode() const

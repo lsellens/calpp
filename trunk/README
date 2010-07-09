@@ -288,8 +288,10 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
 
 - matrixmul
     This is implementation of prunedtree's matrixmul algorithm ( http://forum.beyond3d.com/showthread.php?t=54842 ). 
-    This is probably the fastest know matrixmul on ATI cards. 
     I think this is good example of power of CAL++. The CAL++ code is much easier to write ( and read ) and yet it gives almost exactly the same ISA as the handwritten IL.
+
+- matrixmul2
+    Modified version with sample offset and without matrix split
 
 - coalescingtest
     This is test kernel to verify coalescing behaviour of ATI cards.

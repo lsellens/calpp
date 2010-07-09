@@ -1,3 +1,7 @@
+Version 0.88
+    support for offset in sample load
+    new matrix multiplication example
+
 Version 0.87
     IL kernel link bug fix
     support for pinned memory

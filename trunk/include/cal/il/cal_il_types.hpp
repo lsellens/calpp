@@ -43,7 +43,7 @@ protected:
     typedef detail::swizzable_expression< input_expression<T,E,DIM> >   base_type;
     typedef const E                                                     expression_type;
     typedef typename E::const_closure_type                              expression_closure_type;
-        
+
 public:
     typedef T                                                           value_type;    
     typedef const self_type                                             const_closure_type;
@@ -52,7 +52,9 @@ public:
     static const bool                                                   swizzle_has_assign=false;
 
 protected:
-    int                     input_index;    
+    int                     input_index;
+    int                     xoffset,yoffset;
+    int                     sampler;
     expression_closure_type _e;
     using base_type::index;
 
@@ -60,10 +62,10 @@ public:
     using base_type::resultCode;
 
 public:
-    input_expression( int idx, const E& e ) : base_type(), input_index(idx), _e(e)
+    input_expression( int idx, const E& e, int x=0, int y=0, int s=-1 ) : base_type(), input_index(idx), xoffset(x), yoffset(y), sampler(s), _e(e)
     {
     }
-    input_expression( const input_expression<T,E,DIM>& rhs ) : base_type(rhs), input_index(rhs.input_index), _e(rhs._e)
+    input_expression( const input_expression<T,E,DIM>& rhs ) : base_type(rhs), input_index(rhs.input_index), xoffset(rhs.xoffset), yoffset(rhs.yoffset), sampler(rhs.sampler), _e(rhs._e)
     {
     }
     ~input_expression()
@@ -73,7 +75,10 @@ public:
     void emitCode( Source& prg, std::ostream& _out ) const
     {
         _e.emitCode(prg,_out);
-        _out << boost::format("sample_resource(%1%)_sampler(%1%) %2%,%3%\n") % input_index % resultCode() % _e.resultCode();
+
+        int s = sampler>=0?sampler:input_index;
+        if( xoffset!=0 || yoffset!=0 ) _out << boost::format("sample_resource(%1%)_sampler(%2%)_aoffimmi(%3%,%4%,0) %5%,%6%\n") % input_index % s % xoffset % yoffset % resultCode() % _e.resultCode();
+        else _out << boost::format("sample_resource(%1%)_sampler(%2%) %3%,%4%\n") % input_index % s % resultCode() % _e.resultCode();
     }
 };
 
@@ -189,13 +194,13 @@ protected:
     {
         e.emitCode(Source::code,Source::code.stream());
         _e.emitCode(Source::code,Source::code.stream());
-        
+
         if( T::type_size>1 ) {
             if( E::value_type::type_size==1 ) Source::code << boost::format("lds_store_vec_id(%1%) mem.xyzw,%2%,%3%,%4%\n") % lds_index % _e.resultCode() % _e.resultCode() % e.resultCode();
             else Source::code << boost::format("lds_store_vec_id(%1%) mem.xyzw,%2%,%3%,%4%\n") % lds_index % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % e.resultCode();        
         } else Source::code << boost::format("lds_store_id(%1%) %2%,%3%\n") % lds_index % _e.resultCode() % e.resultCode();
     }
-                        
+
 public:
     lds_expression( int idx, const E& e ) : base_type(), lds_index(idx), _e(e)
     {
@@ -519,12 +524,12 @@ public:
     {
         iEmitCode(value<value_type>(v0));
     }
-    
+
     explicit variable( const component_type& v0, const component_type& v1 ) : base_type()
     {
         iEmitCode(value<value_type>(v0,v1));
     }
-    
+
     explicit variable( const component_type& v0, const component_type& v1, const component_type& v2, const component_type& v3 ) : base_type()
     {
         iEmitCode(value<value_type>(v0,v1,v2,v3));
@@ -534,7 +539,7 @@ public:
     {
         index     = rhs.index;
     }
-    
+
     ~variable()
     {
     }
@@ -599,7 +604,7 @@ public:
         (*this) = (*this) & e();
         return *this;
     }
-    
+
     template<class E>
     variable<T>& operator|=( const detail::expression<E>& e )
     {
@@ -614,14 +619,14 @@ class named_variable : public detail::swizzable_expression< named_variable<T> >
 protected:
     typedef named_variable<T>                                   self_type;
     typedef detail::swizzable_expression< named_variable<T> >   base_type;
-    
+
 public:
     typedef typename detail::base_cal_type<T>::value            value_type;
     typedef const self_type                                     const_closure_type;
     typedef self_type                                           closure_type;
     static const int                                            temp_reg_count=0;
     static const bool                                           swizzle_has_assign=true;
-        
+
 protected:
     std::string _name;
     using base_type::index;
@@ -711,13 +716,13 @@ public:
         (*this) = (*this) & e();
         return *this;
     }
-    
+
     template<class E>
     named_variable<T>& operator|=( const detail::expression<E>& e )
     {
         (*this) = (*this) | e();
         return *this;
-    }    
+    }
 };
 
 template<class T>
@@ -725,33 +730,49 @@ class input1d
 {
 public:
     typedef typename detail::base_cal_type<T>::value    value_type;
-    
+
 protected:
     int     input_index;
+    int     input_sampler;
 
 public:
-    input1d( int idx ) 
+    input1d( int idx, int s=-1 ) 
     {
         input_index = idx;
+        input_sampler = s;
         Source::code.registerInput(input_index,2,value_type::type_size);
-    }    
+    }
 
-    template<class E>        
+    template<class E>
     detail::input_expression<value_type,E,1> operator[]( const detail::expression<E>& e ) const
     {
         typedef boost::is_same<typename E::value_type,float_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
-        
-        return detail::input_expression<value_type,E,1>(input_index,e());
+
+        return detail::input_expression<value_type,E,1>(input_index,e(),0,0,input_sampler);
     }
 
-    template<class E>        
+    input1d<T> operator()( int s ) const
+    {
+        return input1d<T>(input_index,s);
+    }
+
+    template<class E>
+    detail::input_expression<value_type,E,1> operator()( const detail::register_address<E>& a ) const
+    {
+        typedef boost::is_same<typename E::value_type,float_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+
+        return detail::input_expression<value_type,E,1>(input_index,a._e,a._offset,0,input_sampler);
+    }
+
+    template<class E>
     detail::input_expression<value_type,E,1> operator()( const detail::expression<E>& e ) const
     {
         typedef boost::is_same<typename E::value_type,float_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
-        
-        return detail::input_expression<value_type,E,1>(input_index,e());
+
+        return detail::input_expression<value_type,E,1>(input_index,e(),0,0,input_sampler);
     }
 };
 
@@ -759,37 +780,81 @@ template<class T>
 class input2d
 {
 public:
-    typedef typename detail::base_cal_type<T>::value    value_type;    
+    typedef typename detail::base_cal_type<T>::value    value_type;
 
 protected:
     int     input_index;
+    int     input_sampler;
 
 public:
-    input2d( int idx )
+    input2d( int idx, int s=-1 )
     {
         input_index = idx;
+        input_sampler = s;
         Source::code.registerInput(input_index,2,value_type::type_size);
-    }    
+    }
 
-    template<class E>        
+    template<class E>
     detail::input_expression<value_type,E,2> operator[]( const detail::expression<E>& e ) const
     {
         typedef boost::is_same<typename E::value_type,float2_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
-        
-        return detail::input_expression<value_type,E,2>(input_index,e());
+
+        return detail::input_expression<value_type,E,2>(input_index,e(),0,0,input_sampler);
     }
 
-    template<class E1,class E2>        
-    detail::input_expression<value_type,detail::binary<E1,E2,detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >,2> operator()( const detail::expression<E1>& x, const detail::expression<E2>& y ) const
+    input2d<T> operator()( int s ) const
+    {
+        return input2d<T>(input_index,s);
+    }
+
+    template<class E1,class E2>
+    detail::input_expression<value_type,detail::binary<E1,E2,detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >,2> 
+    operator()( const detail::expression<E1>& x, const detail::expression<E2>& y ) const
     {
         typedef detail::input_expression<value_type,detail::binary<E1,E2,detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >,2> expression_type;
 
         typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type,float2_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
-        
-        return expression_type(input_index,merge_types(x(),y()));
-    }    
+
+        return expression_type(input_index,merge_types(x(),y()),0,0,input_sampler);
+    }
+
+    template<class E1,class E2>
+    detail::input_expression<value_type, detail::binary<typename E1::closure_type,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> 
+    operator()( const detail::register_address<E1>& x, const detail::register_address<E2>& y ) const
+    {
+        typedef detail::input_expression<value_type, detail::binary<typename E1::closure_type,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> expression_type;
+
+        typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type,float2_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+
+        return expression_type(input_index,merge_types(x._e,y._e),x._offset,y._offset,input_sampler);
+    }
+
+    template<class E1,class E2>
+    detail::input_expression<value_type, detail::binary<E1,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> 
+    operator()( const detail::expression<E1>& x, const detail::register_address<E2>& y ) const
+    {
+        typedef detail::input_expression<value_type, detail::binary<E1,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> expression_type;
+
+        typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type,float2_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+
+        return expression_type(input_index,merge_types(x(),y._e),0,y._offset,input_sampler);
+    }
+
+    template<class E1,class E2>
+    detail::input_expression<value_type, detail::binary<typename E1::closure_type, E2, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> 
+    operator()( const detail::register_address<E1>& x, const detail::expression<E2>& y ) const
+    {
+        typedef detail::input_expression<value_type, detail::binary<typename E1::closure_type, E2, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> expression_type;
+
+        typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type,float2_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+
+        return expression_type(input_index,merge_types(x._e,y()),x._offset,0,input_sampler);
+    }
 };
 
 template<class T>
@@ -815,7 +880,7 @@ public:
     detail::indexed_expression<value_type,detail::register_address<void> > operator()( int offset ) const
     {
         return detail::indexed_expression<value_type,detail::register_address<void> >(_reg_name,detail::register_address<void>(offset));
-    }    
+    }
 
     template<class E>
     detail::indexed_expression<value_type,detail::register_address<E> > operator[]( const detail::register_address<E>& e ) const
@@ -835,7 +900,7 @@ public:
         typedef boost::is_same<typename E::value_type,int_type> assert_v1;
         typedef boost::is_same<typename E::value_type,uint_type> assert_v2;
         BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value );
-            
+
         return detail::indexed_expression<value_type,E>(_reg_name,e());
     }
 
@@ -845,9 +910,9 @@ public:
         typedef boost::is_same<typename E::value_type,int_type> assert_v1;
         typedef boost::is_same<typename E::value_type,uint_type> assert_v2;
         BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value );
-            
+
         return detail::indexed_expression<value_type,E>(_reg_name,e());
-    }    
+    }
 };
 
 template<class T>
@@ -866,7 +931,7 @@ class lds
 {
 public:
     typedef typename detail::base_cal_type<T>::value    value_type;
-    
+
 protected:
     int     lds_index;
 
@@ -875,7 +940,7 @@ public:
     {
         BOOST_STATIC_ASSERT( value_type::type_size==1 || value_type::type_size==4 );
         lds_index = idx;
-    }    
+    }
 
     template<class E>        
     detail::lds_expression<value_type,E> operator[]( const detail::expression<E>& e ) const
