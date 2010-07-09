@@ -103,11 +103,12 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
     }
     il_endloop
 
+    /* with burst write
     uint1 s,step;
 
     p = (named_variable<float2>("vWinCoord0.xy")-float2(0.5))*float2(BX4,BY);
 
-    s    = cast_type<uint1>(p.y()*xsize + p.x());
+    s    = cast_type<uint1>(p.y()*float1(4)*xsize + p.x());
     step = cast_type<uint1>(xsize);
 
     for(i=0;i<BY;i++) {
@@ -115,6 +116,27 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
             C[s+j] = R[i][j];
         }
         s += step;
+    }
+    */
+
+    uint4 s;
+    uint1 step;
+
+    p = (named_variable<float2>("vWinCoord0.xy")-float2(0.5))*float2(BX4,BY);
+
+    s.x() = convert_uint1( p.y()*xsize + p.x() );
+    step  = convert_uint1(xsize);
+
+    s.y()  = s.x() + uint1(1);
+    s.zw() = s.xy() + uint2(step,step);
+
+    for(i=0;i<4;i++) {
+        C[s.x()] = R[2*i+0][0];
+        C[s.y()] = R[2*i+0][1];
+        C[s.z()] = R[2*i+1][0];
+        C[s.w()] = R[2*i+1][1];
+
+        if( i<3 ) s = s + uint4(step,step,step,step);
     }
 }
 
@@ -213,7 +235,7 @@ int init()
     //std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
-    //_program.disassemble(std::cout); // Uncomment to emit ISA code
+    _program.disassemble(std::cout); // Uncomment to emit ISA code
 
     // create kernel
     _kernel = Kernel(_program,"main");
