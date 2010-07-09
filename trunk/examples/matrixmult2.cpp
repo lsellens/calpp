@@ -246,10 +246,10 @@ int init()
 
     // create program
     std::string source = create_kernel_matrixmul();
-    std::cout << source; // Uncomment to emit IL code
+    //std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
-    _program.disassemble(std::cout); // Uncomment to emit ISA code
+    //_program.disassemble(std::cout); // Uncomment to emit ISA code
 
     // create kernel
     _kernel = Kernel(_program,"main");
