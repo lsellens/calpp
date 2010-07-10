@@ -27,8 +27,10 @@
  * - using pixelshader for tiled workitem layout
  * - workitem position computed directly in code ( in prunedtree's code it is precomputed )
  * - using sample offset ( proposed by nnsan http://galaxy.u-aizu.ac.jp/trac/note/wiki/MatrixMultiply )
+ * - using mad ordering which tricks CAL compiler into generating efficient code ( corrected after looking at nnsan IL kernel,
+ *   but this ordering is present in original prunedtree kernel )
  * - using sample id ( no impact on performance )
- * - without burst write ( reduced register usage )
+ * - using burst write
  *
  */
 
@@ -70,19 +72,6 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
         p += float4(0,0,2,0);
         il_breakc( p.z()>=ysize );
 
-        /* this is the version with sampler id
-        ta[0][0] = A(0)( p.y()  , p.z() );
-        ta[0][1] = A(1)( p.y()+1, p.z() );
-        tb[0][0] = B(2)( p.x()  , p.z() );
-        tb[0][1] = B(3)( p.x()+1, p.z() );
-
-        ta[1][0] = A(4)( p.y()  , p.z()+1 );
-        ta[1][1] = A(5)( p.y()+1, p.z()+1 );
-        tb[1][0] = B(6)( p.x()  , p.z()+1 );
-        tb[1][1] = B(7)( p.x()+1, p.z()+1 );
-        */
-
-        /* version without sampler id */
         ta[0][0] = A( p.y()  , p.z() );
         ta[0][1] = A( p.y()+1, p.z() );
         tb[0][0] = B( p.x()  , p.z() );
@@ -93,34 +82,32 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
         tb[1][0] = B( p.x()  , p.z()+1 );
         tb[1][1] = B( p.x()+1, p.z()+1 );
 
+        //
+        // order of mads ( computations splited into 2 loops ) 
+        // is important to trick CAL/IL compiler to generate efficient code ( saves 4 registers )
+        //
         for(i=0;i<BY4;i++) {
             for(j=0;j<BX4;j++) {
-                R[4*i+0][j].x() = mad( ta[0][i].x(),tb[0][j].x() , mad( ta[1][i].x(),tb[1][j].x(), R[4*i+0][j].x() ) );
-                R[4*i+0][j].y() = mad( ta[0][i].x(),tb[0][j].y() , mad( ta[1][i].x(),tb[1][j].y(), R[4*i+0][j].y() ) );
-                R[4*i+0][j].z() = mad( ta[0][i].x(),tb[0][j].z() , mad( ta[1][i].x(),tb[1][j].z(), R[4*i+0][j].z() ) );
-                R[4*i+0][j].w() = mad( ta[0][i].x(),tb[0][j].w() , mad( ta[1][i].x(),tb[1][j].w(), R[4*i+0][j].w() ) );
-
-                R[4*i+1][j].x() = mad( ta[0][i].y(),tb[0][j].x() , mad( ta[1][i].y(),tb[1][j].x(), R[4*i+1][j].x() ) );
-                R[4*i+1][j].y() = mad( ta[0][i].y(),tb[0][j].y() , mad( ta[1][i].y(),tb[1][j].y(), R[4*i+1][j].y() ) );
-                R[4*i+1][j].z() = mad( ta[0][i].y(),tb[0][j].z() , mad( ta[1][i].y(),tb[1][j].z(), R[4*i+1][j].z() ) );
-                R[4*i+1][j].w() = mad( ta[0][i].y(),tb[0][j].w() , mad( ta[1][i].y(),tb[1][j].w(), R[4*i+1][j].w() ) );
-
-                R[4*i+2][j].x() = mad( ta[0][i].z(),tb[0][j].x() , mad( ta[1][i].z(),tb[1][j].x(), R[4*i+2][j].x() ) );
-                R[4*i+2][j].y() = mad( ta[0][i].z(),tb[0][j].y() , mad( ta[1][i].z(),tb[1][j].y(), R[4*i+2][j].y() ) );
-                R[4*i+2][j].z() = mad( ta[0][i].z(),tb[0][j].z() , mad( ta[1][i].z(),tb[1][j].z(), R[4*i+2][j].z() ) );
-                R[4*i+2][j].w() = mad( ta[0][i].z(),tb[0][j].w() , mad( ta[1][i].z(),tb[1][j].w(), R[4*i+2][j].w() ) );
-
-                R[4*i+3][j].x() = mad( ta[0][i].w(),tb[0][j].x() , mad( ta[1][i].w(),tb[1][j].x(), R[4*i+3][j].x() ) );
-                R[4*i+3][j].y() = mad( ta[0][i].w(),tb[0][j].y() , mad( ta[1][i].w(),tb[1][j].y(), R[4*i+3][j].y() ) );
-                R[4*i+3][j].z() = mad( ta[0][i].w(),tb[0][j].z() , mad( ta[1][i].w(),tb[1][j].z(), R[4*i+3][j].z() ) );
-                R[4*i+3][j].w() = mad( ta[0][i].w(),tb[0][j].w() , mad( ta[1][i].w(),tb[1][j].w(), R[4*i+3][j].w() ) );
+                R[4*i+0][j] = mad( ta[0][i].xxxx(),tb[0][j], R[4*i+0][j] );
+                R[4*i+1][j] = mad( ta[0][i].yyyy(),tb[0][j], R[4*i+1][j] );
+                R[4*i+2][j] = mad( ta[0][i].zzzz(),tb[0][j], R[4*i+2][j] );
+                R[4*i+3][j] = mad( ta[0][i].wwww(),tb[0][j], R[4*i+3][j] );
             }
-            if( i==0 ) il_breakc( xsize<float1(0) ); // hack to reduce register usage
+        }
+
+        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+
+        for(i=0;i<BY4;i++) {
+            for(j=0;j<BX4;j++) {
+                R[4*i+0][j] = mad( ta[1][i].xxxx(),tb[1][j], R[4*i+0][j] );
+                R[4*i+1][j] = mad( ta[1][i].yyyy(),tb[1][j], R[4*i+1][j] );
+                R[4*i+2][j] = mad( ta[1][i].zzzz(),tb[1][j], R[4*i+2][j] );
+                R[4*i+3][j] = mad( ta[1][i].wwww(),tb[1][j], R[4*i+3][j] );
+            }
         }
     }
     il_endloop
 
-    /* this is the version with burst write */
     uint1 s,step;
 
     s    = cast_type<uint1>(p.y()*float1(4)*xsize + p.x());
@@ -132,27 +119,6 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
         }
         s += step;
     }
-
-    /*
-    uint4 s;
-    uint1 step;
-
-    s.x() = convert_uint1( p.y()*float1(4)*xsize + p.x() );
-    step  = convert_uint1(xsize);
-
-    s.y()  = s.x() + uint1(1);
-    s.zw() = s.xy() + uint2(step,step);
-
-    for(i=0;i<4;i++) {
-        C[s.x()] = R[2*i+0][0];
-        C[s.y()] = R[2*i+0][1];
-        C[s.z()] = R[2*i+1][0];
-        C[s.w()] = R[2*i+1][1];
-
-        if( i==0 ) step = step * uint1(2);
-        if( i<3 ) s = s + uint4(step,step,step,step);
-    }
-    */
 }
 
 std::string create_kernel_matrixmul()
@@ -250,7 +216,7 @@ int init()
     //std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
-    //_program.disassemble(std::cout); // Uncomment to emit ISA code
+    _program.disassemble(std::cout); // Uncomment to emit ISA code
 
     // create kernel
     _kernel = Kernel(_program,"main");

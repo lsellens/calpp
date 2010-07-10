@@ -24,6 +24,9 @@
  * Changes to original version
  * - using pixelshader for tiled workitem layout
  * - workitem position computed directly in code ( in prunedtree's code it is precomputed )
+ * - using mad ordering which tricks CAL compiler into generating efficient code ( corrected after looking at nnsan IL kernel,
+ *   but this ordering is present in original prunedtree kernel )
+ * - using burst write
  *
  */
 
@@ -48,65 +51,61 @@ using namespace cal::il;
 void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
                        input2d<float4>& B0, input2d<float4>& B1, global<float4>& C, float1 xsize, float1 ysize )
 {
-    float4  R[BY][BX4],ta[2][BY4],tb[2][BX4],k;
-    float2  p;
+    float4  R[BY][BX4],ta[2][BY4],tb[2][BX4],p;
     int     i,j;
 
     assert( BX==8 && BY==8 );
 
-    p = (named_variable<float2>("vWinCoord0.xy")-float2(0.5));
+    p.xy() = (named_variable<float2>("vWinCoord0.xy")-float2(0.5));
+    p.zw() = float2( -2, -1 );
 
     for(i=0;i<BY;i++) {
         for(j=0;j<BX4;j++) R[i][j]=float4(0);
     }
 
-    k  = float4( p.y(), p.x(), float1(-2), float1(-1) );
-
     il_whileloop {
-        k += float4(0,0,2,2);
-        il_breakc( k.z()>=ysize );
+        p += float4(0,0,2,2);
+        il_breakc( p.z()>=ysize );
 
-        ta[0][0] = A0[k.xz()];
-        ta[0][1] = A1[k.xz()];
-        tb[0][0] = B0[k.yz()];
-        tb[0][1] = B1[k.yz()];
+        ta[0][0] = A0[p.xz()];
+        ta[0][1] = A1[p.xz()];
+        tb[0][0] = B0[p.yz()];
+        tb[0][1] = B1[p.yz()];
 
-        ta[1][0] = A0[k.xw()];
-        ta[1][1] = A1[k.xw()];
-        tb[1][0] = B0[k.yw()];
-        tb[1][1] = B1[k.yw()];
+        ta[1][0] = A0[p.xw()];
+        ta[1][1] = A1[p.xw()];
+        tb[1][0] = B0[p.yw()];
+        tb[1][1] = B1[p.yw()];
+
+        //
+        // order of mads ( computations splited into 2 loops )
+        // is important to trick CAL/IL compiler to generate efficient code ( saves 4 registers )
+        //
+        for(i=0;i<BY4;i++) {
+            for(j=0;j<BX4;j++) {
+                R[4*i+0][j] = mad( ta[0][i].xxxx(),tb[0][j], R[4*i+0][j] );
+                R[4*i+1][j] = mad( ta[0][i].yyyy(),tb[0][j], R[4*i+1][j] );
+                R[4*i+2][j] = mad( ta[0][i].zzzz(),tb[0][j], R[4*i+2][j] );
+                R[4*i+3][j] = mad( ta[0][i].wwww(),tb[0][j], R[4*i+3][j] );
+            }
+        }
+
+        il_breakc( xsize<float1(0) ); // hack to reduce register usage
 
         for(i=0;i<BY4;i++) {
             for(j=0;j<BX4;j++) {
-                R[4*i+0][j].x() = mad( ta[0][i].x(),tb[0][j].x() , mad( ta[1][i].x(),tb[1][j].x(), R[4*i+0][j].x() ) );
-                R[4*i+0][j].y() = mad( ta[0][i].x(),tb[0][j].y() , mad( ta[1][i].x(),tb[1][j].y(), R[4*i+0][j].y() ) );
-                R[4*i+0][j].z() = mad( ta[0][i].x(),tb[0][j].z() , mad( ta[1][i].x(),tb[1][j].z(), R[4*i+0][j].z() ) );
-                R[4*i+0][j].w() = mad( ta[0][i].x(),tb[0][j].w() , mad( ta[1][i].x(),tb[1][j].w(), R[4*i+0][j].w() ) );
-
-                R[4*i+1][j].x() = mad( ta[0][i].y(),tb[0][j].x() , mad( ta[1][i].y(),tb[1][j].x(), R[4*i+1][j].x() ) );
-                R[4*i+1][j].y() = mad( ta[0][i].y(),tb[0][j].y() , mad( ta[1][i].y(),tb[1][j].y(), R[4*i+1][j].y() ) );
-                R[4*i+1][j].z() = mad( ta[0][i].y(),tb[0][j].z() , mad( ta[1][i].y(),tb[1][j].z(), R[4*i+1][j].z() ) );
-                R[4*i+1][j].w() = mad( ta[0][i].y(),tb[0][j].w() , mad( ta[1][i].y(),tb[1][j].w(), R[4*i+1][j].w() ) );
-
-                R[4*i+2][j].x() = mad( ta[0][i].z(),tb[0][j].x() , mad( ta[1][i].z(),tb[1][j].x(), R[4*i+2][j].x() ) );
-                R[4*i+2][j].y() = mad( ta[0][i].z(),tb[0][j].y() , mad( ta[1][i].z(),tb[1][j].y(), R[4*i+2][j].y() ) );
-                R[4*i+2][j].z() = mad( ta[0][i].z(),tb[0][j].z() , mad( ta[1][i].z(),tb[1][j].z(), R[4*i+2][j].z() ) );
-                R[4*i+2][j].w() = mad( ta[0][i].z(),tb[0][j].w() , mad( ta[1][i].z(),tb[1][j].w(), R[4*i+2][j].w() ) );
-
-                R[4*i+3][j].x() = mad( ta[0][i].w(),tb[0][j].x() , mad( ta[1][i].w(),tb[1][j].x(), R[4*i+3][j].x() ) );
-                R[4*i+3][j].y() = mad( ta[0][i].w(),tb[0][j].y() , mad( ta[1][i].w(),tb[1][j].y(), R[4*i+3][j].y() ) );
-                R[4*i+3][j].z() = mad( ta[0][i].w(),tb[0][j].z() , mad( ta[1][i].w(),tb[1][j].z(), R[4*i+3][j].z() ) );
-                R[4*i+3][j].w() = mad( ta[0][i].w(),tb[0][j].w() , mad( ta[1][i].w(),tb[1][j].w(), R[4*i+3][j].w() ) );
+                R[4*i+0][j] = mad( ta[1][i].xxxx(),tb[1][j], R[4*i+0][j] );
+                R[4*i+1][j] = mad( ta[1][i].yyyy(),tb[1][j], R[4*i+1][j] );
+                R[4*i+2][j] = mad( ta[1][i].zzzz(),tb[1][j], R[4*i+2][j] );
+                R[4*i+3][j] = mad( ta[1][i].wwww(),tb[1][j], R[4*i+3][j] );
             }
-            il_breakc( xsize<float1(0) ); // hack to reduce register usage
         }
     }
     il_endloop
 
-    /* with burst write
     uint1 s,step;
 
-    p = (named_variable<float2>("vWinCoord0.xy")-float2(0.5))*float2(BX4,BY);
+    p.xy() = (named_variable<float2>("vWinCoord0.xy")-float2(0.5))*float2(BX4,BY);
 
     s    = cast_type<uint1>(p.y()*float1(4)*xsize + p.x());
     step = cast_type<uint1>(xsize);
@@ -116,28 +115,6 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
             C[s+j] = R[i][j];
         }
         s += step;
-    }
-    */
-
-    uint4 s;
-    uint1 step;
-
-    p = (named_variable<float2>("vWinCoord0.xy")-float2(0.5))*float2(BX4,BY);
-
-    s.x() = convert_uint1( p.y()*xsize + p.x() );
-    step  = convert_uint1(xsize);
-
-    s.y()  = s.x() + uint1(1);
-    s.zw() = s.xy() + uint2(step,step);
-
-    for(i=0;i<4;i++) {
-        C[s.x()] = R[2*i+0][0];
-        C[s.y()] = R[2*i+0][1];
-        C[s.z()] = R[2*i+1][0];
-        C[s.w()] = R[2*i+1][1];
-
-        if( i=0 ) step = step * uint(2);
-        if( i<3 ) s = s + uint4(step,step,step,step);
     }
 }
 
@@ -236,7 +213,7 @@ int init()
     //std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
-    //_program.disassemble(std::cout); // Uncomment to emit ISA code
+    _program.disassemble(std::cout); // Uncomment to emit ISA code
 
     // create kernel
     _kernel = Kernel(_program,"main");
@@ -276,7 +253,7 @@ void run()
     NDRange     rect;
     Event       event;
 
-    rect = NDRange(_C.getWidth()/2,_C.getHeight()/8);
+    rect = NDRange(_C.getWidth()/BX4,_C.getHeight()/BY);
 
     posix_time::ptime t1 = posix_time::microsec_clock::local_time();
 
