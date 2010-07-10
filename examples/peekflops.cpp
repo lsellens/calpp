@@ -32,7 +32,7 @@ using namespace boost;
 using namespace cal;
 using namespace cal::il;
 
-#define MAX_THREADS_PER_GRP 512
+#define MAX_THREADS_PER_GRP 1024
 #define NR_ITERATIONS       0x100000
 #define NR_MAD_INST         209
 
@@ -189,9 +189,9 @@ void show_device_info( int dev )
 void show_result( int dev, int workgroup_size )
 {
 
-    double tms    = (double)_exec_time/1000.;
-    double kflops = (double)((int64_t)8*(int64_t)NR_MAD_INST*(int64_t)NR_ITERATIONS*(int64_t)workgroup_size*(int64_t)_nr_groups)/tms;
-    double gflops = kflops/1000000.;
+    double tms      = (double)_exec_time/1000.;
+    uint64_t mflops = ((uint64_t)8*(uint64_t)NR_MAD_INST*(uint64_t)NR_ITERATIONS*(uint64_t)workgroup_size*(uint64_t)_nr_groups)/(uint64_t)_exec_time;
+    double gflops   = (double)mflops/1000.;
 
     std::cout << format("Device %i: workgroup size %i execution time %.2f ms, achieved %.2f gflops\n") % dev % workgroup_size % tms % gflops;
 }
