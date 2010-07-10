@@ -54,46 +54,44 @@ using namespace cal::il;
 void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C, 
                        const named_variable<float1>& xsize, const named_variable<float1>& ysize )
 {
-    float4  R[BY][BX4],ta[2][BY4],tb[2][BX4],k;
-    float2  p;
+    float4  R[BY][BX4],ta[2][BY4],tb[2][BX4],p;
     int     i,j;
 
     assert( BX==8 && BY==8 );
 
-    p = floor(named_variable<float2>("vWinCoord0.xy"))*float2(2,2);
+    p.xy() = floor(named_variable<float2>("vWinCoord0.xy"))*float2(2,2);
+    p.zw() = float2(-2,0);
 
     for(i=0;i<BY;i++) {
         for(j=0;j<BX4;j++) R[i][j]=float4(0);
     }
 
-    k = float4( p.x(), p.y(), float1(-2), float1(0) );
-
     il_whileloop {
-        k += float4(0,0,2,0);
-        il_breakc( k.z()>=ysize );
+        p += float4(0,0,2,0);
+        il_breakc( p.z()>=ysize );
 
-        /* this is the version with sampler id */
-        ta[0][0] = A(0)( k.y()  , k.z() );
-        ta[0][1] = A(1)( k.y()+1, k.z() );
-        tb[0][0] = B(2)( k.x()  , k.z() );
-        tb[0][1] = B(3)( k.x()+1, k.z() );
+        /* this is the version with sampler id
+        ta[0][0] = A(0)( p.y()  , p.z() );
+        ta[0][1] = A(1)( p.y()+1, p.z() );
+        tb[0][0] = B(2)( p.x()  , p.z() );
+        tb[0][1] = B(3)( p.x()+1, p.z() );
 
-        ta[1][0] = A(4)( k.y()  , k.z()+1 );
-        ta[1][1] = A(5)( k.y()+1, k.z()+1 );
-        tb[1][0] = B(6)( k.x()  , k.z()+1 );
-        tb[1][1] = B(7)( k.x()+1, k.z()+1 );
-
-        /* version without sampler id 
-        ta[0][0] = A( k.y()  , k.z() );
-        ta[0][1] = A( k.y()+1, k.z() );
-        tb[0][0] = B( k.x()  , k.z() );
-        tb[0][1] = B( k.x()+1, k.z() );
-
-        ta[1][0] = A( k.y()  , k.z()+1 );
-        ta[1][1] = A( k.y()+1, k.z()+1 );
-        tb[1][0] = B( k.x()  , k.z()+1 );
-        tb[1][1] = B( k.x()+1, k.z()+1 );
+        ta[1][0] = A(4)( p.y()  , p.z()+1 );
+        ta[1][1] = A(5)( p.y()+1, p.z()+1 );
+        tb[1][0] = B(6)( p.x()  , p.z()+1 );
+        tb[1][1] = B(7)( p.x()+1, p.z()+1 );
         */
+
+        /* version without sampler id */
+        ta[0][0] = A( p.y()  , p.z() );
+        ta[0][1] = A( p.y()+1, p.z() );
+        tb[0][0] = B( p.x()  , p.z() );
+        tb[0][1] = B( p.x()+1, p.z() );
+
+        ta[1][0] = A( p.y()  , p.z()+1 );
+        ta[1][1] = A( p.y()+1, p.z()+1 );
+        tb[1][0] = B( p.x()  , p.z()+1 );
+        tb[1][1] = B( p.x()+1, p.z()+1 );
 
         for(i=0;i<BY4;i++) {
             for(j=0;j<BX4;j++) {
@@ -117,12 +115,12 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
                 R[4*i+3][j].z() = mad( ta[0][i].w(),tb[0][j].z() , mad( ta[1][i].w(),tb[1][j].z(), R[4*i+3][j].z() ) );
                 R[4*i+3][j].w() = mad( ta[0][i].w(),tb[0][j].w() , mad( ta[1][i].w(),tb[1][j].w(), R[4*i+3][j].w() ) );
             }
-            il_breakc( xsize<float1(0) ); // hack to reduce register usage
+            if( i==0 ) il_breakc( xsize<float1(0) ); // hack to reduce register usage
         }
     }
     il_endloop
 
-    /* this is the version with burst write
+    /* this is the version with burst write */
     uint1 s,step;
 
     s    = cast_type<uint1>(p.y()*float1(4)*xsize + p.x());
@@ -134,7 +132,8 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
         }
         s += step;
     }
-    */
+
+    /*
     uint4 s;
     uint1 step;
 
@@ -153,6 +152,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
         if( i==0 ) step = step * uint1(2);
         if( i<3 ) s = s + uint4(step,step,step,step);
     }
+    */
 }
 
 std::string create_kernel_matrixmul()
