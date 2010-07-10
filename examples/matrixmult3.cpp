@@ -19,16 +19,7 @@
  */
 
 /*
- * Modification of matrix multiplication implementation presented by prunedtree ( http://forum.beyond3d.com/showthread.php?t=54842 ).
- * Algorithm computes A^T * B. Matrices are in row format.
- *
- * Changes to original version
- * - different data layout ( without matrices split )
- * - using pixelshader for tiled workitem layout
- * - workitem position computed directly in code ( in prunedtree's code it is precomputed )
- * - using sample offset ( proposed by nnsan http://galaxy.u-aizu.ac.jp/trac/note/wiki/MatrixMultiply )
- * - using sample id ( no impact on performance )
- * - without burst write ( reduced register usage )
+ * Matrix multiplication. Algorithm computes A * B. Matrices are in row format.
  *
  */
 
@@ -47,111 +38,55 @@ using namespace cal;
 using namespace cal::il;
 
 #define BX  8
-#define BY  8
+#define BY  4
 #define BX4 (BX/4)
 #define BY4 (BY/4)
 
 void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C, 
                        const named_variable<float1>& xsize, const named_variable<float1>& ysize )
 {
-    float4  R[BY][BX4],ta[2][BY4],tb[2][BX4],k;
+    float4  R[BY][BX4],ta[BY],tb[4][BX4],k;
     float2  p;
     int     i,j;
 
-    assert( BX==8 && BY==8 );
-
-    p = floor(named_variable<float2>("vWinCoord0.xy"))*float2(2,2);
+    p = floor(named_variable<float2>("vWinCoord0.xy"))*float2(BX4,BY);
 
     for(i=0;i<BY;i++) {
         for(j=0;j<BX4;j++) R[i][j]=float4(0);
     }
 
-    k = float4( p.x(), p.y(), float1(-2), float1(0) );
+    k = float4( p.x(), p.y(), float1(-1), float1(-4) );
 
     il_whileloop {
-        k += float4(0,0,2,0);
-        il_breakc( k.z()>=ysize );
+        k += float4(0,0,1,4);
+        il_breakc( k.w()>=ysize );
 
-        /* this is the version with sampler id */
-        ta[0][0] = A(0)( k.y()  , k.z() );
-        ta[0][1] = A(1)( k.y()+1, k.z() );
-        tb[0][0] = B(2)( k.x()  , k.z() );
-        tb[0][1] = B(3)( k.x()+1, k.z() );
+        for(i=0;i<BY;i++) ta[i] = A( k.z(), k.y() + i );
+        for(i=0;i<4;i++) {
+            for(j=0;j<BX4;j++) tb[i][j] = B( k.x() + j, k.w() + i );
+        }
 
-        ta[1][0] = A(4)( k.y()  , k.z()+1 );
-        ta[1][1] = A(5)( k.y()+1, k.z()+1 );
-        tb[1][0] = B(6)( k.x()  , k.z()+1 );
-        tb[1][1] = B(7)( k.x()+1, k.z()+1 );
-
-        /* version without sampler id 
-        ta[0][0] = A( k.y()  , k.z() );
-        ta[0][1] = A( k.y()+1, k.z() );
-        tb[0][0] = B( k.x()  , k.z() );
-        tb[0][1] = B( k.x()+1, k.z() );
-
-        ta[1][0] = A( k.y()  , k.z()+1 );
-        ta[1][1] = A( k.y()+1, k.z()+1 );
-        tb[1][0] = B( k.x()  , k.z()+1 );
-        tb[1][1] = B( k.x()+1, k.z()+1 );
-        */
-
-        for(i=0;i<BY4;i++) {
+        for(i=0;i<BY;i++) {
             for(j=0;j<BX4;j++) {
-                R[4*i+0][j].x() = mad( ta[0][i].x(),tb[0][j].x() , mad( ta[1][i].x(),tb[1][j].x(), R[4*i+0][j].x() ) );
-                R[4*i+0][j].y() = mad( ta[0][i].x(),tb[0][j].y() , mad( ta[1][i].x(),tb[1][j].y(), R[4*i+0][j].y() ) );
-                R[4*i+0][j].z() = mad( ta[0][i].x(),tb[0][j].z() , mad( ta[1][i].x(),tb[1][j].z(), R[4*i+0][j].z() ) );
-                R[4*i+0][j].w() = mad( ta[0][i].x(),tb[0][j].w() , mad( ta[1][i].x(),tb[1][j].w(), R[4*i+0][j].w() ) );
-
-                R[4*i+1][j].x() = mad( ta[0][i].y(),tb[0][j].x() , mad( ta[1][i].y(),tb[1][j].x(), R[4*i+1][j].x() ) );
-                R[4*i+1][j].y() = mad( ta[0][i].y(),tb[0][j].y() , mad( ta[1][i].y(),tb[1][j].y(), R[4*i+1][j].y() ) );
-                R[4*i+1][j].z() = mad( ta[0][i].y(),tb[0][j].z() , mad( ta[1][i].y(),tb[1][j].z(), R[4*i+1][j].z() ) );
-                R[4*i+1][j].w() = mad( ta[0][i].y(),tb[0][j].w() , mad( ta[1][i].y(),tb[1][j].w(), R[4*i+1][j].w() ) );
-
-                R[4*i+2][j].x() = mad( ta[0][i].z(),tb[0][j].x() , mad( ta[1][i].z(),tb[1][j].x(), R[4*i+2][j].x() ) );
-                R[4*i+2][j].y() = mad( ta[0][i].z(),tb[0][j].y() , mad( ta[1][i].z(),tb[1][j].y(), R[4*i+2][j].y() ) );
-                R[4*i+2][j].z() = mad( ta[0][i].z(),tb[0][j].z() , mad( ta[1][i].z(),tb[1][j].z(), R[4*i+2][j].z() ) );
-                R[4*i+2][j].w() = mad( ta[0][i].z(),tb[0][j].w() , mad( ta[1][i].z(),tb[1][j].w(), R[4*i+2][j].w() ) );
-
-                R[4*i+3][j].x() = mad( ta[0][i].w(),tb[0][j].x() , mad( ta[1][i].w(),tb[1][j].x(), R[4*i+3][j].x() ) );
-                R[4*i+3][j].y() = mad( ta[0][i].w(),tb[0][j].y() , mad( ta[1][i].w(),tb[1][j].y(), R[4*i+3][j].y() ) );
-                R[4*i+3][j].z() = mad( ta[0][i].w(),tb[0][j].z() , mad( ta[1][i].w(),tb[1][j].z(), R[4*i+3][j].z() ) );
-                R[4*i+3][j].w() = mad( ta[0][i].w(),tb[0][j].w() , mad( ta[1][i].w(),tb[1][j].w(), R[4*i+3][j].w() ) );
+                R[i][j] = mad( ta[i].xxxx(), tb[0][j], mad( ta[i].yyyy(), tb[1][j], mad( ta[i].zzzz(), tb[2][j], mad( ta[i].wwww(), tb[3][j], R[i][j] ))));
             }
-            il_breakc( xsize<float1(0) ); // hack to reduce register usage
+            //il_breakc( xsize<float1(0) ); // hack to reduce register usage
         }
     }
     il_endloop
 
-    /* this is the version with burst write
-    uint1 s,step;
+    uint1 s[BX4];
+    uint1 step;
 
-    s    = cast_type<uint1>(p.y()*float1(4)*xsize + p.x());
-    step = cast_type<uint1>(xsize);
+    s[0] = convert_uint1( p.y()*xsize + p.x() );
+    for(i=1;i<BX4;i++) s[i] = s[0] + uint1(i);
+    step  = convert_uint1(xsize);
 
     for(i=0;i<BY;i++) {
         for(j=0;j<BX4;j++) {
-            C[s+j] = R[i][j];
+            C[s[j]] = R[i][j];
         }
-        s += step;
-    }
-    */
-    uint4 s;
-    uint1 step;
-
-    s.x() = convert_uint1( p.y()*float1(4)*xsize + p.x() );
-    step  = convert_uint1(xsize);
-
-    s.y()  = s.x() + uint1(1);
-    s.zw() = s.xy() + uint2(step,step);
-
-    for(i=0;i<4;i++) {
-        C[s.x()] = R[2*i+0][0];
-        C[s.y()] = R[2*i+0][1];
-        C[s.z()] = R[2*i+1][0];
-        C[s.w()] = R[2*i+1][1];
-
-        if( i==0 ) step = step * uint1(2);
-        if( i<3 ) s = s + uint4(step,step,step,step);
+        if( i<(BY-1) ) for(j=0;j<BX4;j++) s[j] += step;
     }
 }
 
@@ -283,7 +218,7 @@ void run()
     NDRange     rect;
     Event       event;
 
-    rect = NDRange(_C.getWidth()/2,_C.getHeight()/8);
+    rect = NDRange(_C.getWidth()*4/BX,_C.getHeight()/BY);
 
     posix_time::ptime t1 = posix_time::microsec_clock::local_time();
 
@@ -306,9 +241,9 @@ void run()
 
 void show_result( int dev )
 {
-    double tms      = (double)_exec_time/1000.;
+    double tms    = (double)_exec_time/1000.;
     uint64_t mflops = ((uint64_t)2*(uint64_t)ITER_COUNT*(uint64_t)WIDTH*(uint64_t)HEIGHT*(uint64_t)WIDTH)/(uint64_t)_exec_time;
-    double gflops   = (double)mflops/1000.;
+    double gflops = mflops/1000.;
 
     //printMatrix(_C);
 

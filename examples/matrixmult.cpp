@@ -136,6 +136,7 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
         C[s.z()] = R[2*i+1][0];
         C[s.w()] = R[2*i+1][1];
 
+        if( i=0 ) step = step * uint(2);
         if( i<3 ) s = s + uint4(step,step,step,step);
     }
 }
