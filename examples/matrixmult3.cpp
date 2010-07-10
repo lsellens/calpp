@@ -45,25 +45,23 @@ using namespace cal::il;
 void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C, 
                        const named_variable<float1>& xsize, const named_variable<float1>& ysize )
 {
-    float4  R[BY][BX4],ta[BY],tb[4][BX4],k;
-    float2  p;
+    float4  R[BY][BX4],ta[BY],tb[4][BX4],p;
     int     i,j;
 
-    p = floor(named_variable<float2>("vWinCoord0.xy"))*float2(BX4,BY);
+    p.xy() = floor(named_variable<float2>("vWinCoord0.xy"))*float2(BX4,BY);
+    p.zw() = float2(-1,-4);
 
     for(i=0;i<BY;i++) {
         for(j=0;j<BX4;j++) R[i][j]=float4(0);
     }
 
-    k = float4( p.x(), p.y(), float1(-1), float1(-4) );
-
     il_whileloop {
-        k += float4(0,0,1,4);
-        il_breakc( k.w()>=ysize );
+        p += float4(0,0,1,4);
+        il_breakc( p.w()>=ysize );
 
-        for(i=0;i<BY;i++) ta[i] = A( k.z(), k.y() + i );
+        for(i=0;i<BY;i++) ta[i] = A( p.z(), p.y() + i );
         for(i=0;i<4;i++) {
-            for(j=0;j<BX4;j++) tb[i][j] = B( k.x() + j, k.w() + i );
+            for(j=0;j<BX4;j++) tb[i][j] = B( p.x() + j, p.w() + i );
         }
 
         for(i=0;i<BY;i++) {
@@ -75,18 +73,17 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
     }
     il_endloop
 
-    uint1 s[BX4];
+    uint1 s;
     uint1 step;
 
-    s[0] = convert_uint1( p.y()*xsize + p.x() );
-    for(i=1;i<BX4;i++) s[i] = s[0] + uint1(i);
-    step  = convert_uint1(xsize);
+    s    = convert_uint1(p.y()*xsize + p.x());
+    step = convert_uint1(xsize);
 
     for(i=0;i<BY;i++) {
         for(j=0;j<BX4;j++) {
-            C[s[j]] = R[i][j];
+            C[s+j] = R[i][j];
         }
-        if( i<(BY-1) ) for(j=0;j<BX4;j++) s[j] += step;
+        s += step;
     }
 }
 
