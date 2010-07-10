@@ -199,11 +199,11 @@ void NBodyWorker::receiveDataFromGPU()
 void NBodyWorker::showFLOPS()
 {
     double tms = (double)_exec_time/1000.;
-    double classic_kflops = (double)((uint64_t)opt.num_bodies * (uint64_t)opt.num_bodies * (uint64_t)38)/tms;
-    double modern_kflops  = (double)((uint64_t)opt.num_bodies * (uint64_t)opt.num_bodies * (uint64_t)20)/tms;
+    double classic_mflops = (double)( ((uint64_t)opt.num_bodies * (uint64_t)opt.num_bodies * (uint64_t)38)/(uint64_t)_exec_time );
+    double modern_mflops  = (double)( ((uint64_t)opt.num_bodies * (uint64_t)opt.num_bodies * (uint64_t)20)/(uint64_t)_exec_time );
 
     std::cout << format("execution time %.2f ms, classic GFLOPS %.2f, modern GFLOPS %.2f\n")
                  % tms
-                 % (classic_kflops/1000000.)
-                 % (modern_kflops/1000000.);
+                 % (classic_mflops/1000.)
+                 % (modern_mflops/1000.);
 }

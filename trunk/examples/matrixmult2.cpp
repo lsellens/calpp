@@ -305,9 +305,9 @@ void run()
 
 void show_result( int dev )
 {
-    double tms    = (double)_exec_time/1000.;
-    double kflops = (double)((int64_t)2*(int64_t)ITER_COUNT*(int64_t)WIDTH*(int64_t)HEIGHT*(int64_t)WIDTH)/tms;
-    double gflops = kflops/1000000.;
+    double tms      = (double)_exec_time/1000.;
+    uint64_t mflops = ((uint64_t)2*(uint64_t)ITER_COUNT*(uint64_t)WIDTH*(uint64_t)HEIGHT*(uint64_t)WIDTH)/(uint64_t)_exec_time;
+    double gflops   = (double)mflops/1000.;
 
     //printMatrix(_C);
 
