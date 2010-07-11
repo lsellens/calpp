@@ -81,7 +81,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
 
         for(i=0;i<BY;i++) {
             for(j=0;j<BX4;j++) {
-                R[i][j] = mad( ta[i].zzzz(), tb[1][j], R[i][j] );
+                R[i][j] = mad( ta[i].zzzz(), tb[2][j], R[i][j] );
             }
         }
 
