@@ -38,9 +38,8 @@ using namespace cal;
 using namespace cal::il;
 
 #define BX  8
-#define BY  4
+#define BY  6
 #define BX4 (BX/4)
-#define BY4 (BY/4)
 
 void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C, 
                        const named_variable<float1>& xsize, const named_variable<float1>& ysize )
@@ -66,9 +65,32 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
 
         for(i=0;i<BY;i++) {
             for(j=0;j<BX4;j++) {
-                R[i][j] = mad( ta[i].xxxx(), tb[0][j], mad( ta[i].yyyy(), tb[1][j], mad( ta[i].zzzz(), tb[2][j], mad( ta[i].wwww(), tb[3][j], R[i][j] ))));
+                R[i][j] = mad( ta[i].xxxx(), tb[0][j], R[i][j] );
             }
-            //il_breakc( xsize<float1(0) ); // hack to reduce register usage
+        }
+
+        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+
+        for(i=0;i<BY;i++) {
+            for(j=0;j<BX4;j++) {
+                R[i][j] = mad( ta[i].yyyy(), tb[1][j], R[i][j] );
+            }
+        }
+
+        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+
+        for(i=0;i<BY;i++) {
+            for(j=0;j<BX4;j++) {
+                R[i][j] = mad( ta[i].zzzz(), tb[1][j], R[i][j] );
+            }
+        }
+
+        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+
+        for(i=0;i<BY;i++) {
+            for(j=0;j<BX4;j++) {
+                R[i][j] = mad( ta[i].wwww(), tb[3][j], R[i][j] );
+            }
         }
     }
     il_endloop
@@ -117,8 +139,8 @@ std::string create_kernel_matrixmul()
 //
 
 #define ITER_COUNT      100
-#define WIDTH           2048
-#define HEIGHT          2048
+#define WIDTH           3072
+#define HEIGHT          3072
 
 Context         _context;
 Program         _program;
@@ -182,7 +204,7 @@ int init()
     //std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
-    //_program.disassemble(std::cout); // Uncomment to emit ISA code
+    _program.disassemble(std::cout); // Uncomment to emit ISA code
 
     // create kernel
     _kernel = Kernel(_program,"main");
