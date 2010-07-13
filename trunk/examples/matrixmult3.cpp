@@ -38,7 +38,7 @@ using namespace cal;
 using namespace cal::il;
 
 #define BX  8
-#define BY  6
+#define BY  8
 #define BX4 (BX/4)
 
 void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C, 
@@ -69,7 +69,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
             }
         }
 
-        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+        //il_breakc( xsize<float1(0) ); // hack to reduce register usage
 
         for(i=0;i<BY;i++) {
             for(j=0;j<BX4;j++) {
@@ -77,7 +77,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
             }
         }
 
-        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+        //il_breakc( xsize<float1(0) ); // hack to reduce register usage
 
         for(i=0;i<BY;i++) {
             for(j=0;j<BX4;j++) {
@@ -85,7 +85,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
             }
         }
 
-        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+        //il_breakc( xsize<float1(0) ); // hack to reduce register usage
 
         for(i=0;i<BY;i++) {
             for(j=0;j<BX4;j++) {
