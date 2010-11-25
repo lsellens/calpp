@@ -140,6 +140,11 @@ inline named_variable<uint1> get_group_id( int idx )
     return named_variable<uint1>("vThreadGrpId.z");
 }
 
+inline emit_comment( const std::string& comment )
+{
+    Source::code << ";" << comment << "\n";
+}
+
 } // il
 } // cal
 
