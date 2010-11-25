@@ -58,6 +58,7 @@ protected:
     void iEmitCode( const E1& e ) const
     {
         e.emitCode(Source::code,Source::code.stream());
+        _e.emitCode(Source::code,Source::code.stream());
         Source::code << boost::format("mov %s,%s\n") % mask_output(resultCode()) % match_input_to_output(resultCode(),e.resultCode());
     }
 
