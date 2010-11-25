@@ -32,7 +32,7 @@ using namespace boost;
 using namespace cal;
 using namespace cal::il;
 
-#define MAX_THREADS_PER_GRP 1024
+#define MAX_THREADS         16
 #define NR_ITERATIONS       0x100000
 #define NR_MAD_INST         209
 
@@ -186,14 +186,14 @@ void show_device_info( int dev )
     % devices[dev].getInfo<CAL_DEVICE_SURFACEALIGNMENT>();
 }
 
-void show_result( int dev, int workgroup_size )
+void show_result( int dev, int workgroup_size, int wavefront_size )
 {
-
     double tms      = (double)_exec_time/1000.;
     uint64_t mflops = ((uint64_t)8*(uint64_t)NR_MAD_INST*(uint64_t)NR_ITERATIONS*(uint64_t)workgroup_size*(uint64_t)_nr_groups)/(uint64_t)_exec_time;
     double gflops   = (double)mflops/1000.;
 
-    std::cout << format("Device %i: workgroup size %i execution time %.2f ms, achieved %.2f gflops\n") % dev % workgroup_size % tms % gflops;
+    std::cout << format("Device %i: workgroup size %i (%i hardware thread(s) per SIMD) execution time %.2f ms, achieved %.2f gflops\n") 
+                 % dev % workgroup_size % ((workgroup_size+wavefront_size-1)/wavefront_size) % tms % gflops;
 }
 
 void release_gpu_resources()
@@ -206,16 +206,23 @@ void release_gpu_resources()
 
 int main( int argc, char* argv[] )
 {
+    std::vector<Device> devices;
+    int wavefront_size;
+
     cal::Init();
     init();
+
+    devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
 
     for(int i=0;i<_dev_count;i++) {
         show_device_info(i);
 
-        for(int workgroup_size=8;workgroup_size<=MAX_THREADS_PER_GRP;workgroup_size*=2) {
+        wavefront_size = devices[i].getInfo<CAL_DEVICE_WAVEFRONTSIZE>();
+
+        for(int workgroup_size=wavefront_size/2;workgroup_size<=(MAX_THREADS*wavefront_size);workgroup_size+=wavefront_size/2) {
             setup(i,workgroup_size);
             run(workgroup_size);
-            show_result(i,workgroup_size);
+            show_result(i,workgroup_size,wavefront_size);
         }
     }
 
