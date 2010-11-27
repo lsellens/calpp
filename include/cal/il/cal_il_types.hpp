@@ -1010,20 +1010,19 @@ protected:
 public:
     lds( int idx )
     {
-        BOOST_STATIC_ASSERT( value_type::type_size==1 || value_type::type_size==4 );
         lds_index = idx;
     }
 
-    template<class E>        
+    template<class E>
     detail::lds_expression<value_type,E> operator[]( const detail::expression<E>& e ) const
     {
         typedef boost::is_same<typename E::value_type,uint_type>    assert_v1;
         typedef boost::is_same<typename E::value_type,int_type>     assert_v2;
         typedef boost::is_same<typename E::value_type,uint2_type>   assert_v3;
         typedef boost::is_same<typename E::value_type,int2_type>    assert_v4;
-        
+
         BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value || assert_v3::value || assert_v4::value );
-        
+
         return detail::lds_expression<value_type,E>(lds_index,e());
     }
 
@@ -1034,13 +1033,13 @@ public:
         typedef boost::is_same<typename E::value_type,int_type>     assert_v2;
         typedef boost::is_same<typename E::value_type,uint2_type>   assert_v3;
         typedef boost::is_same<typename E::value_type,int2_type>    assert_v4;
-        
+
         BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value || assert_v3::value || assert_v4::value );
-        
+
         return detail::lds_expression<value_type,E>(lds_index,e());
     }
 
-    template<class E1,class E2>        
+    template<class E1,class E2>
     detail::lds2_expression<value_type,E1,E2> operator()( const detail::expression<E1>& idx, const detail::expression<E2>& offset ) const
     {
         typedef detail::lds2_expression<value_type,E1,E2> expression_type;
@@ -1048,9 +1047,9 @@ public:
         typedef boost::is_same<typename E1::value_type,int_type>     assert_v2;
         typedef boost::is_same<typename E2::value_type,uint_type>    assert_v3;
         typedef boost::is_same<typename E2::value_type,int_type>     assert_v4;
-        
+
         BOOST_STATIC_ASSERT( (assert_v1::value || assert_v2::value) && (assert_v3::value || assert_v4::value) );
-        
+
         return expression_type(lds_index,idx(),offset());
     }
 
@@ -1060,11 +1059,11 @@ public:
         typedef detail::lds2_expression<value_type,E1,value<uint_type> > expression_type;
         typedef boost::is_same<typename E1::value_type,uint_type>    assert_v1;
         typedef boost::is_same<typename E1::value_type,int_type>     assert_v2;
-        
+
         BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value );
-        
+
         return expression_type(lds_index,idx(),value<uint_type>(offset));
-    }        
+    }
 };
 
 typedef variable<int_type>      int1;

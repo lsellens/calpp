@@ -211,6 +211,9 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
 - basic types casting
     Functions convert_typeX are available. Also template friendly version cast_type<result type>(...) is available.
 
+- bits casting
+    Functions as_typeX are available. Also template friendly version cast_bits<result type>(...) is available.
+
 - logical operations
     Logical !,||,&& are available.
     ! converts 0 to all bits 1, and any non 0 value to all bits 0.
@@ -304,3 +307,6 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
 - vectorquantization
     Implementations of vector quantization. It shows a little bit more advanced kernels and use of LDS.
     It cannot be compiled at the time as it depends on some CAL Vector/Matrix classes which aren't available for public use.
+
+- uavwrite
+    Shows how to use various types of UAV.

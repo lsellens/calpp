@@ -1,7 +1,5 @@
 1. Check exact behaviour of double compare instuctions ( FIXME in cal_il_relop.hpp )
 
-3. UAVs support.
-
 4. Make more user friendly code for IL creation functions.
 
 5. Add il_asm function ( usage example: il_asm("mov %1,%2", v1, v2); would generate "mov r1,r2" )
@@ -13,5 +11,3 @@
 8. More double math functions.
 
 10. Easier to use local cal arrays.
-
-11. Add as_typen conversion

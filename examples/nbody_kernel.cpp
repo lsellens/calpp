@@ -36,7 +36,7 @@
  * L1 cache can be used for decreasing transfer from global memory. We will load data for whole work group once. 
  * After setting work group size to 256 transfer from global memory is limited to ~0.5GB/s.
  *
- * But this doesn't solve our problem. L1 cache has agregate transfer of ~1GB/s - this is still not enough.
+ * But this doesn't solve our problem. L1 cache has agregate transfer of ~1TB/s - this is still not enough.
  * 
  * Most developers forget that there is one important difference between Nvidia and ATI cards. 
  * ATI cards have much bigger register file. And these registers can be used as ultimate cache !!!
@@ -48,6 +48,9 @@
  * Using classical flops count for force calculation (38 flops) 4770 is doing 1250 GFlops/s - this gives 90% peek ops efficiency. 
  * 4% goes for necessary memory index calculations. This gives total 94% used only for computations. 
  * 
+ * Performance for other cards
+ * 5850 - 2800 GFLOPs ( 2950 GFLOPs with workitem size 10 )
+ *
  * Here are estimated values for other cards.
  * 4870 - 1580 GFLOPs (vs 1TFLOP for best know solution at the moment of writing)
  * 5870 - 3580 GFLOPs
@@ -55,6 +58,7 @@
  * Remark 1
  * It's possible to use larger workitem size (10). This gives kernel with maximum number of register used for 4 threads.
  * Unfortunatelly on 4xxx cards this leads to some unstable behaviour - results are ranging from 88% to 92% peek ops depending on the run.
+ * On 5xxx cards results are much more stable and workitem size = 10 gives best performance.
  */
 
 #ifdef _MSC_VER
@@ -99,7 +103,7 @@ void compute_body_acceleration( const input2d<float4>& input_data, float4* pos, 
 
     for(i=0;i<workitem_size;i++) acc[i] = float4(0);
 
-    p             = float2(0,0);
+    p = float2(0,0);
     il_while(tile_count)
     {
         rlimit = p.x() + float1(tile_size-1);
