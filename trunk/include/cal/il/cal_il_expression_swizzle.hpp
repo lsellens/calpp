@@ -38,17 +38,18 @@ template<class E,int P0,int P1,int P2,int P3>
 class swizzle : public expression< swizzle<E,P0,P1,P2,P3> >
 {
 protected:
-    typedef expression< swizzle<E,P0,P1,P2,P3> >    base_type;
-    typedef swizzle<E,P0,P1,P2,P3>                  self_type;
-    typedef const E                                 expression_type;
-    typedef typename E::const_closure_type          expression_closure_type;
-        
+    typedef expression< swizzle<E,P0,P1,P2,P3> >                 base_type;
+    typedef swizzle<E,P0,P1,P2,P3>                               self_type;
+    typedef const E                                              expression_type;
+    typedef typename E::const_closure_type                       expression_closure_type;
+    typedef swizzle_traits<typename E::value_type,P0,P1,P2,P3>   swizzle_trait;
+
 public:
-    typedef typename swizzle_traits<typename E::value_type,P0,P1,P2,P3>::value_type value_type;
-    typedef const self_type                                         const_closure_type;
-    typedef self_type                                               closure_type;
-    static const int                                                temp_reg_count = 0;
-    
+    typedef typename swizzle_trait::value_type                   value_type;
+    typedef const self_type                                      const_closure_type;
+    typedef self_type                                            closure_type;
+    static const int                                             temp_reg_count = 0;
+
 protected:
     expression_closure_type _e;
     using base_type::index;
@@ -83,7 +84,7 @@ public:
     std::string resultCode() const
     {
         BOOST_STATIC_ASSERT( value_type::type_size==1 || value_type::type_size==2 || value_type::type_size==4 );
-        return make_swizzle(_e.resultCode(),P0,P1,P2,P3);
+        return make_swizzle(_e.resultCode(),swizzle_trait::i0,swizzle_trait::i1,swizzle_trait::i2,swizzle_trait::i3);
     }
     
     self_type& operator=( const self_type& v )
@@ -126,7 +127,7 @@ class swizzable_expression : public expression<E>
 {
 protected:
     using expression<E>::index;
-    
+
 public:
     swizzable_expression() : expression<E>() {}
     swizzable_expression( const swizzable_expression& rhs ) : expression<E>(rhs) {}
@@ -137,7 +138,7 @@ public:
         BOOST_STATIC_ASSERT( E::value_type::type_size==1 || E::value_type::type_size==2 || E::value_type::type_size==4 );
 
         int     idx = index+E::temp_reg_count;
-        
+
         return make_swizzle( (boost::format("r%i") % idx).str(), E::value_type::type_size );
     }
 

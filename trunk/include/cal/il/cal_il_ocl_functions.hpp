@@ -106,6 +106,72 @@ detail::unary<E1,detail::cal_unary_cast<double2_type,typename E1::value_type> > 
     return cast_type<double2_type>(e1());
 }
 
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<int1_type,typename E1::value_type> > as_int1( const detail::expression<E1>& e1 )
+{
+    return cast_bits<int1_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<int2_type,typename E1::value_type> > as_int2( const detail::expression<E1>& e1 )
+{
+    return cast_bits<int2_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<int4_type,typename E1::value_type> > as_int4( const detail::expression<E1>& e1 )
+{
+    return cast_bits<int4_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<uint1_type,typename E1::value_type> > as_uint1( const detail::expression<E1>& e1 )
+{
+    return cast_bits<uint1_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<uint2_type,typename E1::value_type> > as_uint2( const detail::expression<E1>& e1 )
+{
+    return cast_bits<uint2_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<uint4_type,typename E1::value_type> > as_uint4( const detail::expression<E1>& e1 )
+{
+    return cast_bits<uint4_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<float1_type,typename E1::value_type> > as_float1( const detail::expression<E1>& e1 )
+{
+    return cast_bits<float1_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<float2_type,typename E1::value_type> > as_float2( const detail::expression<E1>& e1 )
+{
+    return cast_bits<float2_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<float4_type,typename E1::value_type> > as_float4( const detail::expression<E1>& e1 )
+{
+    return cast_bits<float4_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<double1_type,typename E1::value_type> > as_double1( const detail::expression<E1>& e1 )
+{
+    return cast_bits<double1_type>(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_bitcast<double2_type,typename E1::value_type> > as_double2( const detail::expression<E1>& e1 )
+{
+    return cast_bits<double2_type>(e1());
+}
+
 template<class E1,class E2>
 variable<typename E1::value_type> rotate( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
 {

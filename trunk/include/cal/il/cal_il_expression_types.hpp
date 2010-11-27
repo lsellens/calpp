@@ -395,6 +395,13 @@ detail::unary<E1,detail::cal_unary_cast<typename detail::base_cal_type<T>::value
     return expression_type(e1());
 }
 
+template<class T,class E1>
+detail::unary<E1,detail::cal_unary_bitcast<typename detail::base_cal_type<T>::value,typename E1::value_type> > cast_bits( const detail::expression<E1>& e1 )
+{
+    typedef detail::unary<E1,detail::cal_unary_bitcast<typename detail::base_cal_type<T>::value,typename E1::value_type> > expression_type;
+    return expression_type(e1());
+}
+
 template<class E1, class E2>
 detail::binary<E1,E2,detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> > merge_types( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
 {

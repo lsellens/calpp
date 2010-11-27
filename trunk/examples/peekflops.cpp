@@ -150,23 +150,26 @@ void show_device_info( int dev )
 {
     std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
 
-    std::cout << format("Device            %i\n"
-                        "target            %u\n"
-                        "localRAM          %u MB\n"
-                        "uncachedRemoteRAM %u MB\n"
-                        "cachedRemoteRAM   %u MB\n"
-                        "engineClock       %u MHz\n"
-                        "memoryClock       %u MHz\n"
-                        "wavefrontSize     %u\n"
-                        "numberOfSIMD      %u\n"
-                        "doublePrecision   %u\n"
-                        "localDataShare    %u\n"
-                        "globalDataShare   %u\n"
-                        "globalGPR         %u\n"
-                        "computeShader     %u\n"
-                        "memExport         %u\n"
-                        "pitch_alignment   %u\n"
-                        "surface_alignment %u\n")
+    std::cout << format("Device              %i\n"
+                        "target              %u\n"
+                        "localRAM            %u MB\n"
+                        "uncachedRemoteRAM   %u MB\n"
+                        "cachedRemoteRAM     %u MB\n"
+                        "engineClock         %u MHz\n"
+                        "memoryClock         %u MHz\n"
+                        "wavefrontSize       %u\n"
+                        "numberOfSIMD        %u\n"
+                        "doublePrecision     %u\n"
+                        "localDataShare      %u\n"
+                        "globalDataShare     %u\n"
+                        "globalGPR           %u\n"
+                        "computeShader       %u\n"
+                        "memExport           %u\n"
+                        "pitch_alignment     %u\n"
+                        "surface_alignment   %u\n"
+                        "maxResource1DWidth  %u\n"
+                        "maxResource2DWidth  %u\n"
+                        "maxResource2DHeight %u\n")
     % dev
     % devices[dev].getInfo<CAL_DEVICE_TARGET>()
     % devices[dev].getInfo<CAL_DEVICE_LOCALRAM>()
@@ -183,7 +186,10 @@ void show_device_info( int dev )
     % devices[dev].getInfo<CAL_DEVICE_COMPUTESHADER>()
     % devices[dev].getInfo<CAL_DEVICE_MEMEXPORT>()
     % devices[dev].getInfo<CAL_DEVICE_PITCHALIGNMENT>()
-    % devices[dev].getInfo<CAL_DEVICE_SURFACEALIGNMENT>();
+    % devices[dev].getInfo<CAL_DEVICE_SURFACEALIGNMENT>()
+    % devices[dev].getInfo<CAL_DEVICE_MAXRESOURCE1DWIDTH>()
+    % devices[dev].getInfo<CAL_DEVICE_MAXRESOURCE2DWIDTH>()
+    % devices[dev].getInfo<CAL_DEVICE_MAXRESOURCE2DHEIGHT>();
 }
 
 void show_result( int dev, int workgroup_size, int wavefront_size )

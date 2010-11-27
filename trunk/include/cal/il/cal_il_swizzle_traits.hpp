@@ -35,289 +35,289 @@ template<class T,int P0,int P1,int P2,int P3> struct swizzle_traits
 };
 
 #define __SWIZZLE_TRAITS_FOR_TYPE(TYPE) \
-template<> struct swizzle_traits< TYPE##_type,1,0,0,0> { typedef TYPE##_type value_type; }; \
-template<> struct swizzle_traits< TYPE##2_type,1,0,0,0> { typedef TYPE##_type value_type; }; \
-template<> struct swizzle_traits< TYPE##2_type,2,0,0,0> { typedef TYPE##_type value_type; }; \
-template<> struct swizzle_traits< TYPE##2_type,1,1,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##2_type,1,2,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##2_type,2,1,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##2_type,2,2,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,0,0,0> { typedef TYPE##_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,0,0,0> { typedef TYPE##_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,0,0,0> { typedef TYPE##_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,0,0,0> { typedef TYPE##_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,0,0> { typedef TYPE##2_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,1,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,2,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,3,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,1,4,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,1,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,2,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,3,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,2,4,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,1,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,2,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,3,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,3,4,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,1,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,2,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,3,4,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,1,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,1,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,1,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,1,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,2,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,2,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,2,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,2,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,3,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,3,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,3,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,3,4> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,4,1> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,4,2> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,4,3> { typedef TYPE##4_type value_type; }; \
-template<> struct swizzle_traits< TYPE##4_type,4,4,4,4> { typedef TYPE##4_type value_type; }; 
+template<> struct swizzle_traits< TYPE##_type,1,0,0,0> { typedef TYPE##_type value_type; static const int i0=1; static const int i1=0; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##2_type,1,0,0,0> { typedef TYPE##_type value_type; static const int i0=1; static const int i1=0; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##2_type,2,0,0,0> { typedef TYPE##_type value_type; static const int i0=2; static const int i1=0; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##2_type,1,1,0,0> { typedef TYPE##2_type value_type; static const int i0=1; static const int i1=1; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##2_type,1,2,0,0> { typedef TYPE##2_type value_type; static const int i0=1; static const int i1=2; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##2_type,2,1,0,0> { typedef TYPE##2_type value_type; static const int i0=2; static const int i1=1; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##2_type,2,2,0,0> { typedef TYPE##2_type value_type; static const int i0=2; static const int i1=2; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,0,0,0> { typedef TYPE##_type value_type; static const int i0=1; static const int i1=0; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,0,0,0> { typedef TYPE##_type value_type; static const int i0=2; static const int i1=0; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,0,0,0> { typedef TYPE##_type value_type; static const int i0=3; static const int i1=0; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,0,0,0> { typedef TYPE##_type value_type; static const int i0=4; static const int i1=0; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,0,0> { typedef TYPE##2_type value_type; static const int i0=1; static const int i1=1; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,0,0> { typedef TYPE##2_type value_type; static const int i0=1; static const int i1=2; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,0,0> { typedef TYPE##2_type value_type; static const int i0=1; static const int i1=3; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,0,0> { typedef TYPE##2_type value_type; static const int i0=1; static const int i1=4; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,0,0> { typedef TYPE##2_type value_type; static const int i0=2; static const int i1=1; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,0,0> { typedef TYPE##2_type value_type; static const int i0=2; static const int i1=2; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,0,0> { typedef TYPE##2_type value_type; static const int i0=2; static const int i1=3; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,0,0> { typedef TYPE##2_type value_type; static const int i0=2; static const int i1=4; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,0,0> { typedef TYPE##2_type value_type; static const int i0=3; static const int i1=1; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,0,0> { typedef TYPE##2_type value_type; static const int i0=3; static const int i1=2; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,0,0> { typedef TYPE##2_type value_type; static const int i0=3; static const int i1=3; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,0,0> { typedef TYPE##2_type value_type; static const int i0=3; static const int i1=4; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,0,0> { typedef TYPE##2_type value_type; static const int i0=4; static const int i1=1; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,0,0> { typedef TYPE##2_type value_type; static const int i0=4; static const int i1=2; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,0,0> { typedef TYPE##2_type value_type; static const int i0=4; static const int i1=3; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,0,0> { typedef TYPE##2_type value_type; static const int i0=4; static const int i1=4; static const int i2=0; static const int i3=0; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,1,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,1,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,1,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,1,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,2,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,2,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,2,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,2,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,3,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,3,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,3,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,3,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,4,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,4,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,4,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,1,4,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=1; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,1,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,1,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,1,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,1,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,2,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,2,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,2,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,2,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,3,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,3,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,3,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,3,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,4,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,4,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,4,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,2,4,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=2; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,1,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,1,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,1,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,1,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,2,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,2,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,2,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,2,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,3,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,3,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,3,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,3,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,4,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,4,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,4,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,3,4,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=3; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,1,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,1,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,1,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,1,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,2,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,2,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,2,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,2,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,3,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,3,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,3,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,3,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,4,1> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,4,2> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,4,3> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,1,4,4,4> { typedef TYPE##4_type value_type; static const int i0=1; static const int i1=4; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,1,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,1,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,1,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,1,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,2,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,2,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,2,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,2,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,3,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,3,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,3,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,3,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,4,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,4,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,4,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,1,4,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=1; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,1,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,1,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,1,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,1,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,2,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,2,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,2,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,2,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,3,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,3,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,3,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,3,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,4,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,4,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,4,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,2,4,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=2; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,1,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,1,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,1,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,1,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,2,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,2,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,2,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,2,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,3,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,3,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,3,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,3,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,4,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,4,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,4,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,3,4,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=3; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,1,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,1,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,1,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,1,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,2,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,2,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,2,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,2,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,3,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,3,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,3,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,3,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,4,1> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,4,2> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,4,3> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,2,4,4,4> { typedef TYPE##4_type value_type; static const int i0=2; static const int i1=4; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,1,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,1,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,1,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,1,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,2,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,2,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,2,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,2,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,3,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,3,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,3,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,3,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,4,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,4,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,4,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,1,4,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=1; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,1,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,1,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,1,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,1,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,2,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,2,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,2,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,2,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,3,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,3,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,3,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,3,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,4,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,4,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,4,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,2,4,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=2; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,1,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,1,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,1,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,1,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,2,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,2,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,2,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,2,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,3,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,3,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,3,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,3,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,4,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,4,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,4,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,3,4,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=3; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,1,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,1,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,1,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,1,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,2,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,2,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,2,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,2,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,3,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,3,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,3,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,3,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,4,1> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,4,2> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,4,3> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,3,4,4,4> { typedef TYPE##4_type value_type; static const int i0=3; static const int i1=4; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,1,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,1,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,1,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,1,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,2,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,2,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,2,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,2,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,3,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,3,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,3,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,3,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,4,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,4,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,4,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,1,4,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=1; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,1,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,1,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,1,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,1,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,2,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,2,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,2,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,2,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,3,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,3,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,3,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,3,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,4,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,4,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,4,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,2,4,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=2; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,1,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,1,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,1,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,1,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,2,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,2,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,2,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,2,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,3,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,3,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,3,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,3,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,4,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,4,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,4,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,3,4,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=3; static const int i2=4; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,1,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=1; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,1,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=1; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,1,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=1; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,1,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=1; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,2,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=2; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,2,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=2; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,2,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=2; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,2,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=2; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,3,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=3; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,3,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=3; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,3,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=3; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,3,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=3; static const int i3=4; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,4,1> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=4; static const int i3=1; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,4,2> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=4; static const int i3=2; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,4,3> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=4; static const int i3=3; }; \
+template<> struct swizzle_traits< TYPE##4_type,4,4,4,4> { typedef TYPE##4_type value_type; static const int i0=4; static const int i1=4; static const int i2=4; static const int i3=4; }; 
 
 __SWIZZLE_TRAITS_FOR_TYPE(float);
 __SWIZZLE_TRAITS_FOR_TYPE(int);
@@ -325,292 +325,15 @@ __SWIZZLE_TRAITS_FOR_TYPE(uint);
 
 #undef __SWIZZLE_TRAITS_FOR_TYPE
 
-template<> struct swizzle_traits<double_type,1,0,0,0> { typedef float_type value_type; };
-template<> struct swizzle_traits<double_type,2,0,0,0> { typedef float_type value_type; };
+template<> struct swizzle_traits<double_type,1,0,0,0> { typedef float_type value_type; static const int i0=1; static const int i1=2; static const int i2=0; static const int i3=0; };
 
-template<> struct swizzle_traits<double_type,1,1,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double_type,1,2,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double_type,2,1,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double_type,2,2,0,0> { typedef double_type value_type; };
+template<> struct swizzle_traits<double2_type,1,0,0,0> { typedef float_type value_type; static const int i0=1; static const int i1=2; static const int i2=0; static const int i3=0; };
+template<> struct swizzle_traits<double2_type,2,0,0,0> { typedef float_type value_type; static const int i0=3; static const int i1=4; static const int i2=0; static const int i3=0; };
 
-template<> struct swizzle_traits<double2_type,1,0,0,0> { typedef float_type value_type; };
-template<> struct swizzle_traits<double2_type,2,0,0,0> { typedef float_type value_type; };
-template<> struct swizzle_traits<double2_type,3,0,0,0> { typedef float_type value_type; };
-template<> struct swizzle_traits<double2_type,4,0,0,0> { typedef float_type value_type; };
-
-template<> struct swizzle_traits<double2_type,1,1,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,0,0> { typedef double_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,0,0> { typedef double_type value_type; };
-
-template<> struct swizzle_traits<double2_type,1,1,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,1,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,2,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,3,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,1,4,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,1,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,2,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,3,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,2,4,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,1,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,2,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,3,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,3,4,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,1,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,2,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,3,4,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,1,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,1,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,1,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,1,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,2,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,2,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,2,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,2,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,3,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,3,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,3,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,3,4> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,4,1> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,4,2> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,4,3> { typedef double2_type value_type; };
-template<> struct swizzle_traits<double2_type,4,4,4,4> { typedef double2_type value_type; };
+template<> struct swizzle_traits<double2_type,1,1,0,0> { typedef double_type value_type; static const int i0=1; static const int i1=2; static const int i2=1; static const int i3=2; };
+template<> struct swizzle_traits<double2_type,1,2,0,0> { typedef double_type value_type; static const int i0=1; static const int i1=2; static const int i2=3; static const int i3=4; };
+template<> struct swizzle_traits<double2_type,2,1,0,0> { typedef double_type value_type; static const int i0=3; static const int i1=4; static const int i2=1; static const int i3=2; };
+template<> struct swizzle_traits<double2_type,2,2,0,0> { typedef double_type value_type; static const int i0=3; static const int i1=4; static const int i2=3; static const int i3=4; };
 
 } // detail
 

@@ -1,3 +1,11 @@
+Version 0.89
+    uav support
+    new example - uav write
+    cast_bits ( and as_typeN opencl like functions )
+    changes to double swizzle handling
+    fixes in lds handling
+    new emmit_comment function for adding comments to generated IL
+
 Version 0.88
     support for offset in sample load
     new matrix multiplication example
