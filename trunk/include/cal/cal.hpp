@@ -88,7 +88,6 @@ enum CALInfoEnum {
     CAL_KERNEL_NUMTHREADPERGROUPY,     /**< y dimension of numThreadPerGroup */
     CAL_KERNEL_NUMTHREADPERGROUPZ,     /**< z dimension of numThreadPerGroup */
     CAL_KERNEL_TOTALNUMTHREADGROUP,    /**< Total number of thread groups */
-    CAL_KERNEL_WAVEFRONTPERSIMD,       /**< Number of wavefronts per SIMD */
     CAL_KERNEL_NUMWAVEFRONTPERSIMD,    /**< Number of wavefronts per SIMD */
     CAL_KERNEL_ISMAXNUMWAVEPERSIMD,    /**< Is this the max num active wavefronts per SIMD */
     CAL_KERNEL_SETBUFFERFORNUMGROUP    /**< Need to set up buffer for info on number of thread groups? */
@@ -215,7 +214,6 @@ struct param_traits {};
     F(CAL_TYPE_CALMODULE,CAL_KERNEL_NUMTHREADPERGROUPY,CALuint,CALfuncInfo,numThreadPerGroupY)     /**< y dimension of numThreadPerGroup */ \
     F(CAL_TYPE_CALMODULE,CAL_KERNEL_NUMTHREADPERGROUPZ,CALuint,CALfuncInfo,numThreadPerGroupZ)     /**< z dimension of numThreadPerGroup */ \
     F(CAL_TYPE_CALMODULE,CAL_KERNEL_TOTALNUMTHREADGROUP,CALuint,CALfuncInfo,totalNumThreadGroup)   /**< Total number of thread groups */ \
-    F(CAL_TYPE_CALMODULE,CAL_KERNEL_WAVEFRONTPERSIMD,CALuint,CALfuncInfo,wavefrontPerSIMD)         /**< Number of wavefronts per SIMD */ \
     F(CAL_TYPE_CALMODULE,CAL_KERNEL_NUMWAVEFRONTPERSIMD,CALuint,CALfuncInfo,numWavefrontPerSIMD)   /**< Number of wavefronts per SIMD */ \
     F(CAL_TYPE_CALMODULE,CAL_KERNEL_ISMAXNUMWAVEPERSIMD,CALboolean,CALfuncInfo,isMaxNumWavePerSIMD)/**< Is this the max num active wavefronts per SIMD */ \
     F(CAL_TYPE_CALMODULE,CAL_KERNEL_SETBUFFERFORNUMGROUP,CALboolean,CALfuncInfo,setBufferForNumGroup) /**< Need to set up buffer for info on number of thread groups? */
