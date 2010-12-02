@@ -139,8 +139,8 @@ void NBodyWorker::sendDataToGPU()
     int     i,width,height;
     CALuint pitch;
 
-    assert( position.size()>=opt.num_bodies );
-    assert( velocity.size()>=opt.num_bodies );
+    assert( (int)position.size()>=opt.num_bodies );
+    assert( (int)velocity.size()>=opt.num_bodies );
 
     width  = _data[_active_buffer].getWidth();
     height = _data[_active_buffer].getHeight();

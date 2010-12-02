@@ -99,6 +99,8 @@ int init()
 
     std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
     _dev_count =  devices.size();
+
+    return _dev_count;
 }
 
 void setup( int dev, int workgroup_size )

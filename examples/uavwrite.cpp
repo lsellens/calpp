@@ -122,11 +122,13 @@ Kernel          _kernel_A,_kernel_B,_kernel_C,_kernel_C1,_kernel_D,_kernel_D1;
 CommandQueue    _queue;
 
 Image1D         _output_A;
+//Image2D       _output_A;
 Image1D         _output_B;
 Image1D         _output_C;
 Image1D         _output_C1;
 Image2D         _output_D;
 Image2D         _output_D1;
+
 
 void print_data_uint( Image1D& _data, int elem_size=1, int elem_group=1 )
 {
@@ -171,7 +173,7 @@ void print_data_uint( Image2D& _data, int elem_size=1, int elem_group=1 )
 }
 
 
-int init()
+void init()
 {
    _context = Context(CAL_DEVICE_TYPE_GPU);
 }
@@ -237,6 +239,8 @@ void setup( int dev )
 
     // raw uav - buffer must be 1D, possible buffer types are UINT_1, INT_1, FLOAT_1
     _output_A = Image1D(_context, WORKGROUP_SIZE*WORKGROUP_COUNT, CAL_FORMAT_UINT_1, 0 );
+    // this one isn't working ( probably due to bug in CAL ) even though it is example from CAL Manual
+    //_output_A = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_UINT_1, CAL_RESALLOC_GLOBAL_BUFFER );
 
     // struct uav - buffer must be 1D, possible buffer types are UINT_1, INT_1, FLOAT_1
     _output_B = Image1D(_context, 4*WORKGROUP_SIZE*WORKGROUP_COUNT, CAL_FORMAT_UINT_1, 0 );
@@ -251,7 +255,9 @@ void setup( int dev )
     _output_D = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_UINT_1, 0 );
 
     // typed uav 2D
-    _output_D1 = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_FLOAT_4, 0 );
+    //_output_D1 = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_FLOAT_4, 0 );
+    // this one also doesn't work ( probably bug in CAL )
+    _output_D1 = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );
 }
 
 void run()
