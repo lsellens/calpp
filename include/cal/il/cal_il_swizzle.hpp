@@ -62,7 +62,7 @@ inline bool check_output_register_swizzle( const std::string& dst )
 {
     std::string::size_type  i,p;
     int                     prev,v;
-    
+
     p = swizzle_find_dot(dst);
     if( p==std::string::npos ) return true;
 

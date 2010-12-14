@@ -50,12 +50,11 @@ struct cal_ternary_cmov_logical {
     {
         typedef boost::is_same<S2,S3> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
-        BOOST_STATIC_ASSERT( S2::type_size==S1::type_size );
-    
-        return (boost::format("cmov_logical %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
-    }    
-};
+        BOOST_STATIC_ASSERT( S1::type_size==1 || S1::type_size==S2::type_size );
 
+        return (boost::format("cmov_logical %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
 
 } // detail
 } // cal

@@ -56,7 +56,7 @@ void kernel_B()
 
 void kernel_C()
 {
-    uav<uint1> uav(0,"1d","uint");
+    uav<uint1> uav(0,"1d");
     uint1      gid = get_global_id<uint1>();
 
     uav(gid) = gid;
@@ -64,7 +64,7 @@ void kernel_C()
 
 void kernel_C1()
 {
-    uav<uint2> uav(0,"1d","uint");
+    uav<uint2> uav(0,"1d");
     uint1      gid = get_global_id<uint1>();
 
     uav(gid) = uint2(gid,uint1(0));
@@ -72,7 +72,7 @@ void kernel_C1()
 
 void kernel_D()
 {
-    uav<uint1> uav(0,"2d","uint");
+    uav<uint1> uav(0,"2d");
     uint1      gid = get_global_id<uint1>();
     uint1      x,y;
 
@@ -84,7 +84,7 @@ void kernel_D()
 
 void kernel_D1()
 {
-    uav<float4> uav(0,"2d","float"); // float used to show it's possible
+    uav<float4> uav(0,"2d"); // float used to show it's possible
     uint1       gid = get_global_id<uint1>();
     uint1       x,y;
 
@@ -255,9 +255,9 @@ void setup( int dev )
     _output_D = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_UINT_1, 0 );
 
     // typed uav 2D
-    //_output_D1 = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_FLOAT_4, 0 );
+    _output_D1 = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_FLOAT_4, 0 );
     // this one also doesn't work ( probably bug in CAL )
-    _output_D1 = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );
+    //_output_D1 = Image2D(_context, WORKGROUP_SIZE, WORKGROUP_COUNT, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );
 }
 
 void run()
