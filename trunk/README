@@ -299,7 +299,7 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
 - coalescingtest
     This is test kernel to verify coalescing behaviour of ATI cards.
 
-- nbody
+- nbody ( + double version - dbl_nbody )
     Optimal (fastest possible) implementation of brute-force n-body algorithm on ATI GPU.
     Achives 90% of peek operation count ( including required index computations gives 94% ).
     It's 10-20x faster than OpenCL implementation in ATI SDK.

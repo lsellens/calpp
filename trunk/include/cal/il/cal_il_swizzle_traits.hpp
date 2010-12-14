@@ -325,15 +325,15 @@ __SWIZZLE_TRAITS_FOR_TYPE(uint);
 
 #undef __SWIZZLE_TRAITS_FOR_TYPE
 
-template<> struct swizzle_traits<double_type,1,0,0,0> { typedef float_type value_type; static const int i0=1; static const int i1=2; static const int i2=0; static const int i3=0; };
+template<> struct swizzle_traits<double_type,1,0,0,0> { typedef double_type value_type; static const int i0=1; static const int i1=2; static const int i2=0; static const int i3=0; };
 
-template<> struct swizzle_traits<double2_type,1,0,0,0> { typedef float_type value_type; static const int i0=1; static const int i1=2; static const int i2=0; static const int i3=0; };
-template<> struct swizzle_traits<double2_type,2,0,0,0> { typedef float_type value_type; static const int i0=3; static const int i1=4; static const int i2=0; static const int i3=0; };
+template<> struct swizzle_traits<double2_type,1,0,0,0> { typedef double_type value_type; static const int i0=1; static const int i1=2; static const int i2=0; static const int i3=0; };
+template<> struct swizzle_traits<double2_type,2,0,0,0> { typedef double_type value_type; static const int i0=3; static const int i1=4; static const int i2=0; static const int i3=0; };
 
-template<> struct swizzle_traits<double2_type,1,1,0,0> { typedef double_type value_type; static const int i0=1; static const int i1=2; static const int i2=1; static const int i3=2; };
-template<> struct swizzle_traits<double2_type,1,2,0,0> { typedef double_type value_type; static const int i0=1; static const int i1=2; static const int i2=3; static const int i3=4; };
-template<> struct swizzle_traits<double2_type,2,1,0,0> { typedef double_type value_type; static const int i0=3; static const int i1=4; static const int i2=1; static const int i3=2; };
-template<> struct swizzle_traits<double2_type,2,2,0,0> { typedef double_type value_type; static const int i0=3; static const int i1=4; static const int i2=3; static const int i3=4; };
+template<> struct swizzle_traits<double2_type,1,1,0,0> { typedef double2_type value_type; static const int i0=1; static const int i1=2; static const int i2=1; static const int i3=2; };
+template<> struct swizzle_traits<double2_type,1,2,0,0> { typedef double2_type value_type; static const int i0=1; static const int i1=2; static const int i2=3; static const int i3=4; };
+template<> struct swizzle_traits<double2_type,2,1,0,0> { typedef double2_type value_type; static const int i0=3; static const int i1=4; static const int i2=1; static const int i3=2; };
+template<> struct swizzle_traits<double2_type,2,2,0,0> { typedef double2_type value_type; static const int i0=3; static const int i1=4; static const int i2=3; static const int i3=4; };
 
 } // detail
 
