@@ -1,4 +1,4 @@
-Version 0.88
+Version 0.90
     support for offset in sample load
     new matrix multiplication example
     uav support
@@ -6,7 +6,9 @@ Version 0.88
     cast_bits ( and as_typeN opencl like functions )
     changes to double swizzle handling
     fixes in lds handling
-    new emmit_comment function for adding comments to generated IL
+    emmit_comment function for adding comments to generated IL
+    type traits
+    nbody version using double variables for computations
 
 Version 0.87
     IL kernel link bug fix

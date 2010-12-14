@@ -1506,6 +1506,31 @@ struct cal_unary_rsq<float4_type>
     }
 };
 
+template<>
+struct cal_unary_rsq<double_type>
+{
+    typedef double_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("drsq %1%,%2%\n") % mask_output(make_swizzle(r,1,2,0,0)) % make_swizzle(s0,1,2,1,2) ).str();
+    }
+};
+
+template<>
+struct cal_unary_rsq<double2_type>
+{
+    typedef double2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("drsq %1%,%2%\n"
+                              "drsq %3%,%4%\n") % mask_output(make_swizzle(r,1,2,0,0)) % make_swizzle(s0,1,2,1,2)
+                                                % mask_output(make_swizzle(r,3,4,0,0)) % make_swizzle(s0,3,4,3,4) ).str();
+    }
+};
 
 } // detail
 } // il
