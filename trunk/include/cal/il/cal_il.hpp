@@ -32,5 +32,6 @@
 #include <cal/il/cal_il_flat2d.hpp>
 #include <cal/il/cal_il_ocl_functions.hpp>
 #include <cal/il/cal_il_uav.hpp>
+#include <cal/il/cal_il_type_traits.hpp>
 
 #endif

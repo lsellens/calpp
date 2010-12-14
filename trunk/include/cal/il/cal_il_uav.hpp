@@ -283,6 +283,7 @@ protected:
 public:
     uav_raw( int idx )
     {
+        assert( idx>=0 );
         uav_index = idx;
         Source::code.registerUAV(uav_index,2,0,"","");
     }
@@ -322,6 +323,7 @@ protected:
 public:
     uav_struct( int idx, int stride )
     {
+        assert( idx>=0 && stride>0 && (stride%4)==0 );
         uav_index  = idx;
         Source::code.registerUAV(uav_index,1,stride,"","");
     }
@@ -384,9 +386,30 @@ public:
 protected:
     int         uav_index;
 
+protected:
+    std::string getFormatName( const int_type& ) { return "sint"; }
+    std::string getFormatName( const int2_type& ) { return "sint"; }
+    std::string getFormatName( const int4_type& ) { return "sint"; }
+    std::string getFormatName( const uint_type& ) { return "uint"; }
+    std::string getFormatName( const uint2_type& ) { return "uint"; }
+    std::string getFormatName( const uint4_type& ) { return "uint"; }
+    std::string getFormatName( const float_type& ) { return "float"; }
+    std::string getFormatName( const float2_type& ) { return "float"; }
+    std::string getFormatName( const float4_type& ) { return "float"; }
+    std::string getFormatName( const double_type& ) { return "mixed"; }
+    std::string getFormatName( const double2_type& ) { return "mixed"; }
+
 public:
+    uav( int idx, const std::string& type )
+    {
+        assert( idx>=0 );
+        uav_index = idx;
+        Source::code.registerUAV(uav_index,0,0,type,getFormatName(typename detail::base_cal_type<T>::value()));
+    }
+
     uav( int idx, const std::string& type, const std::string& format )
     {
+        assert( idx>=0 );
         uav_index  = idx;
         Source::code.registerUAV(uav_index,0,0,type,format);
     }
@@ -431,6 +454,7 @@ public:
         return expression_type(uav_index,merge_types(idx(),offset()));
     }
 };
+
 
 
 } // il
