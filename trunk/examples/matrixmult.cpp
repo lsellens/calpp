@@ -213,7 +213,7 @@ int init()
     //std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
-    _program.disassemble(std::cout); // Uncomment to emit ISA code
+    //_program.disassemble(std::cout); // Uncomment to emit ISA code
 
     // create kernel
     _kernel = Kernel(_program,"main");

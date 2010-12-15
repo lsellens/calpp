@@ -97,8 +97,8 @@ void DNBodyWorker::init()
     width      = width_step*((min_width + width_step - 1)/width_step);
     height     = (opt.num_bodies + width - 1)/width;
 
-    _data[0]   = Image2D( _context, width, 4*height, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );
-    _data[1]   = Image2D( _context, width, 4*height, CAL_FORMAT_FLOAT_4, CAL_RESALLOC_GLOBAL_BUFFER );
+    _data[0]   = Image2D( _context, width, 4*height, CAL_FORMAT_UNSIGNED_INT32_4, CAL_RESALLOC_GLOBAL_BUFFER );
+    _data[1]   = Image2D( _context, width, 4*height, CAL_FORMAT_UNSIGNED_INT32_4, CAL_RESALLOC_GLOBAL_BUFFER );
 
     // create command queue
     _queue = CommandQueue(_context, _device);
