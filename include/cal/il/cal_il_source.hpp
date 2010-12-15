@@ -108,7 +108,7 @@ protected:
         std::map<int,std::pair<int,int> >::iterator     iinput;
 
         for(iinput=input_data.begin();iinput!=input_data.end();++iinput) {
-            _out << boost::format("dcl_resource_id(%i)_type(%id,unnorm)_fmtx(float)_fmty(float)_fmtz(float)_fmtw(float)\n") % iinput->first % iinput->second.first;
+            _out << boost::format("dcl_resource_id(%i)_type(%id,unnorm)_fmtx(unknown)_fmty(unknown)_fmtz(unknown)_fmtw(unknown)\n") % iinput->first % iinput->second.first;
         }
 
         typename std::map<int,uav_data_t>::iterator iuav;
