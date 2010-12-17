@@ -29,10 +29,12 @@ template<class E1>
 variable<typename E1::value_type> atanh( const detail::expression<E1>& x )
 {
     typedef typename E1::value_type value_type;    
-    variable<value_type>   v1,v2;
-    
-    v1 = (variable<value_type>(1.)+x());
-    v2 = (variable<value_type>(1.)-x());
+    variable<value_type>   v1,v2,_x;
+
+    _x = x();
+
+    v1 = (variable<value_type>(1.)+_x);
+    v2 = (variable<value_type>(1.)-_x);
     return variable<value_type>(0.5)*log(v1/v2);
 }
 

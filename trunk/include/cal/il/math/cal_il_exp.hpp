@@ -23,6 +23,7 @@
 #define __CAL_IL_MATH_EXP_H
 
 #include <cal/il/math/cal_il_dd.hpp>
+#include <boost/limits.hpp>
 
 namespace cal {
 namespace il {
@@ -55,17 +56,18 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double_type  )
 {
     double1    cinv_log2((long double)1/(long double)std::log((long double)2)),
                cmln20(-6.931471805599452862e-01), cmln21(-2.319046813846299558e-17),
-               cinv_k(1./32.);
-    double1    s,r,m,p0,p1,r0,r1;
+               cinv_k(1./32.),cmaxlog(7.09782712893383996843E2),cminlog(-7.08396418532264106224E2);
+    double1    s,r,m,p0,p1,r0,r1,_x;
 
-    m = round( cinv_log2*x() );
+    _x = x();
+    m  = round( cinv_log2*_x );
 
     //r = cinv_k*(x() - log(2)*m);
     dd_prod_dbl( p0, p1, cmln20, cmln21, m );
-    dd_sum_dbl( r0, r1, p0, p1, x() );
+    dd_sum_dbl( r0, r1, p0, p1, _x );
     r = cinv_k*r0;
 
-    // taylor series expansion    
+    // taylor series expansion
     s = double1((long double)1/(long double)5040);
     s = mad(s,r,double1((long double)1/(long double)720));
     s = mad(s,r,double1((long double)1/(long double)120));
@@ -74,16 +76,20 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double_type  )
     s = mad(s,r,double1((long double)1/(long double)2));
     s = mad(s,r,double1((long double)1/(long double)1));
     s = s*r;
-    
+
     // s = (1+s)^32
     s = mad(s,s,s+s);
     s = mad(s,s,s+s);
     s = mad(s,s,s+s);
     s = mad(s,s,s+s);
-    s = mad(s,s,s+s);    
+    s = mad(s,s,s+s);
     s = s + double1(1);
 
-    return ldexp(s,cast_type<int_type>(m));
+    r = ldexp(s,cast_type<int_type>(m));
+    r = select(_x>=cmaxlog,double1(std::numeric_limits<double>::max()),r);
+    r = select(_x<cminlog,double1(0),r);
+
+    return r;
 }
 
 
@@ -92,15 +98,16 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double2_type  )
 {
     double2     cinv_log2((long double)1/(long double)std::log((long double)2)),
                 cmln20(-6.931471805599452862e-01), cmln21(-2.319046813846299558e-17),
-                cinv_k(1./32.);
-    double2     s,r,m,p0,p1,r0,r1;
+                cinv_k(1./32.),cmaxlog(7.09782712893383996843E2),cminlog(-7.08396418532264106224E2);
+    double2     s,r,m,p0,p1,r0,r1,_x;
 
-    m = round( cinv_log2*x() );
+    _x = x();
+    m  = round( cinv_log2*_x );
 
     //r = cinv_k*(x() - log(2)*m);
     dd_prod_dbl( p0, p1, cmln20, cmln21, m );
-    dd_sum_dbl( r0, r1, p0, p1, double2(x()) );
-    r = cinv_k*r0;        
+    dd_sum_dbl( r0, r1, p0, p1, _x );
+    r = cinv_k*r0;
 
     // taylor series expansion
     s = double2((long double)1/(long double)5040);
@@ -111,7 +118,7 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double2_type  )
     s = mad(s,r,double2((long double)1/(long double)2));
     s = mad(s,r,double2((long double)1/(long double)1));
     s = s*r;
-    
+
     // s = (1+s)^32
     s = mad(s,s,s+s);
     s = mad(s,s,s+s);
@@ -120,7 +127,11 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double2_type  )
     s = mad(s,s,s+s);
     s = s + double2(1);
 
-    return ldexp(s,cast_type<int2_type>(m));
+    r = ldexp(s,cast_type<int2_type>(m));
+    r = select(_x>=cmaxlog,double2(std::numeric_limits<double>::max()),r);
+    r = select(_x<cminlog,double2(0),r);
+
+    return r;
 }
 
 } // detail

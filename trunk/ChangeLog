@@ -9,6 +9,8 @@ Version 0.90
     emmit_comment function for adding comments to generated IL
     type traits
     nbody version using double variables for computations
+    frexp
+    more accurate log(double)
 
 Version 0.87
     IL kernel link bug fix

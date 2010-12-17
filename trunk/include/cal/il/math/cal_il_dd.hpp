@@ -66,7 +66,7 @@ variable<D> two_prod( const detail::expression<E1>& a, const detail::expression<
 
     p = a()*b();
     err = mad(a(),b(),-p);
-    
+
     return p;
 }
 */
@@ -75,11 +75,11 @@ template<typename D>
 variable<D> two_sum( const variable<D>& a, const variable<D>& b, variable<D>& err)
 {
     variable<D> s,bb;
-    
+
     s = a + b;
     bb = s - a;
     err = (a - (s - bb)) + (b - bb);
-    
+
     return s;
 }
 
@@ -97,13 +97,13 @@ variable<D> quick_two_sum( const variable<D>& a, const variable<D>& b, variable<
 
 template<typename D>
 void dd_prod_dbl( variable<D>& r0, variable<D>& r1, const variable<D>& a0, const variable<D>& a1, const variable<D>& b )
-{    
+{
     variable<D> p1,p2;
 
     p1 = dd::two_prod( a0, b, p2 );
     p2 = p2 + a1*b;
     p1 = dd::quick_two_sum( p1, p2, p2 );
-    
+
     r0 = p1;
     r1 = p2;
 }
@@ -116,7 +116,7 @@ void dd_sum_dbl( variable<D>& r0, variable<D>& r1, const variable<D>& a0, const 
     s1 = dd::two_sum( a0, b, s2 );
     s2 = s2 + a1;
     s1 = dd::quick_two_sum( s1, s2, s2 );
-    
+
     r0 = s1;
     r1 = s2;
 }
