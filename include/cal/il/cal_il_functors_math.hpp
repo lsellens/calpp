@@ -573,6 +573,35 @@ struct cal_unary_frac<double2_type>
 };
 
 //
+// frexp
+//
+
+template<class S1>
+struct cal_unary_frexp
+{
+    typedef invalid_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        BOOST_STATIC_ASSERT(sizeof(S1) != sizeof(S1));
+        return std::string();
+    }
+};
+
+template<>
+struct cal_unary_frexp<double_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("dfrexp %s,%s\n") % r % s0).str();
+    }
+};
+
+//
 // add
 //
 

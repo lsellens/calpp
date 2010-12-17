@@ -70,6 +70,34 @@ variable<typename E1::value_type> round( const expression<E1>& e1, double2_type 
     return x-fract(x);
 }
 
+template<class E1>
+double1 frexp( const expression<E1>& ex, int1& e, double_type  )
+{
+    typedef unary<E1,cal_unary_frexp<double_type> > expression_type;
+    uint4   r0;
+
+    r0 = expression_type(ex());
+    e  = cast_type<int1>(r0.y());
+    return double1( cast_bits<double1>(r0.zw()) );
+}
+
+template<class E1>
+double2 frexp( const expression<E1>& ex, int2& e, double2_type  )
+{
+    int1    e0,e1;
+    double2 r,x;
+
+    x = ex();
+
+    r.x() = frexp(x.x(),e0,double_type());
+    r.y() = frexp(x.y(),e1,double_type());
+
+    e.x() = e0;
+    e.y() = e1;
+
+    return r;
+}
+
 } // detail
 
 template<class E1>
@@ -97,6 +125,12 @@ detail::binary<E1,E2,detail::cal_binary_ldexp<typename E1::value_type,typename E
 {
     typedef detail::binary<E1,E2,detail::cal_binary_ldexp<typename E1::value_type,typename E2::value_type> > expression_type;
     return expression_type( e1(), e2() );
+}
+
+template<class E1,class E2>
+variable<typename E1::value_type> frexp( const detail::expression<E1>& e1, variable<E2>& e2 )
+{
+    return detail::frexp(e1(),e2,typename E1::value_type());
 }
 
 template<class E1>

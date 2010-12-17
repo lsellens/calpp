@@ -30,7 +30,8 @@ template<class E1>
 variable<typename E1::value_type> tanh( const detail::expression<E1>& x )
 {
     typedef typename E1::value_type value_type;
-    return variable<value_type>(1) - variable<value_type>(2)/(exp(x()+x())+variable<value_type>(1));
+
+    return variable<value_type>(1) - variable<value_type>(2)/(exp(variable<value_type>(2)*x())+variable<value_type>(1));
 }
 
 }

@@ -326,9 +326,6 @@ struct cal_binary_eq<double2_type,double2_type>
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        // FIXME
-        // I'm not sure about exact behaviour of double compare in IL
-        // and IL docs are not too clear about it.
         return (boost::format("deq %1%,%3%,%5%\n"
                               "deq %2%,%4%,%6%\n") % make_swizzle(r ,1,2,0,0) % make_swizzle(r ,3,4,0,0)
                                                    % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
@@ -482,9 +479,6 @@ struct cal_binary_ne<double2_type,double2_type>
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        // FIXME
-        // I'm not sure about exact behaviour of double compare in IL
-        // and IL docs are not too clear about it.
         return (boost::format("dne %1%,%3%,%5%\n"
                               "dne %2%,%4%,%6%\n") % make_swizzle(r ,1,2,0,0) % make_swizzle(r ,3,4,0,0)
                                                    % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
@@ -638,9 +632,6 @@ struct cal_binary_ge<double2_type,double2_type>
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        //FIXME
-        // I'm not sure about exact behaviour of double compare in IL
-        // and IL docs are not too clear about it.
         return (boost::format("dge %1%,%3%,%5%\n"
                               "dge %2%,%4%,%6%\n") % make_swizzle(r ,1,2,0,0) % make_swizzle(r ,3,4,0,0)
                                                    % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
@@ -794,9 +785,6 @@ struct cal_binary_lt<double2_type,double2_type>
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        // FIXME
-        // I'm not sure about exact behaviour of double compare in IL
-        // and IL docs are not too clear about it.
         return (boost::format("dlt %1%,%3%,%5%\n"
                               "dlt %2%,%4%,%6%\n") % make_swizzle(r ,1,2,0,0) % make_swizzle(r ,3,4,0,0)
                                                    % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
@@ -971,9 +959,6 @@ struct cal_binary_le<double2_type,double2_type>
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        // FIXME
-        // I'm not sure about exact behaviour of double compare in IL
-        // and IL docs are not too clear about it.
         return (boost::format("dlt r%6%.xy,%2%,%4%\n"
                               "dlt r%6%.zw,%3%,%5%\n"
                               "deq r%7%.xy,%2%,%4%\n"
@@ -1152,9 +1137,6 @@ struct cal_binary_gt<double2_type,double2_type>
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        // FIXME
-        // I'm not sure about exact behaviour of double compare in IL
-        // and IL docs are not too clear about it.
         return (boost::format("dge r%6%.xy,%2%,%4%\n"
                               "dge r%6%.zw,%3%,%5%\n"
                               "dne r%7%.xy,%2%,%4%\n"
