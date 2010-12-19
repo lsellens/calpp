@@ -41,13 +41,21 @@ void split( const double2& a, double2& hi, double2& lo )
     lo = a - hi;
 }
 
+
 template<typename D>
 variable<D> two_prod( const variable<D>& a, const variable<D>& b, variable<D>& err)
 {
     variable<D> a_hi, a_lo, b_hi, b_lo,p;
 
+    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
+        p   = a*b;
+        err = mad(a,b,-p);
+
+        return p;
+    }
+
     p = a*b;
-    
+
     split(a, a_hi, a_lo);
     split(b, b_hi, b_lo);
 
@@ -56,20 +64,6 @@ variable<D> two_prod( const variable<D>& a, const variable<D>& b, variable<D>& e
 
     return p;
 }
-
-
-/*
-template<typename D,class E1,class E2>
-variable<D> two_prod( const detail::expression<E1>& a, const detail::expression<E2>& b, variable<D>& err)
-{
-    variable<D>   p;
-
-    p = a()*b();
-    err = mad(a(),b(),-p);
-
-    return p;
-}
-*/
 
 template<typename D>
 variable<D> two_sum( const variable<D>& a, const variable<D>& b, variable<D>& err)
@@ -119,6 +113,19 @@ void dd_sum_dbl( variable<D>& r0, variable<D>& r1, const variable<D>& a0, const 
 
     r0 = s1;
     r1 = s2;
+}
+
+template<typename D>
+void dd_from_dbl( variable<D>& r0, variable<D>& r1, const variable<D>& d )
+{
+    r0 = d;
+    r1 = variable<D>(0);
+}
+
+template<typename D>
+variable<D> dd_to_dbl( const variable<D>& a0, const variable<D>& a1 )
+{
+    return a0;
 }
 
 } // il
