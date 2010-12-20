@@ -156,30 +156,6 @@ struct cal_unary_not<float4_type>
     }    
 };
 
-template<>
-struct cal_unary_not<double_type>
-{
-    typedef uint2_type value_type;
-    static const int temp_reg_count=0;
-    
-    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
-    {
-        return (boost::format("cmov_logical %s,%s,l0.xy,l1.xy\n") % r % s0).str();        
-    }    
-};
-
-template<>
-struct cal_unary_not<double2_type>
-{
-    typedef uint4_type value_type;
-    static const int temp_reg_count=0;
-    
-    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
-    {
-        return (boost::format("cmov_logical %s,%s,l0,l1\n") % r % s0).str();        
-    }
-};
-
 //
 // compare ==
 //
@@ -309,27 +285,30 @@ struct cal_binary_eq<float4_type,float4_type>
 template<>
 struct cal_binary_eq<double_type,double_type>
 {
-    typedef uint2_type value_type;
-    static const int temp_reg_count=0;
+    typedef uint1_type value_type;
+    static const int temp_reg_count=1;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        return (boost::format("deq %s,%s,%s\n") % r % s0 % s1).str();
+        return (boost::format("deq r%4%.xy,%2%,%3%\n"
+                              "mov %1%,r%4%.x\n") % r % s0 % s1 % t0).str();
     }
 };
 
 template<>
 struct cal_binary_eq<double2_type,double2_type>
 {
-    typedef uint4_type value_type;
-    static const int temp_reg_count=0;
+    typedef uint2_type value_type;
+    static const int temp_reg_count=1;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        return (boost::format("deq %1%,%3%,%5%\n"
-                              "deq %2%,%4%,%6%\n") % make_swizzle(r ,1,2,0,0) % make_swizzle(r ,3,4,0,0)
+        return (boost::format("deq r%6%.xy,%2%,%4%\n"
+                              "deq r%6%.zw,%3%,%5%\n"
+                              "mov %1%,r%6%.xz\n") % r
                                                    % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
-                                                   % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)).str();
+                                                   % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)
+                                                   % t0 ).str();
     }
 };
 
@@ -462,27 +441,30 @@ struct cal_binary_ne<float4_type,float4_type>
 template<>
 struct cal_binary_ne<double_type,double_type>
 {
-    typedef uint2_type value_type;
-    static const int temp_reg_count=0;
+    typedef uint1_type value_type;
+    static const int temp_reg_count=1;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        return (boost::format("dne %s,%s,%s\n") % r % s0 % s1).str();
+        return (boost::format("dne r%4%.xy,%2%,%3%\n"
+                              "mov %1%,r%4%.x\n") % r % s0 % s1 % t0).str();
     }
 };
 
 template<>
 struct cal_binary_ne<double2_type,double2_type>
 {
-    typedef uint4_type value_type;
-    static const int temp_reg_count=0;
+    typedef uint2_type value_type;
+    static const int temp_reg_count=1;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        return (boost::format("dne %1%,%3%,%5%\n"
-                              "dne %2%,%4%,%6%\n") % make_swizzle(r ,1,2,0,0) % make_swizzle(r ,3,4,0,0)
+        return (boost::format("dne r%6%.xy,%2%,%4%\n"
+                              "dne r%6%.zw,%3%,%5%\n"
+                              "mov %1%,r%6%.xz\n") % r 
                                                    % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
-                                                   % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)).str();
+                                                   % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)
+                                                   % t0 ).str();
     }
 };
 
@@ -615,27 +597,30 @@ struct cal_binary_ge<float4_type,float4_type>
 template<>
 struct cal_binary_ge<double_type,double_type>
 {
-    typedef uint2_type value_type;
-    static const int temp_reg_count=0;
+    typedef uint1_type value_type;
+    static const int temp_reg_count=1;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        return (boost::format("dge %s,%s,%s\n") % r % s0 % s1).str();
+        return (boost::format("dge r%4%.xy,%2%,%3%\n"
+                              "mov %1%,r%4%.x\n") % r % s0 % s1 % t0).str();
     }
 };
 
 template<>
 struct cal_binary_ge<double2_type,double2_type>
 {
-    typedef uint4_type value_type;
-    static const int temp_reg_count=0;
+    typedef uint2_type value_type;
+    static const int temp_reg_count=1;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        return (boost::format("dge %1%,%3%,%5%\n"
-                              "dge %2%,%4%,%6%\n") % make_swizzle(r ,1,2,0,0) % make_swizzle(r ,3,4,0,0)
+        return (boost::format("dge r%6%.xy,%2%,%4%\n"
+                              "dge r%6%.zw,%3%,%5%\n"
+                              "mov %1%,r%6%.xz\n") % r
                                                    % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
-                                                   % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)).str();
+                                                   % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)
+                                                   % t0 ).str();
     }
 };
 
@@ -768,27 +753,30 @@ struct cal_binary_lt<float4_type,float4_type>
 template<>
 struct cal_binary_lt<double_type,double_type>
 {
-    typedef uint2_type value_type;
-    static const int temp_reg_count=0;
+    typedef uint1_type value_type;
+    static const int temp_reg_count=1;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        return (boost::format("dlt %s,%s,%s\n") % r % s0 % s1).str();
+        return (boost::format("dlt r%4%.xy,%2%,%3%\n"
+                              "mov %1%,r%4%.x\n") % r % s0 % s1 % t0).str();
     }
 };
 
 template<>
 struct cal_binary_lt<double2_type,double2_type>
 {
-    typedef uint4_type value_type;
-    static const int temp_reg_count=0;
+    typedef uint2_type value_type;
+    static const int temp_reg_count=1;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
-        return (boost::format("dlt %1%,%3%,%5%\n"
-                              "dlt %2%,%4%,%6%\n") % make_swizzle(r ,1,2,0,0) % make_swizzle(r ,3,4,0,0)
+        return (boost::format("dlt r%6%.xy,%2%,%4%\n"
+                              "dlt r%6%.zw,%3%,%5%\n"
+                              "mov %1%,r%6%.xz\n") % r
                                                    % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
-                                                   % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)).str();
+                                                   % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)
+                                                   % t0 ).str();
     }
 };
 
@@ -940,21 +928,21 @@ struct cal_binary_le<float4_type,float4_type>
 template<>
 struct cal_binary_le<double_type,double_type>
 {
-    typedef uint2_type value_type;
+    typedef uint1_type value_type;
     static const int temp_reg_count=2;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
         return (boost::format("dlt r%4%.xy,%2%,%3%\n"
                               "deq r%5%.xy,%2%,%3%\n"
-                              "ior %1%,r%4%.xy,r%5%.xy\n") % r % s0 % s1 % t0 % (t0+1)).str();
+                              "ior %1%,r%4%.x,r%5%.x\n") % r % s0 % s1 % t0 % (t0+1)).str();
     }
 };
 
 template<>
 struct cal_binary_le<double2_type,double2_type>
 {
-    typedef uint4_type value_type;
+    typedef uint2_type value_type;
     static const int temp_reg_count=2;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
@@ -963,7 +951,7 @@ struct cal_binary_le<double2_type,double2_type>
                               "dlt r%6%.zw,%3%,%5%\n"
                               "deq r%7%.xy,%2%,%4%\n"
                               "deq r%7%.zw,%3%,%5%\n"
-                              "ior %1%,r%6%,r%7%\n" ) % r
+                              "ior %1%,r%6%.xz,r%7%.xz\n" ) % r
                                                       % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
                                                       % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)
                                                       % t0 % (t0+1) ).str();
@@ -1118,21 +1106,21 @@ struct cal_binary_gt<float4_type,float4_type>
 template<>
 struct cal_binary_gt<double_type,double_type>
 {
-    typedef uint2_type value_type;
+    typedef uint1_type value_type;
     static const int temp_reg_count=2;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
     {
         return (boost::format("dge r%4%.xy,%2%,%3%\n"
                               "dne r%5%.xy,%2%,%3%\n"
-                              "iand %1%,r%4%.xy,r%5%.xy\n") % r % s0 % s1 % t0 % (t0+1)).str();
+                              "iand %1%,r%4%.x,r%5%.x\n") % r % s0 % s1 % t0 % (t0+1)).str();
     }
 };
 
 template<>
 struct cal_binary_gt<double2_type,double2_type>
 {
-    typedef uint4_type value_type;
+    typedef uint2_type value_type;
     static const int temp_reg_count=2;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
@@ -1141,7 +1129,7 @@ struct cal_binary_gt<double2_type,double2_type>
                               "dge r%6%.zw,%3%,%5%\n"
                               "dne r%7%.xy,%2%,%4%\n"
                               "dne r%7%.zw,%3%,%5%\n"
-                              "iand %1%,r%6%,r%7%\n" ) % r
+                              "iand %1%,r%6%.xz,r%7%.xz\n" ) % r
                                                       % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0)
                                                       % make_swizzle(s1,1,2,0,0) % make_swizzle(s1,3,4,0,0)
                                                       % t0 % (t0+1) ).str();

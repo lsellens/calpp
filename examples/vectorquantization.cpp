@@ -189,7 +189,7 @@ void kernel_reducematrix( const input2d<float4>& A, const indexed_register<float
         
         uint1   t  = n>float1(0);
         float1  n1 = float1(1)/n;
-        R[ mad(py,Rx,px) ] = select( uint4(t,t,t,t), float4(n1,n1,n1,n1)*acc, float4(0) );
+        R[ mad(py,Rx,px) ] = select( t, float4(n1,n1,n1,n1)*acc, float4(0) );
     }
     il_endif
 }

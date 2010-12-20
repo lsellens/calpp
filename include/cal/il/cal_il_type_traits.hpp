@@ -26,9 +26,21 @@
 #include <cal/il/cal_il_base_types.hpp>
 #include <cal/il/cal_il_types.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/type_traits.hpp>
 
 namespace cal {
 namespace il {
+
+namespace detail {
+
+template<typename T> struct is_floating_point : public boost::false_type {};
+template<> struct is_floating_point<float_type> : public boost::true_type {};
+template<> struct is_floating_point<float2_type> : public boost::true_type {};
+template<> struct is_floating_point<float4_type> : public boost::true_type {};
+template<> struct is_floating_point<double_type> : public boost::true_type {};
+template<> struct is_floating_point<double2_type> : public boost::true_type {};
+
+} // detail
 
 template<typename T>
 struct component_type
@@ -47,6 +59,8 @@ struct component_count
 {
     static const int value = detail::base_cal_type<T>::value::component_count;
 };
+
+template<typename T> struct is_floating_point : public detail::is_floating_point<typename detail::base_cal_type<T>::value> {};
 
 template<typename T,int W>
 struct make_cal_type {};
