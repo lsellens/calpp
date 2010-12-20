@@ -56,6 +56,30 @@ struct cal_ternary_cmov_logical {
     }
 };
 
+//
+// cmov_logical for select
+//
+
+template<class S1, class S2, class S3>
+struct cal_ternary_select {
+    typedef S2 value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        typedef boost::is_same<S2,S3> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        BOOST_STATIC_ASSERT( S1::component_size==1 );
+        BOOST_STATIC_ASSERT( S1::component_count==1 || S1::component_count==S2::component_count );
+
+        if( S1::component_count==2 && S2::component_size==2 ) {
+            return (boost::format("cmov_logical %1%,%2%,%3%,%4%\n") % r % make_swizzle(s0,1,1,2,2) % s1 % s2).str();
+        }
+
+        return (boost::format("cmov_logical %1%,%2%,%3%,%4%\n") % mask_output(r) % s0 % s1 % s2).str();
+    }
+};
+
 } // detail
 } // cal
 } // il

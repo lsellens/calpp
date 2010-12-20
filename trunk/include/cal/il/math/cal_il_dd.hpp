@@ -47,12 +47,14 @@ variable<D> two_prod( const variable<D>& a, const variable<D>& b, variable<D>& e
 {
     variable<D> a_hi, a_lo, b_hi, b_lo,p;
 
+#if defined(__CAL_H__)
     if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
         p   = a*b;
         err = mad(a,b,-p);
 
         return p;
     }
+#endif
 
     p = a*b;
 

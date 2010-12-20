@@ -11,6 +11,8 @@ Version 0.90
     nbody version using double variables for computations
     frexp
     more accurate log(double)
+    changes to relational operators for double types ( return type matches input vectors length )
+    changes to select ( handling of double types )
 
 Version 0.87
     IL kernel link bug fix

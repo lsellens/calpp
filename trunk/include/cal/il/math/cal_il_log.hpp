@@ -77,12 +77,12 @@ double1 log( const expression<E1>& a, double_type  )
     double1 r,r0,r1,_a;
     double1 _x,x,y,z,e;
     int1    _e;
-    uint2   t;
+    uint1   t;
 
     _a = a();
     _x = frexp(_a,_e);
     t  = _x<double1(0.70710678118654752440);
-    e  = cast_type<double1>( select( t.x(), _e - int1(1), _e ) );
+    e  = cast_type<double1>( select( t, _e - int1(1), _e ) );
 
     /* logarithm using log(x) = z + z**3 P(z)/Q(z),
     * where z = 2(x-1)/x+1)
@@ -100,8 +100,8 @@ double1 log( const expression<E1>& a, double_type  )
     r1 = x * ( z * polevl( x, (const double*)P, 6 )/p1evl( x, (const double*)Q, 5 ) )
          - e*double1(2.121944400546905827679e-4) - double1(0.5)*z + x + e*double1(0.693359375);
 
-    uint1 t1 = (_e < int2(-2)) | (_e >= int2(3));
-    r = select( uint2(t1,t1), r0, r1 );
+    t = (_e < int1(-2)) | (_e >= int1(3));
+    r = select( t, r0, r1 );
     r = select( _a == double1(0), double1(-std::numeric_limits<double>::max()), r );
     r = select( _a <  double1(0), double1(std::numeric_limits<double>::quiet_NaN()), r );
 
@@ -132,12 +132,12 @@ double2 log( const expression<E1>& a, double2_type  )
     double2 r,r0,r1,_a;
     double2 _x,x,y,z,e;
     int2    _e;
-    uint4   t;
+    uint2   t;
 
     _a = a();
     _x = frexp(_a,_e);
     t  = _x<double2(0.70710678118654752440);
-    e  = cast_type<double2>( select( t.xz(), _e - int2(1), _e ) );
+    e  = cast_type<double2>( select( t, _e - int2(1), _e ) );
 
     /* logarithm using log(x) = z + z**3 P(z)/Q(z),
     * where z = 2(x-1)/x+1)
@@ -155,8 +155,8 @@ double2 log( const expression<E1>& a, double2_type  )
     r1 = x * ( z * polevl( x, (const double*)P, 6 )/p1evl( x, (const double*)Q, 5 ) )
          - e*double2(2.121944400546905827679e-4) - double2(0.5)*z + x + e*double2(0.693359375);
 
-    uint2 t1 = (_e < int2(-2)) | (_e >= int2(3));
-    r = select( uint4(t1.xx(),t1.yy()), r0, r1 );
+    t = (_e < int2(-2)) | (_e >= int2(3));
+    r = select( t, r0, r1 );
     r = select( _a == double2(0), double2(-std::numeric_limits<double>::max()), r );
     r = select( _a <  double2(0), double2(std::numeric_limits<double>::quiet_NaN()), r );
 
