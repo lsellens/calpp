@@ -136,6 +136,9 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double2_type  )
 
 } // detail
 
+//
+// error for double <1ulp
+//
 template<class E1>
 variable<typename E1::value_type> exp( const detail::expression<E1>& e1 )
 {
