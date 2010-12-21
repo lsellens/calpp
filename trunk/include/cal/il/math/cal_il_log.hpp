@@ -165,6 +165,10 @@ double2 log( const expression<E1>& a, double2_type  )
 
 } // detail
 
+
+//
+// error for double <1ulp
+//
 template<class E1>
 variable<typename E1::value_type> log( const detail::expression<E1>& e1 )
 {

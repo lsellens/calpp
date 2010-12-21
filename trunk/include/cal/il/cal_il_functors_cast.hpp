@@ -117,8 +117,8 @@ struct cal_unary_cast<int2_type,double2_type>
     
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
-        return (boost::format("d2f r%4%.x, %2%\n"
-                              "d2f r%4%.y, %3%\n"
+        return (boost::format("d2f r%4%.x___, %2%\n"
+                              "d2f r%4%._y__, %3%\n"
                               "ftoi %1%,r%4%.xy\n") % r % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0) % t0).str();
     }
 };
@@ -216,8 +216,8 @@ struct cal_unary_cast<uint2_type,double2_type>
     
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
-        return (boost::format("d2f r%4%.x, %2%\n"
-                              "d2f r%4%.y, %3%\n"
+        return (boost::format("d2f r%4%.x___, %2%\n"
+                              "d2f r%4%._y__, %3%\n"
                               "ftou %1%,r%4%.xy\n") % r % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0) % t0).str();
     }
 };
@@ -314,8 +314,8 @@ struct cal_unary_cast<float2_type,double2_type>
 
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
-        return (boost::format("d2f r%4%.x, %2%\n"
-                              "d2f r%4%.y, %3%\n"
+        return (boost::format("d2f r%4%.x___, %2%\n"
+                              "d2f r%4%._y__, %3%\n"
                               "mov %1%,r%4%.xy\n") % r % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0) % t0).str();
     }
 };

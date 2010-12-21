@@ -31,5 +31,6 @@
 #include <cal/il/math/cal_il_log.hpp>
 #include <cal/il/math/cal_il_tanh.hpp>
 #include <cal/il/math/cal_il_atanh.hpp>
+#include <cal/il/math/cal_il_reciprocal.hpp>
 
 #endif
