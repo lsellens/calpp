@@ -278,7 +278,7 @@ struct cal_unary_cast<float_type,double_type>
 
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
-        return (boost::format("dtof %s,%s\n") % r % s0).str();
+        return (boost::format("d2f %s,%s\n") % r % s0).str();
     }
 };
 
