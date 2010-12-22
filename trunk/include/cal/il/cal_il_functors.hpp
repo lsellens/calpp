@@ -30,7 +30,7 @@
 #include <cal/il/cal_il_functors_bitop.hpp>
 #include <cal/il/cal_il_functors_cast.hpp>
 #include <cal/il/cal_il_functors_relop.hpp>
-#include <cal/il/cal_il_functors_math.hpp>
+#include <cal/il/cal_il_functors_mathop.hpp>
 #include <cal/il/cal_il_functors_multimedia.hpp>
 
 namespace cal {
