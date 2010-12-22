@@ -25,14 +25,64 @@
 namespace cal {
 namespace il {
 
+namespace detail {
+
 template<class E1>
-detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> > native_reciprocal( const detail::expression<E1>& e1 )
+detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> > native_reciprocal( const detail::expression<E1>& e1, float_type )
 {
     typedef detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> > expression_type;
     return expression_type(e1());
 }
 
-namespace detail {
+template<class E1>
+detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> > native_reciprocal( const detail::expression<E1>& e1, float2_type )
+{
+    typedef detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> > expression_type;
+    return expression_type(e1());
+}
+
+template<class E1>
+detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> > native_reciprocal( const detail::expression<E1>& e1, float4_type )
+{
+    typedef detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> > expression_type;
+    return expression_type(e1());
+}
+
+template<class E1>
+variable<typename E1::value_type> native_reciprocal( const detail::expression<E1>& e1, double_type )
+{
+    typedef detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> >        rcp_type;
+
+#if defined(__CAL_H__)
+    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) return rcp_type(e1());
+#endif
+    double1 s;
+    int1    e;
+
+    s = frexp(e1(),e);
+    s = cast_type<double1>( native_reciprocal(cast_type<float1>(s),float_type()) );
+    s = ldexp(s,-e);
+
+    return s;
+}
+
+template<class E1>
+variable<typename E1::value_type> native_reciprocal( const detail::expression<E1>& e1, double2_type )
+{
+    typedef detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> >        rcp_type;
+
+#if defined(__CAL_H__)
+    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) return rcp_type(e1());
+#endif
+    double2 s;
+    int2    e;
+
+    s = frexp(e1(),e);
+    s = cast_type<double2>( native_reciprocal(cast_type<float2>(s),float2_type()) );
+    s = ldexp(s,-e);
+
+    return s;
+}
 
 template<class E1>
 unary<E1,cal_unary_rcp<typename E1::value_type> > reciprocal( const expression<E1>& e1, float_type  )
@@ -59,21 +109,9 @@ template<class E1>
 variable<typename E1::value_type> reciprocal( const expression<E1>& ed, double_type  )
 {
     double1 d,s,t;
-    int1    e;
 
     d = ed();
-
-#if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target<CAL_TARGET_CYPRESS ) {
-        s = frexp(d,e);
-        s = cast_type<double1>( native_reciprocal(cast_type<float1>(d)) );
-        s = ldexp(s,-e);
-    } else s = native_reciprocal(d);
-#else
-    s = frexp(d,e);
-    s = cast_type<double1>( native_reciprocal(cast_type<float1>(d)) );
-    s = ldexp(s,-e);
-#endif
+    s = native_reciprocal(d,double_type());
 
     // Newton-Raphson iterations
     t = mad( -d, s, double1(1) );
@@ -88,21 +126,9 @@ template<class E1>
 variable<typename E1::value_type> reciprocal( const expression<E1>& ed, double2_type  )
 {
     double2 d,s,t;
-    int2    e;
 
     d = ed();
-
-#if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target<CAL_TARGET_CYPRESS ) {
-        s = frexp(d,e);
-        s = cast_type<double2>( native_reciprocal(cast_type<float2>(d)) );
-        s = ldexp(s,-e);
-    } else s = native_reciprocal(d);
-#else
-    s = frexp(d,e);
-    s = cast_type<double2>( native_reciprocal(cast_type<float2>(d)) );
-    s = ldexp(s,-e);
-#endif
+    s = native_reciprocal(d,double2_type());
 
     // Newton-Raphson iterations
     t = mad( -d, s, double2(1) );
@@ -114,6 +140,12 @@ variable<typename E1::value_type> reciprocal( const expression<E1>& ed, double2_
 }
 
 } // detail
+
+template<class E1>
+variable<typename E1::value_type> native_reciprocal( const detail::expression<E1>& e1 )
+{
+    return detail::native_reciprocal(e1(),typename E1::value_type());
+}
 
 //
 // error for double <= 0.5ulp
