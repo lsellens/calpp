@@ -25,6 +25,7 @@
 
 #include <cal/il/cal_il_expression_types.hpp>
 #include <cal/il/cal_il_types.hpp>
+#include <cal/il/math/cal_il_functors_math.hpp>
 #include <cal/il/math/cal_il_dd.hpp>
 #include <cal/il/math/cal_il_math_basic.hpp>
 #include <cal/il/math/cal_il_exp.hpp>
@@ -32,5 +33,6 @@
 #include <cal/il/math/cal_il_tanh.hpp>
 #include <cal/il/math/cal_il_atanh.hpp>
 #include <cal/il/math/cal_il_reciprocal.hpp>
+#include <cal/il/math/cal_il_sqrt.hpp>
 
 #endif
