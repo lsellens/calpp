@@ -33,6 +33,51 @@ namespace il {
 namespace detail {
 
 template<class E1>
+unary<E1,cal_unary_log<typename E1::value_type> > native_log( const expression<E1>& e1, float_type  )
+{
+    typedef unary<E1,cal_unary_log<typename E1::value_type> > expression_type;
+    return expression_type(e1());
+}
+
+template<class E1>
+unary<E1,cal_unary_log<typename E1::value_type> > native_log( const expression<E1>& e1, float2_type  )
+{
+    typedef unary<E1,cal_unary_log<typename E1::value_type> > expression_type;
+    return expression_type(e1());
+}
+
+template<class E1>
+unary<E1,cal_unary_log<typename E1::value_type> > native_log( const expression<E1>& e1, float4_type  )
+{
+    typedef unary<E1,cal_unary_log<typename E1::value_type> > expression_type;
+    return expression_type(e1());
+}
+
+template<class E1>
+double1 native_log( const expression<E1>& a, double_type  )
+{
+    double1 w,r;
+    int1    e;
+
+    w = a();
+    r = frexp(w,e);
+
+    return mad( cast_type<double1>(e), double1(0.69314718055994530942), cast_type<double1>(native_log(cast_type<float1>(r),float_type())) );
+}
+
+template<class E1>
+double2 native_log( const expression<E1>& a, double2_type  )
+{
+    double2 w,r;
+    int2    e;
+
+    w = a();
+    r = frexp(w,e);
+
+    return mad( cast_type<double2>(e), double2(0.69314718055994530942), cast_type<double2>(native_log(cast_type<float2>(r),float2_type())) );
+}
+
+template<class E1>
 unary<E1,cal_unary_log<typename E1::value_type> > log( const expression<E1>& e1, float_type  )
 {
     typedef unary<E1,cal_unary_log<typename E1::value_type> > expression_type;
@@ -165,6 +210,11 @@ double2 log( const expression<E1>& a, double2_type  )
 
 } // detail
 
+template<class E1>
+variable<typename E1::value_type> native_log( const detail::expression<E1>& e1 )
+{
+    return detail::native_log(e1(),typename E1::value_type());
+}
 
 //
 // error for double <1ulp

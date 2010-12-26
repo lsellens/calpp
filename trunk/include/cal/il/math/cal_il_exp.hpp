@@ -24,11 +24,65 @@
 
 #include <cal/il/math/cal_il_dd.hpp>
 #include <boost/limits.hpp>
+#include <cmath>
 
 namespace cal {
 namespace il {
 
 namespace detail {
+
+template<class E1>
+unary<E1,cal_unary_exp<typename E1::value_type> > native_exp( const expression<E1>& e1, float_type  )
+{
+    typedef unary<E1,cal_unary_exp<typename E1::value_type> > expression_type;
+    return expression_type(e1);
+}
+
+template<class E1>
+unary<E1,cal_unary_exp<typename E1::value_type> > native_exp( const expression<E1>& e1, float2_type  )
+{
+    typedef unary<E1,cal_unary_exp<typename E1::value_type> > expression_type;
+    return expression_type(e1());
+}
+
+template<class E1>
+unary<E1,cal_unary_exp<typename E1::value_type> > native_exp( const expression<E1>& e1, float4_type  )
+{
+    typedef unary<E1,cal_unary_exp<typename E1::value_type> > expression_type;
+    return expression_type(e1());
+}
+
+template<class E1>
+variable<typename E1::value_type> native_exp( const expression<E1>& x, double_type  )
+{
+    double1    cinv_log2((long double)1/(long double)std::log((long double)2)),
+               cmlog2(-std::log((long double)2));
+    double1    s,r,m,_x;
+
+    _x = x();
+    m  = round( cinv_log2*_x );
+    r  = mad(cmlog2,m,_x);
+
+    s  = cast_type<double1>(native_exp(cast_type<float1>(r),float_type()));
+
+    return ldexp(s,cast_type<int1>(m));
+}
+
+template<class E1>
+variable<typename E1::value_type> native_exp( const expression<E1>& x, double2_type  )
+{
+    double2    cinv_log2((long double)1/(long double)std::log((long double)2)),
+               cmlog2(-std::log((long double)2));
+    double2    s,r,m,_x;
+
+    _x = x();
+    m  = round( cinv_log2*_x );
+    r  = mad(cmlog2,m,_x);
+
+    s  = cast_type<double2>(native_exp(cast_type<float2>(r),float2_type()));
+
+    return ldexp(s,cast_type<int2>(m));
+}
 
 template<class E1>
 unary<E1,cal_unary_exp<typename E1::value_type> > exp( const expression<E1>& e1, float_type  )
@@ -92,7 +146,6 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double_type  )
     return r;
 }
 
-
 template<class E1>
 variable<typename E1::value_type> exp( const expression<E1>& x, double2_type  )
 {
@@ -135,6 +188,12 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double2_type  )
 }
 
 } // detail
+
+template<class E1>
+variable<typename E1::value_type> native_exp( const detail::expression<E1>& e1 )
+{
+    return detail::native_exp(e1(),typename E1::value_type());
+}
 
 //
 // error for double <1ulp

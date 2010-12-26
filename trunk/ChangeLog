@@ -15,6 +15,7 @@ Version 0.90
     changes to select ( handling of double types )
     new reciprocal and native_reciprocal functions ( calculating 1/x )
     sqrt and native_sqrt functions
+    native_exp and native_log functions
 
 Version 0.87
     IL kernel link bug fix
