@@ -117,8 +117,8 @@ double1 rsqrt( const expression<E1>& a, double_type  )
     w2 = double1(-0.5)*w;
     x  = native_rsqrt(w,double_type());
 
-    x  = x*mad( w2*x, x, double1(1.5) );
-    x  = x*mad( w2*x, x, double1(1.5) );
+    x  = x*mad( x*x, w2, double1(1.5) );
+    x  = x*mad( x*x, w2, double1(1.5) );
 
     return x;
 }
@@ -132,8 +132,8 @@ double2 rsqrt( const expression<E1>& a, double2_type  )
     w2 = double2(-0.5)*w;
     x  = native_rsqrt(w,double2_type());
 
-    x  = x*mad( w2*x, x, double2(1.5) );
-    x  = x*mad( w2*x, x, double2(1.5) );
+    x  = x*mad( x*x, w2, double2(1.5) );
+    x  = x*mad( x*x, w2, double2(1.5) );
 
     return x;
 }

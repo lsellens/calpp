@@ -136,6 +136,52 @@ double2 sqrt( const expression<E1>& a, double2_type  )
     return x;
 }
 
+template<class E1>
+double1 fast_sqrt( const expression<E1>& a, float_type  )
+{
+    return native_sqrt(a(),float_type());
+}
+
+template<class E1>
+double2 fast_sqrt( const expression<E1>& a, float2_type  )
+{
+    return native_sqrt(a(),float2_type());
+}
+
+template<class E1>
+double1 fast_sqrt( const expression<E1>& a, float4_type  )
+{
+    return native_sqrt(a(),float4_type());
+}
+
+template<class E1>
+double1 fast_sqrt( const expression<E1>& a, double_type  )
+{
+    double1 w,x,r;
+
+    w = a();
+    x = native_rsqrt(w);
+    x = x*mad(x*x,-w,double1(3.));
+    r = x*w;
+    r = r*mad(double1(-0.0625),r*x,double1(0.75));
+
+    return r;
+}
+
+template<class E1>
+double2 fast_sqrt( const expression<E1>& a, double2_type  )
+{
+    double2 w,x,r;
+
+    w = a();
+    x = native_rsqrt(w);
+    x = x*mad(x*x,-w,double2(3.));
+    r = x*w;
+    r = r*mad(double2(-0.0625),r*x,double2(0.75));
+
+    return r;
+}
+
 } // detail
 
 template<class E1>
@@ -145,13 +191,25 @@ variable<typename E1::value_type> native_sqrt( const detail::expression<E1>& e1 
 }
 
 //
-// error for double < 1 ulp
+// error for double < 1 ulp ( with few exceptions <= 0.5 ulp )
 //
 template<class E1>
 variable<typename E1::value_type> sqrt( const detail::expression<E1>& e1 )
 {
     return detail::sqrt(e1(),typename E1::value_type());
 }
+
+//
+// error for double < 2 ulp
+//
+// no divisions used ( huge speed improvement on older GPUs )
+//
+template<class E1>
+variable<typename E1::value_type> fast_sqrt( const detail::expression<E1>& e1 )
+{
+    return detail::fast_sqrt(e1(),typename E1::value_type());
+}
+
 
 }
 }
