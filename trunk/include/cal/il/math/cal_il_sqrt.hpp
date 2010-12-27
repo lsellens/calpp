@@ -23,9 +23,6 @@
 #define __CAL_IL_MATH_SQRT_H
 
 #include <cal/il/cal_il_types.hpp>
-#include <cal/il/math/cal_il_polevl.hpp>
-#include <boost/cstdint.hpp>
-#include <boost/limits.hpp>
 
 namespace cal {
 namespace il {
@@ -66,7 +63,7 @@ double1 native_sqrt( const expression<E1>& e1, double_type  )
 
     w = e1();
     x = frexp(w,e);
-    x = cast_type<double1>( native_sqrt(cast_type<float1>(x),float1_type()) );
+    x = cast_type<double1>( native_sqrt(cast_type<float1>(x),float_type()) );
     x = select( e&int1(0x1), double1(1.41421356237309504880)*x, x );
     x = ldexp(x,e>>int1(1));
 
@@ -112,12 +109,12 @@ double1 sqrt( const expression<E1>& a, float4_type  )
 }
 
 template<class E1>
-double2 sqrt( const expression<E1>& a, double_type  )
+double1 sqrt( const expression<E1>& a, double_type  )
 {
     double1 w,x;
 
     w = a();
-    x = native_sqrt(w,double1_type());
+    x = native_sqrt(w,double_type());
 
     x = double2(0.5)*(x + w/x);
     x = double2(0.5)*(x + w/x);
@@ -148,7 +145,7 @@ variable<typename E1::value_type> native_sqrt( const detail::expression<E1>& e1 
 }
 
 //
-// error for double < 1ulp
+// error for double < 1 ulp
 //
 template<class E1>
 variable<typename E1::value_type> sqrt( const detail::expression<E1>& e1 )
