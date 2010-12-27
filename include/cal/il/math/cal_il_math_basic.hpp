@@ -133,13 +133,6 @@ variable<typename E1::value_type> frexp( const detail::expression<E1>& e1, varia
     return detail::frexp(e1(),e2,typename E1::value_type());
 }
 
-template<class E1>
-detail::unary<E1,detail::cal_unary_rsq<typename E1::value_type> > rsqrt( const detail::expression<E1>& e1  )
-{
-    typedef detail::unary<E1,detail::cal_unary_rsq<typename E1::value_type> > expression_type;
-    return expression_type(e1);
-}
-
 } // il
 } // cal
 
