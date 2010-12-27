@@ -51,7 +51,7 @@ void compute_interaction( const double4& a, const double4& b, double4& acc, doub
     r.z() = a.z() - b.z();
 
     distSqr     = mad( r.x(), r.x(), mad( r.y(), r.y(), mad( r.z(), r.z(), double1(eps2) ) ) );
-    invDist     = rsqrt( distSqr );
+    invDist     = native_rsqrt( distSqr );
     invDistCube = invDist*invDist*invDist;
     s           = b.w() * invDistCube;
 
