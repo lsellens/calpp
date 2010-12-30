@@ -67,7 +67,7 @@
 
 #include <cal/cal.hpp>
 #include <cal/il/cal_il.hpp>
-#include <cal/il/cal_il_math.hpp>
+#include <cal/il/math/cal_il_rsqrt.hpp>
 
 using namespace boost;
 using namespace cal::il;
@@ -108,7 +108,7 @@ void compute_body_acceleration( const input2d<float4>& input_data, float4* pos, 
     {
         rlimit = p.x() + (tile_size-1);
         px[0] = convert_float1( get_local_id(0) & (tile_size-1) ) + p.x();
-        for(i=1;i<read_count;i++) px[i] = select( px[i-1]<rlimit, px[i-1]+float1(1), p.x() );
+        for(i=1;i<read_count;i++) px[i] = select( px[i-1]<rlimit, px[i-1]+1, p.x() );
 
         rlimit = p.x() + (tile_size-read_count);
         c = tile_size/(read_count*unroll_count) + 1;
