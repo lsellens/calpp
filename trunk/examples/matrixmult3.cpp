@@ -31,7 +31,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <cal/cal.hpp>
 #include <cal/il/cal_il.hpp>
-#include <cal/il/cal_il_math.hpp>
+#include <cal/il/math/cal_il_floor.hpp>
 
 using namespace boost;
 using namespace cal;
