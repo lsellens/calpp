@@ -26,7 +26,6 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <cal/cal.hpp>
 #include <cal/il/cal_il.hpp>
-#include <cal/il/cal_il_math.hpp>
 
 using namespace boost;
 using namespace cal;
@@ -42,9 +41,9 @@ void kernel_peekperf()
     float4              a,b;
     uint1               i;
 
-    a = float4(42);
-    b = float4(42);
-    i = uint1(NR_ITERATIONS);
+    a = 42;
+    b = 42;
+    i = NR_ITERATIONS;
 
     il_while(i) {
         for(int k=0;k<(NR_MAD_INST/2);k++) {
@@ -53,7 +52,7 @@ void kernel_peekperf()
         }
         a = mad(a,a,a);
 
-        i -= uint1(1);
+        i -= 1;
     }
     il_endloop
 

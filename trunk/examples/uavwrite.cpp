@@ -40,7 +40,7 @@ void kernel_A()
     uint1          gid = get_global_id<uint1>();
 
     // raw uav is addressed in bytes, so we need to multiply gid by sizeof(uint)
-    uav[uint1(4)*gid] = gid;
+    uav[4*gid] = gid;
 }
 
 void kernel_B()
@@ -49,9 +49,9 @@ void kernel_B()
     uint1             gid = get_global_id<uint1>();
 
     uav(gid,0)  = gid;
-    uav(gid,4)  = uint1(0);
-    uav(gid,8)  = uint1(1);
-    uav(gid,12) = uint1(2);
+    uav(gid,4)  = 0;
+    uav(gid,8)  = 1;
+    uav(gid,12) = 2;
 }
 
 void kernel_C()
@@ -67,7 +67,7 @@ void kernel_C1()
     uav<uint2> uav(0,"1d");
     uint1      gid = get_global_id<uint1>();
 
-    uav(gid) = uint2(gid,uint1(0));
+    uav(gid) = uint2(gid,0);
 }
 
 void kernel_D()
@@ -76,8 +76,8 @@ void kernel_D()
     uint1      gid = get_global_id<uint1>();
     uint1      x,y;
 
-    x = gid/uint1(WORKGROUP_SIZE);
-    y = gid%uint1(WORKGROUP_SIZE);
+    x = gid/WORKGROUP_SIZE;
+    y = gid%WORKGROUP_SIZE;
 
     uav(y,x) = gid;
 }
@@ -88,10 +88,10 @@ void kernel_D1()
     uint1       gid = get_global_id<uint1>();
     uint1       x,y;
 
-    x = gid/uint1(WORKGROUP_SIZE);
-    y = gid%uint1(WORKGROUP_SIZE);
+    x = gid/WORKGROUP_SIZE;
+    y = gid%WORKGROUP_SIZE;
 
-    uav(y,x) = as_float4( uint4(gid,uint1(0),uint1(1),uint1(2)) );
+    uav(y,x) = as_float4( uint4(gid,0,1,2) );
 }
 
 std::string create_kernel( void (*kernel)() )
