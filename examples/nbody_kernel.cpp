@@ -81,7 +81,7 @@ void compute_interaction( const float4& a, const float4& b, float4& acc, float e
     r.y() = a.y() - b.y();
     r.z() = a.z() - b.z();
 
-    distSqr     = mad( r.x(), r.x(), mad( r.y(), r.y(), mad( r.z(), r.z(), float1(eps2) ) ) );
+    distSqr     = mad( r.x(), r.x(), mad( r.y(), r.y(), mad( r.z(), r.z(), eps2 ) ) );
     invDist     = rsqrt( distSqr );
     invDistCube = invDist*invDist*invDist;
     s           = b.w() * invDistCube;
@@ -101,20 +101,20 @@ void compute_body_acceleration( const input2d<float4>& input_data, float4* pos, 
     float2 p;
     int    i,j,k;
 
-    for(i=0;i<workitem_size;i++) acc[i] = float4(0);
+    for(i=0;i<workitem_size;i++) acc[i] = 0;
 
-    p = float2(0,0);
+    p = 0;
     il_while(tile_count)
     {
-        rlimit = p.x() + float1(tile_size-1);
-        px[0] = convert_float1( get_local_id(0) & uint1(tile_size-1) ) + p.x();
+        rlimit = p.x() + (tile_size-1);
+        px[0] = convert_float1( get_local_id(0) & (tile_size-1) ) + p.x();
         for(i=1;i<read_count;i++) px[i] = select( px[i-1]<rlimit, px[i-1]+float1(1), p.x() );
 
-        rlimit = p.x() + float1(tile_size-read_count);
-        c = uint1( tile_size/(read_count*unroll_count) + 1 );
+        rlimit = p.x() + (tile_size-read_count);
+        c = tile_size/(read_count*unroll_count) + 1;
         il_whileloop
         {
-            c = c - uint1(1);
+            c = c - 1;
             il_breakc(!c);
 
             for(i=0;i<unroll_count;i++) {
@@ -125,18 +125,18 @@ void compute_body_acceleration( const input2d<float4>& input_data, float4* pos, 
                 }
 
                 for(j=0;j<read_count;j++) {
-                    v = px[j] + float1(read_count);
-                    px[j] = select( px[j]<rlimit, v, v - float1(tile_size) );
+                    v = px[j] + read_count;
+                    px[j] = select( px[j]<rlimit, v, v - tile_size );
                 }
             }
         }
         il_endloop
 
-        p.x()       = p.x() + float1(tile_size);
+        p.x()       = p.x() + tile_size;
         t           = p.x()<_buffer_width;
         p.x()       = select( t, p.x(), float1(0) );
-        p.y()       = select( t, p.y(), p.y()+float1(1) );
-        tile_count -= uint1(1);
+        p.y()       = select( t, p.y(), p.y()+1 );
+        tile_count -= 1;
     }
     il_endloop
 }
@@ -173,13 +173,13 @@ void nbody_kernel( const input2d<float4>& input_data, global<float4>& output_dat
     uint1  idx,off;
     int    i;
 
-    idx = get_global_id(0)*uint1(workitem_size);
+    idx = get_global_id(0)*workitem_size;
 
     il_while(idx<data_size)
     {
         py    = convert_float1(idx/buffer_width);
         px[0] = convert_float1(idx%buffer_width);
-        for(i=1;i<workitem_size;i++) px[i] = px[0] + float1(i);
+        for(i=1;i<workitem_size;i++) px[i] = px[0] + i;
         for(i=0;i<workitem_size;i++) pos[i] = input_data(px[i],py);
 
         compute_body_acceleration( input_data, pos, acc, tile_count, _buffer_width, workitem_size, tile_size, read_count, unroll_count, eps2 );
@@ -195,7 +195,7 @@ void nbody_kernel( const input2d<float4>& input_data, global<float4>& output_dat
         off = convert_uint1( py2*_buffer_width + px[0] );
         for(i=0;i<workitem_size;i++) output_data[off+i] = nvel[i];
 
-        idx += uint1(workforce_size*workitem_size);
+        idx += workforce_size*workitem_size;
     }
     il_endloop
 }

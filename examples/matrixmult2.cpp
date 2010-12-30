@@ -61,11 +61,11 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
 
     assert( BX==8 && BY==8 );
 
-    p.xy() = floor(named_variable<float2>("vWinCoord0.xy"))*float2(2,2);
+    p.xy() = floor(named_variable<float2>("vWinCoord0.xy"))*2;
     p.zw() = float2(-2,0);
 
     for(i=0;i<BY;i++) {
-        for(j=0;j<BX4;j++) R[i][j]=float4(0);
+        for(j=0;j<BX4;j++) R[i][j]=0;
     }
 
     il_whileloop {
@@ -95,7 +95,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
             }
         }
 
-        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+        il_breakc( xsize<0 ); // hack to reduce register usage
 
         for(i=0;i<BY4;i++) {
             for(j=0;j<BX4;j++) {
@@ -110,7 +110,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
 
     uint1 s,step;
 
-    s    = cast_type<uint1>(p.y()*float1(4)*xsize + p.x());
+    s    = cast_type<uint1>(p.y()*4*xsize + p.x());
     step = cast_type<uint1>(xsize);
 
     for(i=0;i<BY;i++) {
@@ -213,10 +213,10 @@ int init()
 
     // create program
     std::string source = create_kernel_matrixmul();
-    //std::cout << source; // Uncomment to emit IL code
+    std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
-    //_program.disassemble(std::cout); // Uncomment to emit ISA code
+    _program.disassemble(std::cout); // Uncomment to emit ISA code
 
     // create kernel
     _kernel = Kernel(_program,"main");

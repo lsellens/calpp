@@ -56,11 +56,11 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
 
     assert( BX==8 && BY==8 );
 
-    p.xy() = (named_variable<float2>("vWinCoord0.xy")-float2(0.5));
+    p.xy() = (named_variable<float2>("vWinCoord0.xy")-0.5);
     p.zw() = float2( -2, -1 );
 
     for(i=0;i<BY;i++) {
-        for(j=0;j<BX4;j++) R[i][j]=float4(0);
+        for(j=0;j<BX4;j++) R[i][j]=0;
     }
 
     il_whileloop {
@@ -90,7 +90,7 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
             }
         }
 
-        il_breakc( xsize<float1(0) ); // hack to reduce register usage
+        il_breakc( xsize<0 ); // hack to reduce register usage
 
         for(i=0;i<BY4;i++) {
             for(j=0;j<BX4;j++) {
@@ -105,9 +105,9 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
 
     uint1 s,step;
 
-    p.xy() = (named_variable<float2>("vWinCoord0.xy")-float2(0.5))*float2(BX4,BY);
+    p.xy() = (named_variable<float2>("vWinCoord0.xy")-0.5)*float2(BX4,BY);
 
-    s    = cast_type<uint1>(p.y()*float1(4)*xsize + p.x());
+    s    = cast_type<uint1>(p.y()*4*xsize + p.x());
     step = cast_type<uint1>(xsize);
 
     for(i=0;i<BY;i++) {

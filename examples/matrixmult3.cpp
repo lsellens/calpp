@@ -51,7 +51,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
     p.zw() = float2(-1,-4);
 
     for(i=0;i<BY;i++) {
-        for(j=0;j<BX4;j++) R[i][j]=float4(0);
+        for(j=0;j<BX4;j++) R[i][j]=0;
     }
 
     il_whileloop {

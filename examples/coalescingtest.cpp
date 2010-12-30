@@ -46,12 +46,12 @@ void kernel_coalescing( input2d<float4>& A, global<float4>& result, int step)
     uint2       _p;
     uint1       i;
 
-    _p = uint2( get_group_id<uint1>()*uint1(NR_READS_X*THREADS_PER_GRP/step) + get_local_id<uint1>()%uint1(THREADS_PER_GRP/step)
-    , get_local_id<uint1>()/uint1(THREADS_PER_GRP/step) );
+    _p = uint2( get_group_id<uint1>()*(NR_READS_X*THREADS_PER_GRP/step) + get_local_id<uint1>()%(THREADS_PER_GRP/step)
+    , get_local_id<uint1>()/(THREADS_PER_GRP/step) );
     p0 = cast_type<float2>(_p);
-    v  = float4(0);
+    v  = 0;
 
-    i = uint1(NR_ITERATIONS);
+    i = NR_ITERATIONS;
 
     il_while(i) {
         p.y() = p0.y();
@@ -59,15 +59,14 @@ void kernel_coalescing( input2d<float4>& A, global<float4>& result, int step)
             p.x() = p0.x();
             for(int l=0;l<NR_READS_X;l++) {
                 v = v + A[p];
-                p.x() = p.x() + float1(THREADS_PER_GRP/step);
+                p.x() = p.x() + (THREADS_PER_GRP/step);
             }            
-            p.y() = p.y() + float1(step);
+            p.y() = p.y() + step;
         }
 
-        i = i - uint1(1);
+        i = i - 1;
     }
     il_endloop
-    
 
     result[get_global_id<uint1>()] = v;
 }
@@ -78,7 +77,7 @@ std::string create_kernel_coalescing( int step )
 
     code << "il_cs_2_0\n";
     code << format("dcl_num_thread_per_group %i\n") % (int)THREADS_PER_GRP;
-    
+
     Source::begin();
 
     input2d<float4>    A(0);
@@ -86,7 +85,7 @@ std::string create_kernel_coalescing( int step )
     kernel_coalescing(A,result,step);
 
     Source::end();
-    
+
     Source::emitHeader(code);
     Source::emitCode(code);
 
