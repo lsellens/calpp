@@ -91,19 +91,19 @@ double2 native_rsqrt( const expression<E1>& e1, double2_type  )
 }
 
 template<class E1>
-double1 rsqrt( const expression<E1>& a, float_type  )
+unary<E1,cal_unary_rsq<typename E1::value_type> > rsqrt( const expression<E1>& a, float_type  )
 {
     return native_rsqrt(a(),float_type());
 }
 
 template<class E1>
-double2 rsqrt( const expression<E1>& a, float2_type  )
+unary<E1,cal_unary_rsq<typename E1::value_type> > rsqrt( const expression<E1>& a, float2_type  )
 {
     return native_rsqrt(a(),float2_type());
 }
 
 template<class E1>
-double1 rsqrt( const expression<E1>& a, float4_type  )
+unary<E1,cal_unary_rsq<typename E1::value_type> > rsqrt( const expression<E1>& a, float4_type  )
 {
     return native_rsqrt(a(),float4_type());
 }

@@ -29,30 +29,34 @@
 #include <cal/il/cal_il_swizzle.hpp>
 #include <cal/il/cal_il_swizzle_traits.hpp>
 #include <cal/il/cal_il_source.hpp>
+#include <cal/il/cal_il_expression_assignable.hpp>
 
 namespace cal {
 namespace il {
 namespace detail {
 
 template<class E,int P0,int P1,int P2,int P3>
-class swizzle : public expression< swizzle<E,P0,P1,P2,P3> >
+class swizzle : public assignable_expression<typename E::value_type,swizzle<E,P0,P1,P2,P3> >
 {
 protected:
-    typedef expression< swizzle<E,P0,P1,P2,P3> >                 base_type;
-    typedef swizzle<E,P0,P1,P2,P3>                               self_type;
-    typedef const E                                              expression_type;
-    typedef typename E::const_closure_type                       expression_closure_type;
-    typedef swizzle_traits<typename E::value_type,P0,P1,P2,P3>   swizzle_trait;
+    typedef assignable_expression<typename E::value_type,swizzle<E,P0,P1,P2,P3> > base_type;
+    typedef swizzle<E,P0,P1,P2,P3>                                                self_type;
+    typedef const E                                                               expression_type;
+    typedef typename E::const_closure_type                                        expression_closure_type;
+    typedef swizzle_traits<typename E::value_type,P0,P1,P2,P3>                    swizzle_trait;
 
 public:
-    typedef typename swizzle_trait::value_type                   value_type;
-    typedef const self_type                                      const_closure_type;
-    typedef self_type                                            closure_type;
-    static const int                                             temp_reg_count = 0;
+    typedef typename swizzle_trait::value_type                                    value_type;
+    typedef const self_type                                                       const_closure_type;
+    typedef self_type                                                             closure_type;
+    static const int                                                              temp_reg_count = 0;
 
 protected:
     expression_closure_type _e;
     using base_type::index;
+
+public:
+    using base_type::operator=;
 
 protected:
     template<class E1>
@@ -64,12 +68,12 @@ protected:
     }
 
 public:
-    swizzle( const E& e ) : expression<swizzle<E,P0,P1,P2,P3> >(), _e(e)
+    swizzle( const E& e ) : base_type(), _e(e)
     {
         typedef boost::is_same<value_type,invalid_swizzle> assert_value;
         BOOST_STATIC_ASSERT( !assert_value::value );
     }
-    swizzle( const swizzle<E,P0,P1,P2,P3>& rhs ) : expression<swizzle<E,P0,P1,P2,P3> >(rhs), _e(rhs._e)
+    swizzle( const swizzle<E,P0,P1,P2,P3>& rhs ) : base_type(rhs), _e(rhs._e)
     {
     }
     ~swizzle()
@@ -86,7 +90,7 @@ public:
         BOOST_STATIC_ASSERT( value_type::type_size==1 || value_type::type_size==2 || value_type::type_size==4 );
         return make_swizzle(_e.resultCode(),swizzle_trait::i0,swizzle_trait::i1,swizzle_trait::i2,swizzle_trait::i3);
     }
-    
+
     self_type& operator=( const self_type& v )
     {
         BOOST_STATIC_ASSERT( E::swizzle_has_assign );
@@ -99,8 +103,8 @@ public:
         BOOST_STATIC_ASSERT( E::swizzle_has_assign );
         iEmitCode(v);
         return *this;
-    }            
-    
+    }
+
     template<class E1>
     self_type& operator=( const detail::expression<E1>& e )
     {
@@ -122,15 +126,18 @@ public:
     }
 };
 
-template<class E>
-class swizzable_expression : public expression<E>
+template<class T,class E>
+class swizzable_expression : public assignable_expression<T,E>
 {
 protected:
     using expression<E>::index;
 
 public:
-    swizzable_expression() : expression<E>() {}
-    swizzable_expression( const swizzable_expression& rhs ) : expression<E>(rhs) {}
+    using assignable_expression<T,E>::operator=;
+
+public:
+    swizzable_expression() : assignable_expression<T,E>() {}
+    swizzable_expression( const swizzable_expression& rhs ) : assignable_expression<T,E>(rhs) {}
     ~swizzable_expression() {}
 
     std::string resultCode() const

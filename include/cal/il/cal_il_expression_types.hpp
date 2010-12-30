@@ -35,25 +35,25 @@ namespace il {
 namespace detail {
 
 template<class E, class F>
-class unary : public swizzable_expression<unary<E,F> >
+class unary : public swizzable_expression<F,unary<E,F> >
 {
 protected:
-    typedef F                                       functor_type;
-    typedef swizzable_expression<unary<E,F> >       base_type;
-    typedef unary<E,F>                              self_type;
-    typedef const E                                 expression_type;
-    typedef typename E::const_closure_type          expression_closure_type;
-    
+    typedef F                                    functor_type;
+    typedef swizzable_expression<F,unary<E,F> >  base_type;
+    typedef unary<E,F>                           self_type;
+    typedef const E                              expression_type;
+    typedef typename E::const_closure_type       expression_closure_type;
+
 public:
-    typedef typename F::value_type                  value_type;
-    typedef const self_type                         const_closure_type;
-    typedef self_type                               closure_type;
-    static const int                                temp_reg_count = F::temp_reg_count;
+    typedef typename F::value_type               value_type;
+    typedef const self_type                      const_closure_type;
+    typedef self_type                            closure_type;
+    static const int                             temp_reg_count = F::temp_reg_count;
 
 public:
     expression_closure_type _e;
 
-protected:    
+protected:
     using base_type::index;
 
 public:
@@ -66,34 +66,34 @@ public:
 
     void emitCode( Source& prg, std::ostream& _out ) const
     {
-        _e.emitCode(prg,_out);        
+        _e.emitCode(prg,_out);
         _out << F::emitCode(resultCode(),_e.resultCode(),index);
     }
 };
 
 template<class E1, class E2, class F>
-class binary : public swizzable_expression<binary<E1,E2,F> >
+class binary : public swizzable_expression<F,binary<E1,E2,F> >
 {
 protected:
-    typedef F                                       functor_type;
-    typedef const E1                                expression1_type;
-    typedef const E2                                expression2_type;
-    typedef typename E1::const_closure_type         expression1_closure_type;
-    typedef typename E2::const_closure_type         expression2_closure_type;        
-    typedef swizzable_expression<binary<E1,E2,F> >  base_type;
-    typedef binary<E1,E2,F>                         self_type;
-    
+    typedef F                                         functor_type;
+    typedef const E1                                  expression1_type;
+    typedef const E2                                  expression2_type;
+    typedef typename E1::const_closure_type           expression1_closure_type;
+    typedef typename E2::const_closure_type           expression2_closure_type;
+    typedef swizzable_expression<F,binary<E1,E2,F> >  base_type;
+    typedef binary<E1,E2,F>                           self_type;
+
 public:
-    typedef typename F::value_type                  value_type;    
-    typedef const self_type                         const_closure_type;
-    typedef self_type                               closure_type;    
-    static const int                                temp_reg_count = F::temp_reg_count;
+    typedef typename F::value_type                    value_type;
+    typedef const self_type                           const_closure_type;
+    typedef self_type                                 closure_type;
+    static const int                                  temp_reg_count = F::temp_reg_count;
 
 public:
     expression1_closure_type _e1;
     expression2_closure_type _e2;
 
-protected:    
+protected:
     using base_type::index;
 
 public:
@@ -114,31 +114,31 @@ public:
 };
 
 template<class E1, class E2, class E3, class F>
-class ternary : public swizzable_expression<ternary<E1,E2,E3,F> >
+class ternary : public swizzable_expression<F,ternary<E1,E2,E3,F> >
 {
 protected:
-    typedef F                                           functor_type;
-    typedef const E1                                    expression1_type;
-    typedef const E2                                    expression2_type;
-    typedef const E3                                    expression3_type;
-    typedef typename E1::const_closure_type             expression1_closure_type;
-    typedef typename E2::const_closure_type             expression2_closure_type;
-    typedef typename E3::const_closure_type             expression3_closure_type;
-    typedef swizzable_expression<ternary<E1,E2,E3,F> >  base_type;
-    typedef ternary<E1,E2,E3,F>                         self_type;
+    typedef F                                             functor_type;
+    typedef const E1                                      expression1_type;
+    typedef const E2                                      expression2_type;
+    typedef const E3                                      expression3_type;
+    typedef typename E1::const_closure_type               expression1_closure_type;
+    typedef typename E2::const_closure_type               expression2_closure_type;
+    typedef typename E3::const_closure_type               expression3_closure_type;
+    typedef swizzable_expression<F,ternary<E1,E2,E3,F> >  base_type;
+    typedef ternary<E1,E2,E3,F>                           self_type;
 
 public:
-    typedef typename F::value_type                      value_type;    
-    typedef const self_type                             const_closure_type;
-    typedef self_type                                   closure_type;        
-    static const int                                    temp_reg_count = F::temp_reg_count;
+    typedef typename F::value_type                        value_type;
+    typedef const self_type                               const_closure_type;
+    typedef self_type                                     closure_type;
+    static const int                                      temp_reg_count = F::temp_reg_count;
 
 public:
     expression1_closure_type _e1;
     expression2_closure_type _e2;
     expression3_closure_type _e3;
 
-protected:    
+protected:
     using base_type::index;
 
 public:
@@ -160,7 +160,7 @@ public:
 };
 
 template<class E>
-class register_address 
+class register_address
 {
 protected:
     typedef register_address<E>                     self_type;
@@ -215,13 +215,13 @@ protected:
     typedef register_address<void>                  self_type;
     typedef void                                    expression_type;
     typedef void                                    expression_closure_type;
-    
+
 public:
     typedef uint_type                               value_type;
     typedef const self_type                         const_closure_type;
     typedef self_type                               closure_type;
 
-public:    
+public:
     int                     _offset;
 
 public:
@@ -428,16 +428,260 @@ mad( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const d
     return expression_type(e1(),e2(),e3());
 }
 
-template<class E>
-detail::register_address<E> operator+( const detail::expression<E>& e, int offset )
+//
+// mixed CAL++ IL and C types
+//
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_add<typename E1::value_type,typename E1::value_type> > operator+( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
 {
-    return detail::register_address<E>(e(),offset);
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_add<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_add<typename E1::value_type,typename E1::value_type> > operator+( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_add<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
 }
 
-template<class E>
-detail::register_address<E> operator-( const detail::expression<E>& e, int offset )
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_sub<typename E1::value_type,typename E1::value_type> > operator-( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
 {
-    return detail::register_address<E>(e(),-offset);
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_sub<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_sub<typename E1::value_type,typename E1::value_type> > operator-( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_sub<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_mul<typename E1::value_type,typename E1::value_type> > operator*( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_mul<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_mul<typename E1::value_type,typename E1::value_type> > operator*( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_mul<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_div<typename E1::value_type,typename E1::value_type> > operator/( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_div<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_div<typename E1::value_type,typename E1::value_type> > operator/( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_div<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_mod<typename E1::value_type,typename E1::value_type> > operator%( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_mod<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_mod<typename E1::value_type,typename E1::value_type> > operator%( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_mod<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_bitor<typename E1::value_type,typename E1::value_type> > operator|( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_bitor<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_bitor<typename E1::value_type,typename E1::value_type> > operator|( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_bitor<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_bitxor<typename E1::value_type,typename E1::value_type> > operator^( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_bitxor<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_bitxor<typename E1::value_type,typename E1::value_type> > operator^( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_bitxor<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_bitand<typename E1::value_type,typename E1::value_type> > operator&( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_bitand<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_bitand<typename E1::value_type,typename E1::value_type> > operator&( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_bitand<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_shl<typename E1::value_type,typename E1::value_type> > operator<<( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_shl<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_shl<typename E1::value_type,typename E1::value_type> > operator<<( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_shl<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_shr<typename E1::value_type,typename E1::value_type> > operator>>( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_shr<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_shr<typename E1::value_type,typename E1::value_type> > operator>>( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_shr<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_eq<typename E1::value_type,typename E1::value_type> > operator==( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_eq<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_eq<typename E1::value_type,typename E1::value_type> > operator==( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_eq<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_ne<typename E1::value_type,typename E1::value_type> > operator!=( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_ne<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_ne<typename E1::value_type,typename E1::value_type> > operator!=( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_ne<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_gt<typename E1::value_type,typename E1::value_type> > operator>( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_gt<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_gt<typename E1::value_type,typename E1::value_type> > operator>( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_gt<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_ge<typename E1::value_type,typename E1::value_type> > operator>=( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_ge<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_ge<typename E1::value_type,typename E1::value_type> > operator>=( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_ge<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_lt<typename E1::value_type,typename E1::value_type> > operator<( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_lt<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_lt<typename E1::value_type,typename E1::value_type> > operator<( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_lt<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1>
+detail::binary<E1,detail::value<E1>,detail::cal_binary_le<typename E1::value_type,typename E1::value_type> > operator<=( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::binary<E1,detail::value<E1>,detail::cal_binary_le<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( e1(), detail::value<E1>(v1) );
+}
+template<class E1>
+detail::binary<detail::value<E1>,E1,detail::cal_binary_le<typename E1::value_type,typename E1::value_type> > operator<=( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1 )
+{
+    typedef detail::binary<detail::value<E1>,E1,detail::cal_binary_le<typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type( detail::value<E1>(v1), e1() );
+}
+
+template<class E1,class E2>
+detail::ternary<detail::value<E1>,E1,E2,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E2::value_type> >
+mad( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
+{
+    typedef detail::ternary<detail::value<E1>,E1,E2,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E2::value_type> > expression_type;
+    return expression_type(detail::value<E1>(v1),e1(),e2());
+}
+template<class E1,class E2>
+detail::ternary<E1,detail::value<E1>,E2,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E2::value_type> >
+mad( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1, const detail::expression<E2>& e2 )
+{
+    typedef detail::ternary<E1,detail::value<E1>,E2,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E2::value_type> > expression_type;
+    return expression_type(e1(),detail::value<E1>(v1),e2());
+}
+template<class E1,class E2>
+detail::ternary<E1,E2,detail::value<E1>,detail::cal_ternary_mad<typename E1::value_type,typename E2::value_type,typename E1::value_type> >
+mad( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const typename E1::value_type::component_type& v1 )
+{
+    typedef detail::ternary<E1,E2,detail::value<E1>,detail::cal_ternary_mad<typename E1::value_type,typename E2::value_type,typename E1::value_type> > expression_type;
+    return expression_type(e1(),e2(),detail::value<E1>(v1));
+}
+
+template<class E1>
+detail::ternary<detail::value<E1>,detail::value<E1>,E1,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E1::value_type> >
+mad( const typename E1::value_type::component_type& v1, const typename E1::value_type::component_type& v2, const detail::expression<E1>& e1 )
+{
+    typedef detail::ternary<detail::value<E1>,detail::value<E1>,E1,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type(detail::value<E1>(v1),detail::value<E1>(v2),e1());
+}
+template<class E1>
+detail::ternary<detail::value<E1>,E1,detail::value<E1>,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E1::value_type> >
+mad( const typename E1::value_type::component_type& v1, const detail::expression<E1>& e1, const typename E1::value_type::component_type& v2 )
+{
+    typedef detail::ternary<detail::value<E1>,E1,detail::value<E1>,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type(detail::value<E1>(v1),e1(),detail::value<E1>(v2));
+}
+template<class E1>
+detail::ternary<E1,detail::value<E1>,detail::value<E1>,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E1::value_type> >
+mad( const detail::expression<E1>& e1, const typename E1::value_type::component_type& v1, const typename E1::value_type::component_type& v2 )
+{
+    typedef detail::ternary<E1,detail::value<E1>,detail::value<E1>,detail::cal_ternary_mad<typename E1::value_type,typename E1::value_type,typename E1::value_type> > expression_type;
+    return expression_type(e1(),detail::value<E1>(v1),detail::value<E1>(v2));
 }
 
 template<class E>
