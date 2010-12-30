@@ -22,8 +22,6 @@
 #ifndef __CAL_IL_MATH_POLEVL_H
 #define __CAL_IL_MATH_POLEVL_H
 
-#include <cal/il/cal_il_types.hpp>
-
 namespace cal {
 namespace il {
 
@@ -37,10 +35,10 @@ variable<typename E1::value_type> polevl( const detail::expression<E1>& x, const
 
     _x = x();
 
-    r = variable<value_type>(coef[0]);
+    r = coef[0];
 
     for(int i=1;i<N;i++) {
-        r = mad( r, _x, variable<value_type>(coef[i]) );
+        r = mad( r, _x, coef[i] );
     }
 
     return r;
@@ -54,10 +52,10 @@ variable<typename E1::value_type> p1evl( const detail::expression<E1>& x, const 
 
     _x = x();
 
-    r = _x + variable<value_type>(coef[0]);
+    r = _x + coef[0];
 
     for(int i=1;i<N;i++) {
-        r = mad( r, _x, variable<value_type>(coef[i]) );
+        r = mad( r, _x, coef[i] );
     }
 
     return r;

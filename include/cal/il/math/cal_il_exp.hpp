@@ -23,6 +23,8 @@
 #define __CAL_IL_MATH_EXP_H
 
 #include <cal/il/math/cal_il_dd.hpp>
+#include <cal/il/math/cal_il_round.hpp>
+#include <cal/il/math/cal_il_ldexp.hpp>
 #include <boost/limits.hpp>
 #include <cmath>
 
@@ -30,6 +32,62 @@ namespace cal {
 namespace il {
 
 namespace detail {
+
+template<class S1>
+struct cal_unary_exp {
+    typedef invalid_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        BOOST_STATIC_ASSERT(sizeof(S1) != sizeof(S1));
+        return std::string();
+    }    
+};
+
+template<>
+struct cal_unary_exp<float_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+    
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("exn %s,%s\n") % r % s0).str();
+    }    
+};
+
+template<>
+struct cal_unary_exp<float2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=2;
+    
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov r%3%.xy,%2%\n"
+                              "exn r%4%.x,r%3%.x\n"
+                              "exn r%4%.y,r%3%.y\n"
+                              "mov %1%,r%4%.xy\n") % r % s0 % t0 % (t0+1)).str();
+    }    
+};
+
+template<>
+struct cal_unary_exp<float4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=2;
+    
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov r%3%,%2%\n"
+                              "exn r%4%.x,%3%.x\n"
+                              "exn r%4%.y,%3%.y\n"
+                              "exn r%4%.z,%3%.z\n"
+                              "exn r%4%.w,%3%.w\n"
+                              "mov %1%,r%4%\n") % r % s0 % t0 % (t0+1)).str();
+    }
+};
 
 template<class E1>
 unary<E1,cal_unary_exp<typename E1::value_type> > native_exp( const expression<E1>& e1, float_type  )

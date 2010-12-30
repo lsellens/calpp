@@ -22,8 +22,6 @@
 #ifndef __CAL_IL_MATH_DD_H
 #define __CAL_IL_MATH_DD_H
 
-#include <cal/il/cal_il_types.hpp>
-
 namespace cal {
 namespace il {
 
