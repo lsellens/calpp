@@ -36,20 +36,20 @@ namespace il {
 namespace detail {
 
 template<class T,class E>
-class uav_expression : public detail::swizzable_expression<uav_expression<T,E> >
+class uav_expression : public detail::swizzable_expression<T,uav_expression<T,E> >
 {
 protected:
-    typedef uav_expression<T,E>                                 self_type;
-    typedef detail::swizzable_expression< uav_expression<T,E> > base_type;
-    typedef const E                                             expression_type;
-    typedef typename E::const_closure_type                      expression_closure_type;
+    typedef uav_expression<T,E>                                  self_type;
+    typedef detail::swizzable_expression<T,uav_expression<T,E> > base_type;
+    typedef const E                                              expression_type;
+    typedef typename E::const_closure_type                       expression_closure_type;
 
 public:
-    typedef T                                                   value_type;
-    typedef const self_type                                     const_closure_type;
-    typedef self_type                                           closure_type;
-    static const int                                            temp_reg_count=1;
-    static const bool                                           swizzle_has_assign=false;
+    typedef T                                                    value_type;
+    typedef const self_type                                      const_closure_type;
+    typedef self_type                                            closure_type;
+    static const int                                             temp_reg_count=1;
+    static const bool                                            swizzle_has_assign=false;
 
 protected:
     int                     uav_index;
@@ -61,6 +61,7 @@ protected:
 
 public:
     using base_type::resultCode;
+    using base_type::operator=;
 
 protected:
     template<class E1>
@@ -153,20 +154,20 @@ public:
 };
 
 template<class T,class E>
-class uav_typed_expression : public detail::swizzable_expression<uav_typed_expression<T,E> >
+class uav_typed_expression : public detail::swizzable_expression<T,uav_typed_expression<T,E> >
 {
 protected:
-    typedef uav_typed_expression<T,E>                                 self_type;
-    typedef detail::swizzable_expression< uav_typed_expression<T,E> > base_type;
-    typedef const E                                                   expression_type;
-    typedef typename E::const_closure_type                            expression_closure_type;
+    typedef uav_typed_expression<T,E>                                  self_type;
+    typedef detail::swizzable_expression<T,uav_typed_expression<T,E> > base_type;
+    typedef const E                                                    expression_type;
+    typedef typename E::const_closure_type                             expression_closure_type;
 
 public:
-    typedef T                                                   value_type;
-    typedef const self_type                                     const_closure_type;
-    typedef self_type                                           closure_type;
-    static const int                                            temp_reg_count=1;
-    static const bool                                           swizzle_has_assign=false;
+    typedef T                                                          value_type;
+    typedef const self_type                                            const_closure_type;
+    typedef self_type                                                  closure_type;
+    static const int                                                   temp_reg_count=1;
+    static const bool                                                  swizzle_has_assign=false;
 
 protected:
     int                     uav_index;
@@ -176,6 +177,7 @@ protected:
 
 public:
     using base_type::resultCode;
+    using base_type::operator=;
 
 protected:
     template<class E1>

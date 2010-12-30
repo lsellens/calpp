@@ -36,16 +36,16 @@ namespace il {
 namespace detail {
 
 template<class T,class E,int DIM>
-class input_expression : public detail::swizzable_expression<input_expression<T,E,DIM> >
+class input_expression : public detail::swizzable_expression<T,input_expression<T,E,DIM> >
 {
 protected:
     typedef input_expression<T,E,DIM>                                   self_type;
-    typedef detail::swizzable_expression< input_expression<T,E,DIM> >   base_type;
+    typedef detail::swizzable_expression<T,input_expression<T,E,DIM> >  base_type;
     typedef const E                                                     expression_type;
     typedef typename E::const_closure_type                              expression_closure_type;
 
 public:
-    typedef T                                                           value_type;    
+    typedef T                                                           value_type;
     typedef const self_type                                             const_closure_type;
     typedef self_type                                                   closure_type;
     static const int                                                    temp_reg_count=0;
@@ -83,25 +83,29 @@ public:
 };
 
 template<class T,class E>
-class indexed_expression : public detail::swizzable_expression<indexed_expression<T,E> >
+class indexed_expression : public detail::swizzable_expression<T,indexed_expression<T,E> >
 {
 protected:
-    typedef indexed_expression<T,E>                                 self_type;
-    typedef detail::swizzable_expression<indexed_expression<T,E> >  base_type;
-    typedef const E                                                 expression_type;
-    typedef typename E::const_closure_type                          expression_closure_type;
-        
+    typedef indexed_expression<T,E>                                  self_type;
+    typedef detail::swizzable_expression<T,indexed_expression<T,E> > base_type;
+    typedef const E                                                  expression_type;
+    typedef typename E::const_closure_type                           expression_closure_type;
+
 public:
-    typedef T                                                       value_type;
-    typedef const self_type                                         const_closure_type;
-    typedef self_type                                               closure_type;
-    static const int                                                temp_reg_count=0;
-    static const bool                                               swizzle_has_assign=true;
+    typedef T                                                        value_type;
+    typedef const self_type                                          const_closure_type;
+    typedef self_type                                                closure_type;
+    static const int                                                 temp_reg_count=0;
+    static const bool                                                swizzle_has_assign=true;
+
+public:
+    using base_type::operator=;
 
 protected:
     expression_closure_type _e;
     std::string             _reg_name;
     using base_type::index;
+
 
 protected:
     template<class E1>
@@ -138,12 +142,12 @@ public:
         iEmitCode(v);
         return *this;
     }
-    
+
     const indexed_expression<T,E>& operator=( const indexed_expression<T,E>& v ) const
     {
         iEmitCode(v);
         return *this;
-    }    
+    }
 
     template<class E1>
     indexed_expression<T,E>& operator=( const detail::expression<E1>& e )
@@ -161,24 +165,25 @@ public:
         BOOST_STATIC_ASSERT( assert_value::value );        
         iEmitCode(e());
         return *this;
-    }    
+    }
 };
 
 template<class T,class E>
-class lds_expression : public detail::swizzable_expression<lds_expression<T,E> >
+class lds_expression : public detail::swizzable_expression<T,lds_expression<T,E> >
 {
 protected:
-    typedef lds_expression<T,E>                                 self_type;
-    typedef detail::swizzable_expression< lds_expression<T,E> > base_type;
-    typedef const E                                             expression_type;
-    typedef typename E::const_closure_type                      expression_closure_type;
-        
+    typedef lds_expression<T,E>                                  self_type;
+    typedef detail::swizzable_expression<T,lds_expression<T,E> > base_type;
+    typedef const E                                              expression_type;
+    typedef typename E::const_closure_type                       expression_closure_type;
+
 public:
-    typedef T                                                   value_type;
-    typedef const self_type                                     const_closure_type;
-    typedef self_type                                           closure_type;
-    static const int                                            temp_reg_count=1;
-    static const bool                                           swizzle_has_assign=false;
+    typedef T                                                    value_type;
+    typedef const self_type                                      const_closure_type;
+    typedef self_type                                            closure_type;
+    static const int                                             temp_reg_count=1;
+    static const bool                                            swizzle_has_assign=false;
+
 
 protected:
     int                     lds_index;
@@ -187,6 +192,7 @@ protected:
 
 public:
     using base_type::resultCode;
+    using base_type::operator=;
 
 protected:
     template<class E1>
@@ -300,23 +306,22 @@ public:
 };
 
 template<class T,class E1,class E2>
-class lds2_expression : public detail::swizzable_expression<lds2_expression<T,E1,E2> >
+class lds2_expression : public detail::swizzable_expression<T,lds2_expression<T,E1,E2> >
 {
 protected:
     typedef lds2_expression<T,E1,E2>                                    self_type;
-    typedef detail::swizzable_expression< lds2_expression<T,E1,E2> >    base_type;
+    typedef detail::swizzable_expression<T,lds2_expression<T,E1,E2> >   base_type;
     typedef const E1                                                    expression1_type;
     typedef typename E1::const_closure_type                             expression1_closure_type;
     typedef const E2                                                    expression2_type;
     typedef typename E2::const_closure_type                             expression2_closure_type;
-        
-        
+
 public:
-    typedef T                                                   value_type;
-    typedef const self_type                                     const_closure_type;
-    typedef self_type                                           closure_type;
-    static const int                                            temp_reg_count=2;
-    static const bool                                           swizzle_has_assign=false;
+    typedef T                                                           value_type;
+    typedef const self_type                                             const_closure_type;
+    typedef self_type                                                   closure_type;
+    static const int                                                    temp_reg_count=2;
+    static const bool                                                   swizzle_has_assign=false;
 
 protected:
     int                         lds_index;
@@ -326,6 +331,7 @@ protected:
 
 public:
     using base_type::resultCode;
+    using base_type::operator=;
 
 protected:
     template<class E>
@@ -459,19 +465,19 @@ private:
 } // detail
 
 template<class T>
-class value : public detail::swizzable_expression<value<T> >
+class value : public detail::swizzable_expression<T,value<T> >
 {
 protected:
-    typedef value<T>                                  self_type;
-    typedef detail::swizzable_expression< value<T> >  base_type;
-    
+    typedef value<T>                                        self_type;
+    typedef detail::swizzable_expression<T,value<T> >       base_type;
+
 public:
     typedef typename detail::base_cal_type<T>::value        value_type;
     typedef const self_type                                 const_closure_type;
     typedef self_type                                       closure_type;
     static const int                                        temp_reg_count=0;
     static const bool                                       swizzle_has_assign=false;
-       
+
 protected:
     typedef typename value_type::component_type         component_type;
     typedef union data_type_union { boost::array<component_type,value_type::component_count> base; boost::array<boost::uint32_t,4> hex; } data_type;
@@ -499,63 +505,64 @@ public:
         if( _data.base.size()>2 ) _data.base[2] = v0;
         if( _data.base.size()>3 ) _data.base[3] = v1;
     }
-    
+
     explicit value( const component_type& v0, const component_type& v1, const component_type& v2, const component_type& v3 ) : base_type()
     {
         BOOST_STATIC_ASSERT( value_type::component_count==4 );
-        _data.hex.assign(0);        
+        _data.hex.assign(0);
         _data.base[0] = v0;
         _data.base[1] = v1;
         _data.base[2] = v2;
         _data.base[3] = v3;
-    }        
+    }
     value( const value<T>& rhs ) : base_type(rhs), _data(rhs._data)
     {
-    }    
+    }
     ~value()
     {
     }
 
     void emitCode( Source& prg, std::ostream& _out ) const
-    {        
+    {
     }
 
     std::string resultCode() const
     {
         int     idx = Source::code.getLiteral( _data.hex );
         return detail::make_swizzle( (boost::format("l%i") % idx).str(), value_type::type_size );
-    }    
+    }
 };
-              
+
 template<class T>
-class variable : public detail::swizzable_expression< variable<T> >
+class variable : public detail::swizzable_expression<T,variable<T> >
 {
 protected:
-    typedef variable<T>                                 self_type;
-    typedef detail::swizzable_expression< variable<T> > base_type;
-    
+    typedef variable<T>                                  self_type;
+    typedef detail::swizzable_expression<T,variable<T> > base_type;
+
 public:
-    typedef typename detail::base_cal_type<T>::value    value_type;
-    typedef detail::variable_clone<self_type>           closure_type;
-    typedef const closure_type                          const_closure_type;
-    
-    static const int                                    temp_reg_count=0;
-    static const bool                                   swizzle_has_assign=true;
-    
+    typedef typename detail::base_cal_type<T>::value     value_type;
+    typedef detail::variable_clone<self_type>            closure_type;
+    typedef const closure_type                           const_closure_type;
+
+    static const int                                     temp_reg_count=0;
+    static const bool                                    swizzle_has_assign=true;
+
 protected:
     typedef typename value_type::component_type         component_type;
     typedef union data_type_union { boost::array<component_type,value_type::component_count> base; boost::array<boost::uint32_t,4> hex; } data_type;
-    
+
 protected:
     using base_type::index;
 
 public:
     using base_type::resultCode;
+    using base_type::operator=;
 
 protected:
     template<class E>
     void iEmitCode( const E& e ) const
-    {        
+    {
         e.emitCode(Source::code,Source::code.stream());
         Source::code << boost::format("mov %s,%s\n") % resultCode() % e.resultCode();
     }
@@ -567,20 +574,20 @@ public:
     variable( const variable<T>& rhs ) : base_type()
     {
         iEmitCode(rhs);
-    }    
-    
+    }
+
     template<class E>
     variable( const detail::expression<E>& e ) : base_type()
     {
         typedef boost::is_same<typename E::value_type,value_type> assert_value;
-        BOOST_STATIC_ASSERT( assert_value::value );        
+        BOOST_STATIC_ASSERT( assert_value::value );
         iEmitCode(e());
     }
     template<class E1,class E2>
     explicit variable( const detail::expression<E1>& e1, const detail::expression<E2>& e2 ) : base_type()
     {
         typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type, value_type> assert_value;
-        BOOST_STATIC_ASSERT( assert_value::value );        
+        BOOST_STATIC_ASSERT( assert_value::value );
         iEmitCode(merge_types(e1(),e2()));
     }
     template<class E1,class E2,class E3,class E4>
@@ -589,27 +596,170 @@ public:
         typedef typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type value1_type;
         typedef typename detail::cal_binary_cast<typename E3::value_type,typename E4::value_type>::value_type value2_type;
         typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
-        BOOST_STATIC_ASSERT( assert_value::value );        
+        BOOST_STATIC_ASSERT( assert_value::value );
         iEmitCode(merge_types(e1(),e2(),e3(),e4()));
-    }        
+    }
+
     explicit variable( const component_type& v0 ) : base_type()
     {
         iEmitCode(value<value_type>(v0));
     }
-
     explicit variable( const component_type& v0, const component_type& v1 ) : base_type()
     {
         iEmitCode(value<value_type>(v0,v1));
     }
-
     explicit variable( const component_type& v0, const component_type& v1, const component_type& v2, const component_type& v3 ) : base_type()
     {
         iEmitCode(value<value_type>(v0,v1,v2,v3));
     }
 
+    template<class E1>
+    explicit variable( const detail::expression<E1>& e1, const component_type& v1 ) : base_type()
+    {
+        typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(e1(),value<typename E1::value_type>(v1)));
+    }
+    template<class E1>
+    explicit variable( const component_type& v1, const detail::expression<E1>& e1 ) : base_type()
+    {
+        typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(value<typename E1::value_type>(v1),e1()));
+    }
+
+    template<class E1,class E2,class E3>
+    explicit variable( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const detail::expression<E3>& e3, const component_type& v1 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E3::value_type,typename E1::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(e1(),e2(),e3(),value<typename E1::value_type>(v1)));
+    }
+    template<class E1,class E2,class E3>
+    explicit variable( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const component_type& v1, const detail::expression<E3>& e3  ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E3::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(e1(),e2(),value<typename E1::value_type>(v1),e3()));
+    }
+    template<class E1,class E2,class E3>
+    explicit variable( const detail::expression<E1>& e1, const component_type& v1, const detail::expression<E2>& e2, const detail::expression<E3>& e3 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E2::value_type,typename E3::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(e1(),value<typename E1::value_type>(v1),e2(),e3()));
+    }
+    template<class E1,class E2,class E3>
+    explicit variable( const component_type& v1, const detail::expression<E1>& e1, const detail::expression<E2>& e2, const detail::expression<E3>& e3 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E2::value_type,typename E3::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(value<typename E1::value_type>(v1),e1(),e2(),e3()));
+    }
+
+    template<class E1,class E2>
+    explicit variable( const component_type& v1, const component_type& v2, const detail::expression<E1>& e1, const detail::expression<E2>& e2 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(value<typename E1::value_type>(v1),value<typename E1::value_type>(v2),e1(),e2()));
+    }
+    template<class E1,class E2>
+    explicit variable( const component_type& v1, const detail::expression<E1>& e1, const component_type& v2, const detail::expression<E2>& e2 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(value<typename E1::value_type>(v1),e1(),value<typename E1::value_type>(v2),e2()));
+    }
+    template<class E1,class E2>
+    explicit variable( const component_type& v1, const detail::expression<E1>& e1, const detail::expression<E2>& e2, const component_type& v2 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E2::value_type,typename E1::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(value<typename E1::value_type>(v1),e1(),e2(),value<typename E1::value_type>(v2)));
+    }
+    template<class E1,class E2>
+    explicit variable( const detail::expression<E1>& e1, const component_type& v1, const component_type& v2, const detail::expression<E2>& e2 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(e1(),value<typename E1::value_type>(v1),value<typename E1::value_type>(v2),e2()));
+    }
+    template<class E1,class E2>
+    explicit variable( const detail::expression<E1>& e1, const component_type& v1, const detail::expression<E2>& e2, const component_type& v2 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E2::value_type,typename E1::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(e1(),value<typename E1::value_type>(v1),e2(),value<typename E1::value_type>(v2)));
+    }
+    template<class E1,class E2>
+    explicit variable( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const component_type& v1, const component_type& v2 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(e1(),e2(),value<typename E1::value_type>(v1),value<typename E1::value_type>(v2)));
+    }
+
+    template<class E1>
+    explicit variable( const component_type& v1, const component_type& v2, const component_type& v3, const detail::expression<E1>& e1 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(value<typename E1::value_type>(v1),value<typename E1::value_type>(v2),value<typename E1::value_type>(v3),e1()));
+    }
+    template<class E1>
+    explicit variable( const component_type& v1, const component_type& v2, const detail::expression<E1>& e1, const component_type& v3 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(value<typename E1::value_type>(v1),value<typename E1::value_type>(v2),e1(),value<typename E1::value_type>(v3)));
+    }
+    template<class E1>
+    explicit variable( const component_type& v1, const detail::expression<E1>& e1, const component_type& v2, const component_type& v3 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(value<typename E1::value_type>(v1),e1(),value<typename E1::value_type>(v2),value<typename E1::value_type>(v3)));
+    }
+    template<class E1>
+    explicit variable( const detail::expression<E1>& e1, const component_type& v1, const component_type& v2, const component_type& v3 ) : base_type()
+    {
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value1_type;
+        typedef typename detail::cal_binary_cast<typename E1::value_type,typename E1::value_type>::value_type value2_type;
+        typedef boost::is_same<typename detail::cal_binary_cast<value1_type,value2_type>::value_type, value_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        iEmitCode(merge_types(e1(),value<typename E1::value_type>(v1),value<typename E1::value_type>(v2),value<typename E1::value_type>(v3)));
+    }
+
     void clone( const variable<T>& rhs ) 
     {
-        index     = rhs.index;
+        index = rhs.index;
     }
 
     ~variable()
@@ -634,63 +784,14 @@ public:
         iEmitCode(e());
         return *this;
     }
-
-    template<class E>
-    variable<T>& operator+=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) + e();        
-        return *this;
-    }
-
-    template<class E>
-    variable<T>& operator-=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) - e();
-        return *this;
-    }
-
-    template<class E>
-    variable<T>& operator*=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) * e();
-        return *this;
-    }
-
-    template<class E>
-    variable<T>& operator/=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) / e();
-        return *this;
-    }
-
-    template<class E>
-    variable<T>& operator%=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) % e();
-        return *this;
-    }
-
-    template<class E>
-    variable<T>& operator&=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) & e();
-        return *this;
-    }
-
-    template<class E>
-    variable<T>& operator|=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) | e();
-        return *this;
-    }
 };
 
 template<class T>
-class named_variable : public detail::swizzable_expression< named_variable<T> >
+class named_variable : public detail::swizzable_expression<T,named_variable<T> >
 {
 protected:
     typedef named_variable<T>                                   self_type;
-    typedef detail::swizzable_expression< named_variable<T> >   base_type;
+    typedef detail::swizzable_expression<T,named_variable<T> >  base_type;
 
 public:
     typedef typename detail::base_cal_type<T>::value            value_type;
@@ -710,6 +811,9 @@ protected:
         e.emitCode(Source::code,Source::code.stream());
         Source::code << boost::format("mov %s,%s\n") % detail::mask_output(resultCode()) % detail::match_input_to_output(resultCode(),e.resultCode());
     }
+
+public:
+    using base_type::operator=;
 
 public:
     named_variable( const std::string& name ) : base_type(), _name(name)
@@ -744,55 +848,6 @@ public:
         typedef boost::is_same<typename E::value_type,value_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );        
         iEmitCode(e());
-        return *this;
-    }
-
-    template<class E>
-    named_variable<T>& operator+=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) + e();        
-        return *this;
-    }
-
-    template<class E>
-    named_variable<T>& operator-=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) - e();
-        return *this;
-    }
-
-    template<class E>
-    named_variable<T>& operator*=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) * e();
-        return *this;
-    }
-
-    template<class E>
-    named_variable<T>& operator/=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) / e();
-        return *this;
-    }
-
-    template<class E>
-    named_variable<T>& operator%=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) % e();
-        return *this;
-    }
-
-    template<class E>
-    named_variable<T>& operator&=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) & e();
-        return *this;
-    }
-
-    template<class E>
-    named_variable<T>& operator|=( const detail::expression<E>& e )
-    {
-        (*this) = (*this) | e();
         return *this;
     }
 };
@@ -830,12 +885,12 @@ public:
     }
 
     template<class E>
-    detail::input_expression<value_type,E,1> operator()( const detail::register_address<E>& a ) const
+    detail::input_expression<value_type,E,1> operator()( const detail::binary<E,detail::value<E>,detail::cal_binary_add<typename E::value_type,typename E::value_type> >& e ) const
     {
         typedef boost::is_same<typename E::value_type,float_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
 
-        return detail::input_expression<value_type,E,1>(input_index,a._e,a._offset,0,input_sampler);
+        return detail::input_expression<value_type,E,1>(input_index,e._e1,e._e2.getValue(),0,input_sampler);
     }
 
     template<class E>
@@ -892,40 +947,54 @@ public:
         return expression_type(input_index,merge_types(x(),y()),0,0,input_sampler);
     }
 
+    template<class E>
+    detail::input_expression<value_type,E,1> operator()( const detail::binary<E,detail::value<E>,detail::cal_binary_add<typename E::value_type,typename E::value_type> >& e ) const
+    {
+        typedef boost::is_same<typename E::value_type,float_type> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+
+        return detail::input_expression<value_type,E,1>(input_index,e._e1,e._e2.getValue(),0,input_sampler);
+    }
+
+
+
     template<class E1,class E2>
-    detail::input_expression<value_type, detail::binary<typename E1::closure_type,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> 
-    operator()( const detail::register_address<E1>& x, const detail::register_address<E2>& y ) const
+    detail::input_expression<value_type, detail::binary<typename E1::closure_type,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2>
+    operator()( const detail::binary<E1,detail::value<E1>,detail::cal_binary_add<typename E1::value_type,typename E1::value_type> >& x,
+                const detail::binary<E2,detail::value<E2>,detail::cal_binary_add<typename E2::value_type,typename E2::value_type> >& y ) const
     {
         typedef detail::input_expression<value_type, detail::binary<typename E1::closure_type,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> expression_type;
 
         typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type,float2_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
 
-        return expression_type(input_index,merge_types(x._e,y._e),x._offset,y._offset,input_sampler);
+        return expression_type(input_index,merge_types(x._e1,y._e1),x._e2.getValue(),y._e2.getValue(),input_sampler);
     }
 
     template<class E1,class E2>
     detail::input_expression<value_type, detail::binary<E1,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> 
-    operator()( const detail::expression<E1>& x, const detail::register_address<E2>& y ) const
+    operator()( const detail::expression<E1>& x,
+                const detail::binary<E2,detail::value<E2>,detail::cal_binary_add<typename E2::value_type,typename E2::value_type> >& y ) const
     {
         typedef detail::input_expression<value_type, detail::binary<E1,typename E2::closure_type, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> expression_type;
 
         typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type,float2_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
 
-        return expression_type(input_index,merge_types(x(),y._e),0,y._offset,input_sampler);
+        return expression_type(input_index,merge_types(x(),y._e1),0,y._e2.getValue(),input_sampler);
     }
 
     template<class E1,class E2>
     detail::input_expression<value_type, detail::binary<typename E1::closure_type, E2, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> 
-    operator()( const detail::register_address<E1>& x, const detail::expression<E2>& y ) const
+    operator()( const detail::binary<E1,detail::value<E1>,detail::cal_binary_add<typename E1::value_type,typename E1::value_type> >& x,
+                const detail::expression<E2>& y ) const
     {
         typedef detail::input_expression<value_type, detail::binary<typename E1::closure_type, E2, detail::cal_binary_cast<typename E1::value_type,typename E2::value_type> >, 2> expression_type;
 
         typedef boost::is_same<typename detail::cal_binary_cast<typename E1::value_type,typename E2::value_type>::value_type,float2_type> assert_value;
         BOOST_STATIC_ASSERT( assert_value::value );
 
-        return expression_type(input_index,merge_types(x._e,y()),x._offset,0,input_sampler);
+        return expression_type(input_index,merge_types(x._e1,y()),x._e2.getValue(),0,input_sampler);
     }
 };
 
@@ -955,15 +1024,23 @@ public:
     }
 
     template<class E>
-    detail::indexed_expression<value_type,detail::register_address<E> > operator[]( const detail::register_address<E>& e ) const
+    detail::indexed_expression<value_type,detail::register_address<E> > operator[]( const detail::binary<E,detail::value<E>,detail::cal_binary_add<typename E::value_type,typename E::value_type> >& e ) const
     {
-        return detail::indexed_expression<value_type,detail::register_address<E> >(_reg_name,e);
+        typedef boost::is_same<typename E::value_type,int_type> assert_v1;
+        typedef boost::is_same<typename E::value_type,uint_type> assert_v2;
+        BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value );
+
+        return detail::indexed_expression<value_type,detail::register_address<E> >( _reg_name, detail::register_address<E>(e._e1, e._e2.getValue()) );
     }
 
     template<class E>
-    detail::indexed_expression<value_type,detail::register_address<E> > operator()( const detail::register_address<E>& e ) const
+    detail::indexed_expression<value_type,detail::register_address<E> > operator()( const detail::binary<E,detail::value<E>,detail::cal_binary_add<typename E::value_type,typename E::value_type> >& e ) const
     {
-        return detail::indexed_expression<value_type,detail::register_address<E> >(_reg_name,e);
+        typedef boost::is_same<typename E::value_type,int_type> assert_v1;
+        typedef boost::is_same<typename E::value_type,uint_type> assert_v2;
+        BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value );
+
+        return detail::indexed_expression<value_type,detail::register_address<E> >( _reg_name, detail::register_address<E>(e._e1, e._e2.getValue()) );
     }
 
     template<class E>
