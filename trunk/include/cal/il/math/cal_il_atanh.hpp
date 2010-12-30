@@ -22,20 +22,22 @@
 #ifndef __CAL_IL_MATH_ATANH_H
 #define __CAL_IL_MATH_ATANH_H
 
+#include <cal/il/math/cal_il_log.hpp>
+
 namespace cal {
 namespace il {
 
 template<class E1>
 variable<typename E1::value_type> atanh( const detail::expression<E1>& x )
 {
-    typedef typename E1::value_type value_type;    
+    typedef typename E1::value_type value_type;
     variable<value_type>   v1,v2,_x;
 
     _x = x();
 
-    v1 = (variable<value_type>(1.)+_x);
-    v2 = (variable<value_type>(1.)-_x);
-    return variable<value_type>(0.5)*log(v1/v2);
+    v1 = (1.+_x);
+    v2 = (1.-_x);
+    return 0.5*log(v1/v2);
 }
 
 } // il

@@ -22,12 +22,96 @@
 #ifndef __CAL_IL_MATH_SQRT_H
 #define __CAL_IL_MATH_SQRT_H
 
-#include <cal/il/cal_il_types.hpp>
+#include <cal/il/math/cal_il_frexp.hpp>
+#include <cal/il/math/cal_il_ldexp.hpp>
+#include <cal/il/math/cal_il_rsqrt.hpp>
 
 namespace cal {
 namespace il {
 
 namespace detail {
+
+template<class S1>
+struct cal_unary_sqrt {
+    typedef invalid_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        BOOST_STATIC_ASSERT(sizeof(S1) != sizeof(S1));
+        return std::string();
+    }
+};
+
+template<>
+struct cal_unary_sqrt<float_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("sqrt %1%,%2%\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,1,1,1) ).str();
+    }
+};
+
+template<>
+struct cal_unary_sqrt<float2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("sqrt %1%,%2%\n"
+                              "sqrt %3%,%4%\n") % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,1,1,1)
+                                                % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,2,2,2) ).str();
+    }
+};
+
+template<>
+struct cal_unary_sqrt<float4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("sqrt %1%,%2%\n"
+                              "sqrt %3%,%4%\n"
+                              "sqrt %5%,%6%\n"
+                              "sqrt %7%,%8%\n" ) % mask_output(make_swizzle(r,1,0,0,0)) % make_swizzle(s0,1,1,1,1)
+                                                 % mask_output(make_swizzle(r,2,0,0,0)) % make_swizzle(s0,2,2,2,2)
+                                                 % mask_output(make_swizzle(r,3,0,0,0)) % make_swizzle(s0,3,3,3,3)
+                                                 % mask_output(make_swizzle(r,4,0,0,0)) % make_swizzle(s0,4,4,4,4) ).str();
+    }
+};
+
+template<>
+struct cal_unary_sqrt<double_type>
+{
+    typedef double_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("dsqrt %1%,%2%\n") % make_swizzle(r,1,2,0,0) % make_swizzle(s0,1,2,1,2) ).str();
+    }
+};
+
+template<>
+struct cal_unary_sqrt<double2_type>
+{
+    typedef double2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("dsqrt %1%,%2%\n"
+                              "dsqrt %3%,%4%\n") % make_swizzle(r,1,2,0,0) % make_swizzle(s0,1,2,1,2)
+                                                 % make_swizzle(r,3,4,0,0) % make_swizzle(s0,3,4,3,4) ).str();
+    }
+};
 
 template<class E1>
 unary<E1,cal_unary_sqrt<typename E1::value_type> > native_sqrt( const expression<E1>& e1, float_type  )

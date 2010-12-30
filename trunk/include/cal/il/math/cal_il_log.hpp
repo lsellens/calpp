@@ -22,8 +22,8 @@
 #ifndef __CAL_IL_MATH_LOG_H
 #define __CAL_IL_MATH_LOG_H
 
-#include <cal/il/cal_il_types.hpp>
 #include <cal/il/math/cal_il_polevl.hpp>
+#include <cal/il/math/cal_il_frexp.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/limits.hpp>
 
@@ -31,6 +31,62 @@ namespace cal {
 namespace il {
 
 namespace detail {
+
+template<class S1>
+struct cal_unary_log {
+    typedef invalid_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        BOOST_STATIC_ASSERT(sizeof(S1) != sizeof(S1));
+        return std::string();
+    }    
+};
+
+template<>
+struct cal_unary_log<float_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+    
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("ln %s,%s\n") % r % s0).str();
+    }    
+};
+
+template<>
+struct cal_unary_log<float2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=2;
+    
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov r%3%.xy,%2%\n"
+                              "ln  r%4%.x,r%3%.x\n"
+                              "ln  r%4%.y,r%3%.y\n"
+                              "mov %1%,r%4%.xy\n") % r % s0 % t0 % (t0+1)).str();
+    }    
+};
+
+template<>
+struct cal_unary_log<float4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=2;
+    
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov r%3%,%2%\n"
+                              "ln  r%4%.x,%3%.x\n"
+                              "ln  r%4%.y,%3%.y\n"
+                              "ln  r%4%.z,%3%.z\n"
+                              "ln  r%4%.w,%3%.w\n"
+                              "mov %1%,r%4%\n") % r % s0 % t0 % (t0+1)).str();
+    }    
+};
 
 template<class E1>
 unary<E1,cal_unary_log<typename E1::value_type> > native_log( const expression<E1>& e1, float_type  )
