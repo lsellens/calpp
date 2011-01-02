@@ -23,7 +23,7 @@
 #include <cal/cal.hpp>
 #include "dbl_nbody_worker.h"
 
-std::string create_nbody_kernel( cal::Device& device, int num_threads, int workitem_size, int tile_size, int read_count, int unroll_count, double eps2 );
+std::string create_nbody_kernel( cal::Device& device, int num_threads, int workitem_size, int tile_size, int read_count, int unroll_count, double eps2, bool native_rsqrt );
 
 using namespace boost;
 using namespace cal;
@@ -39,6 +39,7 @@ DNBodyWorker::DNBodyWorker()
     opt.unroll_count  = 8;
     opt.eps2          = 50;
     opt.dT            = 0.005;
+    opt.native_rsqrt  = true;
 
     _active_buffer    = 0;
     _exec_time        = 0;
@@ -61,7 +62,7 @@ void DNBodyWorker::init()
     devices  = _context.getInfo<CAL_CONTEXT_DEVICES>();
 
     // create program
-    std::string source = create_nbody_kernel(_device,opt.num_threads,opt.workitem_size,opt.tile_size,opt.read_count,opt.unroll_count,opt.eps2);
+    std::string source = create_nbody_kernel(_device,opt.num_threads,opt.workitem_size,opt.tile_size,opt.read_count,opt.unroll_count,opt.eps2,opt.native_rsqrt);
     //std::cout << source; // Uncomment to emit IL code
     _program = Program( _context, source.c_str(), source.length() );
     _program.build(devices);
@@ -218,7 +219,10 @@ void DNBodyWorker::showFLOPS()
 {
     double tms = (double)_exec_time/1000.;
     double classic_mflops = (double)( ((uint64_t)opt.num_bodies * (uint64_t)opt.num_bodies * (uint64_t)38)/(uint64_t)_exec_time );
-    double modern_mflops  = (double)( ((uint64_t)opt.num_bodies * (uint64_t)opt.num_bodies * (uint64_t)20)/(uint64_t)_exec_time );
+    double modern_mflops;
+
+    if( opt.native_rsqrt ) modern_mflops = (double)( ((uint64_t)opt.num_bodies * (uint64_t)opt.num_bodies * (uint64_t)20)/(uint64_t)_exec_time );
+    else modern_mflops = (double)( ((uint64_t)opt.num_bodies * (uint64_t)opt.num_bodies * (uint64_t)29)/(uint64_t)_exec_time );
 
     std::cout << format("execution time %.2f ms, classic GFLOPS %.2f, modern GFLOPS %.2f\n")
                  % tms
