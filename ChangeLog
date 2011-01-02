@@ -19,6 +19,8 @@ Version 0.90
     native_rsqrt and improved precision for rsqrt(double)
     mixed IL and C types operators (+,-,...)
     refactoring of math library ( to improve compilation times only required files might be included )
+    changes in file layouts ( cal/il/cal_il.hpp moved to cal/cal_il.hpp, cal/il/cal_il_math.hpp moved to cal/cal_il_math.hpp )
+    improved mul, div, mod operators with C types ( automatic use of shl, shr, ldexp for power of 2 values ) - to enable compile with defined __CAL_USE_IMPROVED_MULDIV - use with caution ( double ldexp may triger CAL driver bug causing invalid results )
 
 Version 0.87
     IL kernel link bug fix

@@ -250,11 +250,8 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
   for(;;) usually is used for loop unroling at compilation time. if() can be used for conditional compilation.
 
 - special functions available
-    <cal/il/cal_il.hpp>
+    <cal/cal_il.hpp>
     mad   - multiply add
-    ldexp - ldexp 
-
-    <cal/il/cal_il_misc.hpp>
     barrier( int type )
     mem_fence( int type )
     read_mem_fence( int type )
@@ -269,7 +266,8 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
     get_group_id<uint4>()
     get_group_id( int idx )
 
-    <cal/il/cal_il_math.hpp> ( all functions support both floatX and doubleX )
+    <cal/cal_il_math.hpp> ( all functions support both floatX and doubleX )
+    ldexp
     fract
     round
     exp

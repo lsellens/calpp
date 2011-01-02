@@ -25,7 +25,7 @@
 #include <iostream>
 #include <boost/format.hpp>
 #include <cal/cal.hpp>
-#include <cal/il/cal_il.hpp>
+#include <cal/cal_il.hpp>
 
 using namespace boost;
 using namespace cal;

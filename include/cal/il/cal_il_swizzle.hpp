@@ -23,8 +23,9 @@
 #ifndef __CAL_IL_SWIZZLE_H
 #define __CAL_IL_SWIZZLE_H
 
-#include <boost/format.hpp>
-#include <boost/static_assert.hpp>
+#include <cassert>
+#include <string>
+#include <stdexcept>
 
 namespace cal {
 namespace il {

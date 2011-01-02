@@ -23,11 +23,7 @@
 #ifndef __CAL_IL_OCL_FUNCTIONS_H
 #define __CAL_IL_OCL_FUNCTIONS_H
 
-#include <boost/static_assert.hpp>
-#include <boost/format.hpp>
-#include <cal/il/cal_il_expression_types.hpp>
-#include <cal/il/cal_il_multimedia.hpp>
-#include <cal/il/cal_il_types.hpp>
+#include <cassert>
 
 namespace cal {
 namespace il {

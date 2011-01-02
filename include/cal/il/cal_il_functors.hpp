@@ -26,7 +26,6 @@
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
-#include <cal/il/cal_il_base_types.hpp>
 #include <cal/il/cal_il_functors_bitop.hpp>
 #include <cal/il/cal_il_functors_cast.hpp>
 #include <cal/il/cal_il_functors_relop.hpp>

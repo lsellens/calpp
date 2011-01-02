@@ -24,14 +24,20 @@
 #define __CAL_IL_H
 
 #include <cal/il/cal_il_base_types.hpp>
+#include <cal/il/cal_il_type_traits.hpp>
 #include <cal/il/cal_il_source.hpp>
+#include <cal/il/cal_il_swizzle.hpp>
+#include <cal/il/cal_il_expression_assignable.hpp>
+#include <cal/il/cal_il_expression_swizzle.hpp>
 #include <cal/il/cal_il_expression_types.hpp>
+#include <cal/il/cal_il_functors.hpp>
 #include <cal/il/cal_il_types.hpp>
+#include <cal/il/cal_il_operators.hpp>
+#include <cal/il/cal_il_operators_muldiv.hpp>
 #include <cal/il/cal_il_flowcontrol.hpp>
 #include <cal/il/cal_il_misc.hpp>
-#include <cal/il/cal_il_flat2d.hpp>
-#include <cal/il/cal_il_ocl_functions.hpp>
 #include <cal/il/cal_il_uav.hpp>
-#include <cal/il/cal_il_type_traits.hpp>
+#include <cal/il/cal_il_multimedia.hpp>
+#include <cal/il/cal_il_ocl_functions.hpp>
 
 #endif

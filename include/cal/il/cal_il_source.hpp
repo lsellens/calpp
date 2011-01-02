@@ -156,12 +156,12 @@ public:
     {
         next_instruction_index=0;
         next_literal_index=0;
-        
+
         input_data.clear();
         literal_data.clear();
 
         code_stream.str(std::string());
-        
+
         boost::array<boost::uint32_t,4>    data;
         data.assign(0);
         literal_data[data]=next_literal_index++;        

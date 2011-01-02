@@ -1,5 +1,5 @@
 /*
- * C++ to IL compiler/generator flattening 2d workspace support
+ * C++ to IL compiler/generator flat 2d workspace support
  * 
  * Copyright (C) 2010 Artur Kornacki
  *
@@ -22,10 +22,6 @@
 
 #ifndef __CAL_IL_FLAT2D_H
 #define __CAL_IL_FLAT2D_H
-
-#include <cal/il/cal_il_source.hpp>
-#include <cal/il/cal_il_types.hpp>
-#include <cal/il/cal_il_misc.hpp>
 
 #ifdef __CAL_HPP__
   #include <boost/cstdint.hpp>
@@ -136,7 +132,7 @@ inline void make_flat( ::cal::NDRange& global, ::cal::NDRange& local, const ::ca
 inline ::cal::NDRange make_flat_global( const ::cal::NDRange& _global, const ::cal::NDRange& _local )
 {
     ::cal::NDRange  global;
-    
+
     global.width  = _local.width*((_global.width+_local.width-1)/_local.width);
     global.height = _local.height*((_global.height+_local.height-1)/_local.height);
 
@@ -150,11 +146,11 @@ inline ::cal::NDRange make_flat_global( const ::cal::NDRange& _global, const ::c
 inline ::cal::NDRange make_flat_local( const ::cal::NDRange& _local )
 {
     ::cal::NDRange  local;
-    
+
     local.width  = _local.width*_local.height;
     local.height = 1;
     local.depth  = 1;
-    
+
     return local;
 }
 
