@@ -199,9 +199,9 @@ variable<typename E1::value_type> reciprocal( const expression<E1>& ed, double_t
     s = native_reciprocal(d,double_type());
 
     // Newton-Raphson iterations
-    t = mad( -d, s, double1(1) );
+    t = mad( -d, s, 1 );
     s = mad(  s, t, s );
-    t = mad( -d, s, double1(1) );
+    t = mad( -d, s, 1 );
     s = mad(  s, t, s );
 
     return s;
@@ -216,9 +216,9 @@ variable<typename E1::value_type> reciprocal( const expression<E1>& ed, double2_
     s = native_reciprocal(d,double2_type());
 
     // Newton-Raphson iterations
-    t = mad( -d, s, double2(1) );
+    t = mad( -d, s, 1 );
     s = mad(  s, t, s );
-    t = mad( -d, s, double2(1) );
+    t = mad( -d, s, 1 );
     s = mad(  s, t, s );
 
     return s;

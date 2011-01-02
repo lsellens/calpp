@@ -95,7 +95,7 @@ void dd_prod_dbl( variable<D>& r0, variable<D>& r1, const variable<D>& a0, const
     variable<D> p1,p2;
 
     p1 = dd::two_prod( a0, b, p2 );
-    p2 = p2 + a1*b;
+    p2 = mad(a1,b,p2);
     p1 = dd::quick_two_sum( p1, p2, p2 );
 
     r0 = p1;

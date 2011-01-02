@@ -35,8 +35,8 @@ variable<typename E1::value_type> atanh( const detail::expression<E1>& x )
 
     _x = x();
 
-    v1 = (1.+_x);
-    v2 = (1.-_x);
+    v1 = 1.+_x;
+    v2 = 1.-_x;
     return 0.5*log(v1/v2);
 }
 
