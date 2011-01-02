@@ -28,11 +28,14 @@ namespace cal {
 namespace il {
 
 template<class E1>
-variable<typename E1::value_type> tanh( const detail::expression<E1>& x )
+variable<typename E1::value_type> tanh( const detail::expression<E1>& _x )
 {
     typedef typename E1::value_type value_type;
+    variable<value_type> x;
 
-    return 1 - 2/(exp(2*x())+1);
+    x = _x();
+
+    return 1 - 2/(exp(x+x)+1);
 }
 
 }

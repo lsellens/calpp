@@ -76,6 +76,15 @@ detail::binary<E1,E2,detail::cal_binary_ldexp<typename E1::value_type,typename E
     return expression_type( e1(), e2() );
 }
 
+template<class E1>
+detail::binary<E1,detail::value<typename make_cal_type<boost::int32_t,E1::value_type::component_count>::value::value_type>,
+               detail::cal_binary_ldexp<typename E1::value_type,typename make_cal_type<boost::int32_t,E1::value_type::component_count>::value::value_type> > ldexp( const detail::expression<E1>& e1, int k )
+{
+    typedef detail::value<typename make_cal_type<boost::int32_t,E1::value_type::component_count>::value::value_type> value_type;
+    typedef detail::binary<E1,value_type,detail::cal_binary_ldexp< typename E1::value_type,typename value_type::value_type> > expression_type;
+    return expression_type( e1(), value_type(k) );
+}
+
 } // il
 } // cal
 

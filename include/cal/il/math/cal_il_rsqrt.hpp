@@ -147,8 +147,8 @@ double1 native_rsqrt( const expression<E1>& e1, double_type  )
     w = e1();
     x = frexp(w,e);
     x = cast_type<double1>( native_rsqrt(cast_type<float1>(x),float_type()) );
-    x = select( e&int1(0x1), double1(0.70710678118654752440)*x, x );
-    x = ldexp(x,-(e>>int1(1)));
+    x = select( e&0x1, 0.70710678118654752440*x, x );
+    x = ldexp(x,-(e>>1));
 
     return x;
 }
@@ -167,8 +167,8 @@ double2 native_rsqrt( const expression<E1>& e1, double2_type  )
     w = e1();
     x = frexp(w,e);
     x = cast_type<double2>( native_rsqrt(cast_type<float2>(x),float2_type()) );
-    x = select( e&int2(0x1), double2(0.70710678118654752440)*x, x );
-    x = ldexp(x,-(e>>int2(1)));
+    x = select( e&0x1, 0.70710678118654752440*x, x );
+    x = ldexp(x,-(e>>1));
 
     return x;
 }
@@ -197,11 +197,11 @@ double1 rsqrt( const expression<E1>& a, double_type  )
     double1 w,w2,x;
 
     w  = a();
-    w2 = double1(-0.5)*w;
+    w2 = -0.5*w;
     x  = native_rsqrt(w,double_type());
 
-    x  = x*mad( x*x, w2, double1(1.5) );
-    x  = x*mad( x*x, w2, double1(1.5) );
+    x  = x*mad( x*x, w2, 1.5 );
+    x  = x*mad( x*x, w2, 1.5 );
 
     return x;
 }
@@ -212,11 +212,11 @@ double2 rsqrt( const expression<E1>& a, double2_type  )
     double2 w,w2,x;
 
     w  = a();
-    w2 = double2(-0.5)*w;
+    w2 = -0.5*w;
     x  = native_rsqrt(w,double2_type());
 
-    x  = x*mad( x*x, w2, double2(1.5) );
-    x  = x*mad( x*x, w2, double2(1.5) );
+    x  = x*mad( x*x, w2, 1.5 );
+    x  = x*mad( x*x, w2, 1.5 );
 
     return x;
 }

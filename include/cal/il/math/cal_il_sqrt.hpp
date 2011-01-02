@@ -148,8 +148,8 @@ double1 native_sqrt( const expression<E1>& e1, double_type  )
     w = e1();
     x = frexp(w,e);
     x = cast_type<double1>( native_sqrt(cast_type<float1>(x),float_type()) );
-    x = select( e&int1(0x1), double1(1.41421356237309504880)*x, x );
-    x = ldexp(x,e>>int1(1));
+    x = select( e&0x1, 1.41421356237309504880*x, x );
+    x = ldexp(x,e>>1);
 
     return x;
 }
@@ -168,8 +168,8 @@ double2 native_sqrt( const expression<E1>& e1, double2_type  )
     w = e1();
     x = frexp(w,e);
     x = cast_type<double2>( native_sqrt(cast_type<float2>(x),float2_type()) );
-    x = select( e&int2(0x1), double2(1.41421356237309504880)*x, x );
-    x = ldexp(x,e>>int2(1));
+    x = select( e&0x1, 1.41421356237309504880*x, x );
+    x = ldexp(x,e>>1);
 
     return x;
 }
@@ -200,8 +200,8 @@ double1 sqrt( const expression<E1>& a, double_type  )
     w = a();
     x = native_sqrt(w,double_type());
 
-    x = double2(0.5)*(x + w/x);
-    x = double2(0.5)*(x + w/x);
+    x = 0.5*(x + w/x);
+    x = 0.5*(x + w/x);
 
     return x;
 }
@@ -214,8 +214,8 @@ double2 sqrt( const expression<E1>& a, double2_type  )
     w = a();
     x = native_sqrt(w,double2_type());
 
-    x = double2(0.5)*(x + w/x);
-    x = double2(0.5)*(x + w/x);
+    x = 0.5*(x + w/x);
+    x = 0.5*(x + w/x);
 
     return x;
 }
@@ -245,9 +245,9 @@ double1 fast_sqrt( const expression<E1>& a, double_type  )
 
     w = a();
     x = native_rsqrt(w);
-    x = x*mad(x*x,-w,double1(3.));
+    x = x*mad(x*x,-w,3);
     r = x*w;
-    r = r*mad(double1(-0.0625),r*x,double1(0.75));
+    r = r*mad(-0.0625,r*x,0.75);
 
     return r;
 }
@@ -259,9 +259,9 @@ double2 fast_sqrt( const expression<E1>& a, double2_type  )
 
     w = a();
     x = native_rsqrt(w);
-    x = x*mad(x*x,-w,double2(3.));
+    x = x*mad(x*x,-w,3);
     r = x*w;
-    r = r*mad(double2(-0.0625),r*x,double2(0.75));
+    r = r*mad(-0.0625,r*x,0.75);
 
     return r;
 }
