@@ -41,7 +41,7 @@
 using namespace boost;
 using namespace cal::il;
 
-void compute_interaction( const double4& a, const double4& b, double4& acc, double eps2 )
+void compute_interaction( const double4& a, const double4& b, double4& acc, double eps2, bool use_native )
 {
     double1 distSqr,invDist,invDistCube,s;
     double4 r;
@@ -51,7 +51,7 @@ void compute_interaction( const double4& a, const double4& b, double4& acc, doub
     r.z() = a.z() - b.z();
 
     distSqr     = mad( r.x(), r.x(), mad( r.y(), r.y(), mad( r.z(), r.z(), eps2 ) ) );
-    invDist     = native_rsqrt( distSqr );
+    invDist     = use_native?native_rsqrt( distSqr ):rsqrt( distSqr );
     invDistCube = invDist*invDist*invDist;
     s           = b.w() * invDistCube;
 
@@ -62,7 +62,8 @@ void compute_interaction( const double4& a, const double4& b, double4& acc, doub
 
 void compute_body_acceleration( const input2d<double2>& input_data, double4* pos, double4* acc,
                                 uint1 tile_count, float1 _buffer_width, 
-                                int workitem_size, int tile_size, int read_count, int unroll_count, double eps2 )
+                                int workitem_size, int tile_size, int read_count, int unroll_count, double eps2,
+                                bool native_rsqrt )
 {
     double4 B[read_count];
     float1  px[read_count],rlimit,v,_py;
@@ -92,7 +93,7 @@ void compute_body_acceleration( const input2d<double2>& input_data, double4* pos
                 for(j=0;j<read_count;j++) B[j].zw()  = input_data(px[j],_py);
 
                 for(j=0;j<workitem_size;j++) {
-                    for(k=0;k<read_count;k++) compute_interaction(pos[j],B[k],acc[j],eps2);
+                    for(k=0;k<read_count;k++) compute_interaction(pos[j],B[k],acc[j],eps2,native_rsqrt);
                 }
 
                 for(j=0;j<read_count;j++) {
@@ -136,7 +137,8 @@ void nbody_kernel( const input2d<double2>& input_data, global<double2>& output_d
                    uint1 data_size, uint1 tile_count,
                    uint1 buffer_width, float1 _buffer_width, float1 _buffer_height2,
                    double1 dT, double eps2, 
-                   int workforce_size, int workitem_size, int tile_size, int read_count, int unroll_count )
+                   int workforce_size, int workitem_size, int tile_size, int read_count, int unroll_count,
+                   bool native_rsqrt )
 {
     double4 pos[workitem_size],vel[workitem_size],acc[workitem_size];
     double4 npos[workitem_size],nvel[workitem_size];
@@ -155,7 +157,7 @@ void nbody_kernel( const input2d<double2>& input_data, global<double2>& output_d
         for(i=0;i<workitem_size;i++) pos[i].xy() = input_data(px[i],py);
         for(i=0;i<workitem_size;i++) pos[i].zw() = input_data(px[i],_py);
 
-        compute_body_acceleration( input_data, pos, acc, tile_count, _buffer_width, workitem_size, tile_size, read_count, unroll_count, eps2 );
+        compute_body_acceleration( input_data, pos, acc, tile_count, _buffer_width, workitem_size, tile_size, read_count, unroll_count, eps2, native_rsqrt );
 
         py2 = py + _buffer_height2;
         _py = py2 + 1;
@@ -179,7 +181,7 @@ void nbody_kernel( const input2d<double2>& input_data, global<double2>& output_d
     il_endloop
 }
 
-std::string create_nbody_kernel( cal::Device& device, int num_threads, int workitem_size, int tile_size, int read_count, int unroll_count, double eps2 )
+std::string create_nbody_kernel( cal::Device& device, int num_threads, int workitem_size, int tile_size, int read_count, int unroll_count, double eps2, bool native_rsqrt )
 {
     std::stringstream code;
     int               workforce_size,workgroup_size;
@@ -203,7 +205,8 @@ std::string create_nbody_kernel( cal::Device& device, int num_threads, int worki
                   data_size, tile_count, buffer_width, 
                   _buffer_width, _buffer_height2, 
                   dT, eps2,
-                  workforce_size, workitem_size, tile_size, read_count, unroll_count );
+                  workforce_size, workitem_size, tile_size, read_count, unroll_count,
+                  native_rsqrt );
 
     Source::end();
 

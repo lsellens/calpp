@@ -17,13 +17,14 @@ public:
     };
 
     struct options_t {
-        int device;
-        int num_bodies;
-        int num_threads;
-        int workitem_size;
-        int tile_size;
-        int read_count;
-        int unroll_count;
+        int    device;
+        int    num_bodies;
+        int    num_threads;
+        int    workitem_size;
+        int    tile_size;
+        int    read_count;
+        int    unroll_count;
+        bool   native_rsqrt;
         double dT;
         double eps2;
     };

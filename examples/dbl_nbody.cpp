@@ -71,6 +71,7 @@ int main( int argc, char* argv[] )
     worker->opt.tile_size     = 64;
     worker->opt.read_count    = 4;
     worker->opt.unroll_count  = 4; // too big value here might cause kernel size to be larger than 48kB ( penalty for not fitting in program cache )
+    worker->opt.native_rsqrt  = false;
 
     worker->init();
 
