@@ -23,8 +23,6 @@
 #ifndef __CAL_IL_MISC_H
 #define __CAL_IL_MISC_H
 
-#include <cal/il/cal_il_source.hpp>
-#include <cal/il/cal_il_types.hpp>
 
 namespace cal {
 namespace il {

@@ -25,8 +25,6 @@
 
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
-#include <cal/il/cal_il_base_types.hpp>
-#include <cal/il/cal_il_swizzle.hpp>
 
 namespace cal {
 namespace il {

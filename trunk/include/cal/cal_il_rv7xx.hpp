@@ -23,9 +23,10 @@
 #ifndef __CAL_IL_RV7XX_H
 #define __CAL_IL_RV7XX_H
 
+#include <cassert>
 #include <boost/type_traits.hpp>
-#include <cal/il/cal_il_source.hpp>
-#include <cal/il/cal_il_types.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/format.hpp>
 
 namespace cal {
 namespace il {
@@ -36,7 +37,7 @@ void lds_write( unsigned offset, const detail::expression<E>& e )
 {
     BOOST_STATIC_ASSERT( E::value_type::type_size==4 );
     assert( (offset%4)==0 );
-        
+
     e().emitCode(Source::code,Source::code.stream());
     Source::code << boost::format("lds_write_vec_lOffset(offset) mem.xyzw,%1%\n") % e().resultCode();
 }
@@ -45,7 +46,7 @@ template<class E>
 void lds_write( unsigned offset, const detail::expression<E>& e, const std::string& mask )
 {
     assert( (offset%4)==0 );
-        
+
     e().emitCode(Source::code,Source::code.stream());
     Source::code << boost::format("lds_write_vec_lOffset(offset) mem.%1%,%2%\n") % mask % e().resultCode();
 }
@@ -73,11 +74,11 @@ variable<T> lds_read( const detail::expression<E1>& tid, const detail::expressio
     typedef boost::is_same<typename E1::value_type,int_type>    assert_v2;
     typedef boost::is_same<typename E2::value_type,uint_type>   assert_v3;
     typedef boost::is_same<typename E2::value_type,int_type>    assert_v4;
-        
+
     BOOST_STATIC_ASSERT( T::type_size==4 );
     BOOST_STATIC_ASSERT( (assert_v1::value || assert_v2::value) && (assert_v3::value || assert_v4::value) );
 
-    return lds_read( cast_type(tid,offset) );
+    return lds_read( merge_types(tid,offset) );
 }
 
 } // rv7xx

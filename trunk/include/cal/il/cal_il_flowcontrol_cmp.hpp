@@ -23,9 +23,8 @@
 #ifndef __CAL_IL_FLOWCONTROL_CMP_H
 #define __CAL_IL_FLOWCONTROL_CMP_H
 
+#include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
-#include <cal/il/cal_il_source.hpp>
-#include <cal/il/cal_il_expression_types.hpp>
 
 namespace cal {
 namespace il {

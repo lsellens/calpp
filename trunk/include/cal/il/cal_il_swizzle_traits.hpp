@@ -23,8 +23,6 @@
 #ifndef __CAL_IL_SWIZZLE_TRAITS_H
 #define __CAL_IL_SWIZZLE_TRAITS_H
 
-#include <cal/il/cal_il_base_types.hpp>
-
 namespace cal {
 namespace il {
 namespace detail {

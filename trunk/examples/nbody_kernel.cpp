@@ -66,7 +66,7 @@
 #endif
 
 #include <cal/cal.hpp>
-#include <cal/il/cal_il.hpp>
+#include <cal/cal_il.hpp>
 #include <cal/il/math/cal_il_rsqrt.hpp>
 
 using namespace boost;
@@ -148,7 +148,7 @@ void compute_body_position( float4* pos, float4* vel, float4* acc, float4* npos,
         npos[i].y() = pos[i].y() + (vel[i].y() + float1(0.5)*acc[i].y()*dT)*dT;
         npos[i].z() = pos[i].z() + (vel[i].z() + float1(0.5)*acc[i].z()*dT)*dT;
         npos[i].w() = pos[i].w();
-    } 
+    }
 }
 
 void compute_body_velocity( float4* pos, float4* vel, float4* acc, float4* nvel, float1& dT, int workitem_size )

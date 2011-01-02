@@ -23,7 +23,7 @@
 #ifndef __CAL_IL_DOUBLE4_H
 #define __CAL_IL_DOUBLE4_H
 
-#include <cal/il/cal_il.hpp>
+#include <cal/cal_il.hpp>
 
 namespace cal {
 namespace il {

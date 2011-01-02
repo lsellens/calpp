@@ -23,7 +23,6 @@
 #ifndef _CAL_IL_FLOWCONTROL_H
 #define _CAL_IL_FLOWCONTROL_H
 
-#include <cal/il/cal_il_source.hpp>
 #include <cal/il/cal_il_flowcontrol_cmp.hpp>
 
 namespace cal {

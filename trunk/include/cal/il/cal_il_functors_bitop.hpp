@@ -25,8 +25,6 @@
 
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
-#include <cal/il/cal_il_base_types.hpp>
-#include <cal/il/cal_il_swizzle.hpp>
 
 namespace cal {
 namespace il {
@@ -603,7 +601,7 @@ struct cal_binary_shr<int4_type,uint4_type>
 template<>
 struct cal_binary_shr<uint_type,int_type>
 {
-    typedef int_type value_type;
+    typedef uint_type value_type;
     static const int temp_reg_count=0;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
@@ -667,7 +665,7 @@ struct cal_binary_shr<uint4_type,int4_type>
 template<>
 struct cal_binary_shr<uint_type,uint_type>
 {
-    typedef int_type value_type;
+    typedef uint_type value_type;
     static const int temp_reg_count=0;
 
     static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )

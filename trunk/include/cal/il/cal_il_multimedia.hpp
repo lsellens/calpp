@@ -23,9 +23,6 @@
 #ifndef __CAL_IL_MULTIMEDIA_H
 #define __CAL_IL_MULTIMEDIA_H
 
-#include <cal/il/cal_il_functors.hpp>
-#include <cal/il/cal_il_expression_types.hpp>
-
 namespace cal {
 namespace il {
 

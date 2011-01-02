@@ -34,7 +34,7 @@
 #endif
 
 #include <cal/cal.hpp>
-#include <cal/il/cal_il.hpp>
+#include <cal/cal_il.hpp>
 #include <cal/il/math/cal_il_rsqrt.hpp>
 #include "cal_il_double4.hpp"
 

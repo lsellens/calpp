@@ -23,9 +23,6 @@
 #ifndef __CAL_IL_MATH_H
 #define __CAL_IL_MATH_H
 
-#include <cal/il/cal_il_expression_types.hpp>
-#include <cal/il/cal_il_types.hpp>
-
 #include <cal/il/math/cal_il_atanh.hpp>
 #include <cal/il/math/cal_il_exp.hpp>
 #include <cal/il/math/cal_il_floor.hpp>

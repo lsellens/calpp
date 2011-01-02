@@ -23,8 +23,6 @@
 #ifndef __CAL_IL_TYPE_TRAITS_H
 #define __CAL_IL_TYPE_TRAITS_H
 
-#include <cal/il/cal_il_base_types.hpp>
-#include <cal/il/cal_il_types.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/type_traits.hpp>
 
