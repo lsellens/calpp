@@ -41,7 +41,7 @@ inline uint1 get_local_size( int i )
 {
     assert( i>=0 && i<2 );
     if( i==0 ) return named_variable<uint1>("cb0[0].x");
-    return named_variable<uint1>("cb0[0].y");    
+    return named_variable<uint1>("cb0[0].y");
 }
 
 inline uint4 get_global_size()
@@ -102,7 +102,7 @@ inline uint1 get_num_groups( int i )
 inline uint4 get_group_id()
 {
     return uint4( named_variable<uint1>("vThreadGrpIdFlat.x") % get_num_groups(0),
-                  named_variable<uint1>("vThreadGrpIdFlat.x") / get_num_groups(1),
+                  named_variable<uint1>("vThreadGrpIdFlat.x") / get_num_groups(0),
                   uint1(0), uint1(0) );
 }
 
@@ -110,7 +110,7 @@ inline uint1 get_group_id( int i )
 {
     assert( i>=0 && i<2 );
     if( i==0 ) return named_variable<uint1>("vThreadGrpIdFlat.x") % get_num_groups(0);
-    return named_variable<uint1>("vThreadGrpIdFlat.x") / get_num_groups(1);
+    return named_variable<uint1>("vThreadGrpIdFlat.x") / get_num_groups(0);
 }
 
 #ifdef __CAL_HPP__
