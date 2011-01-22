@@ -200,8 +200,8 @@ double1 log( const expression<E1>& a, double_type  )
     t = (_e < -2) | (_e >= 3);
     r = select( t, r0, r1 );
     r = mad( 0.693359375, e , mad( -2.121944400546905827679e-4, e, r ) );
-    r = select( _a == 0, double1(-std::numeric_limits<double>::max()), r );
-    r = select( _a <  0, double1(std::numeric_limits<double>::quiet_NaN()), r );
+    r = select( _a == 0, -std::numeric_limits<double>::max(), r );
+    r = select( _a <  0, std::numeric_limits<double>::quiet_NaN(), r );
 
     return r;
 }
@@ -252,8 +252,8 @@ double2 log( const expression<E1>& a, double2_type  )
     t = (_e < -2) | (_e >= 3);
     r = select( t, r0, r1 );
     r = mad( 0.693359375, e , mad( -2.121944400546905827679e-4, e, r ) );
-    r = select( _a == 0, double2(-std::numeric_limits<double>::max()), r );
-    r = select( _a <  0, double2(std::numeric_limits<double>::quiet_NaN()), r );
+    r = select( _a == 0, -std::numeric_limits<double>::max(), r );
+    r = select( _a <  0, std::numeric_limits<double>::quiet_NaN(), r );
 
     return r;
 }
