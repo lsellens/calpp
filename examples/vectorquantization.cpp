@@ -65,7 +65,7 @@ float1 find_nearest_for_vector( const input2d<float4>& A, const input2d<float4>&
         } il_endif
     }
 
-    return select( px==uint1(0), acc.x() + acc.y() + acc.z() + acc.w(), float1(0) );
+    return select( px==uint1(0), acc.x() + acc.y() + acc.z() + acc.w(), 0 );
 }
 
 void kernel_findnearest( const input2d<float4>& A, const input2d<float4>& B, global<float4>& error_vector,
@@ -189,7 +189,7 @@ void kernel_reducematrix( const input2d<float4>& A, const indexed_register<float
         
         uint1   t  = n>float1(0);
         float1  n1 = float1(1)/n;
-        R[ mad(py,Rx,px) ] = select( t, float4(n1,n1,n1,n1)*acc, float4(0) );
+        R[ mad(py,Rx,px) ] = select( t, float4(n1,n1,n1,n1)*acc, 0 );
     }
     il_endif
 }

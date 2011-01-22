@@ -198,8 +198,8 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double_type  )
     s = s + 1;
 
     r = ldexp(s,cast_type<int_type>(m));
-    r = select(_x>=cmaxlog,double1(std::numeric_limits<double>::max()),r);
-    r = select(_x<cminlog,double1(0),r);
+    r = select(_x>=cmaxlog,std::numeric_limits<double>::max(),r);
+    r = select(_x<cminlog,0,r);
 
     return r;
 }
@@ -239,8 +239,8 @@ variable<typename E1::value_type> exp( const expression<E1>& x, double2_type  )
     s = s + 1;
 
     r = ldexp(s,cast_type<int2_type>(m));
-    r = select(_x>=cmaxlog,double2(std::numeric_limits<double>::max()),r);
-    r = select(_x<cminlog,double2(0),r);
+    r = select(_x>=cmaxlog,std::numeric_limits<double>::max(),r);
+    r = select(_x<cminlog,0,r);
 
     return r;
 }
