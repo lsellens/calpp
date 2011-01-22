@@ -36,6 +36,22 @@ select( const detail::expression<E1>& e1, const detail::expression<E2>& e2, cons
     return expression_type(e1(),e2(),e3());
 }
 
+template<class E1,class E2>
+detail::ternary<E1,E2,detail::value<E2>,detail::cal_ternary_select<typename E1::value_type,typename E2::value_type,typename E2::value_type> >
+select( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const typename E2::value_type::component_type& v1 )
+{
+    typedef detail::ternary<E1,E2,detail::value<E2>,detail::cal_ternary_select<typename E1::value_type,typename E2::value_type,typename E2::value_type> > expression_type;
+    return expression_type(e1(),e2(),detail::value<E2>(v1));
+}
+
+template<class E1,class E2>
+detail::ternary<E1,detail::value<E2>,E2,detail::cal_ternary_select<typename E1::value_type,typename E2::value_type,typename E2::value_type> >
+select( const detail::expression<E1>& e1, const typename E2::value_type::component_type& v1, const detail::expression<E2>& e2 )
+{
+    typedef detail::ternary<E1,detail::value<E2>,E2,detail::cal_ternary_select<typename E1::value_type,typename E2::value_type,typename E2::value_type> > expression_type;
+    return expression_type(e1(),detail::value<E2>(v1),e2());
+}
+
 template<class E1>
 detail::unary<E1,detail::cal_unary_cast<int1_type,typename E1::value_type> > convert_int1( const detail::expression<E1>& e1 )
 {

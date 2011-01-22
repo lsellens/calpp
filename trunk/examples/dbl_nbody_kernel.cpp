@@ -106,7 +106,7 @@ void compute_body_acceleration( const input2d<double2>& input_data, double4* pos
 
         p.x()       = p.x() + tile_size;
         t           = p.x()<_buffer_width;
-        p.x()       = select( t, p.x(), float1(0) );
+        p.x()       = select( t, p.x(), 0 );
         p.y()       = select( t, p.y(), p.y()+2 );
         tile_count -= 1;
     }

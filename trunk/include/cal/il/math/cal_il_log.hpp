@@ -118,7 +118,7 @@ double1 native_log( const expression<E1>& a, double_type  )
     w = a();
     r = frexp(w,e);
 
-    return mad( cast_type<double1>(e), double1(0.69314718055994530942), cast_type<double1>(native_log(cast_type<float1>(r),float_type())) );
+    return mad( cast_type<double1>(e), 0.69314718055994530942, cast_type<double1>(native_log(cast_type<float1>(r),float_type())) );
 }
 
 template<class E1>
@@ -130,7 +130,7 @@ double2 native_log( const expression<E1>& a, double2_type  )
     w = a();
     r = frexp(w,e);
 
-    return mad( cast_type<double2>(e), double2(0.69314718055994530942), cast_type<double2>(native_log(cast_type<float2>(r),float2_type())) );
+    return mad( cast_type<double2>(e), 0.69314718055994530942, cast_type<double2>(native_log(cast_type<float2>(r),float2_type())) );
 }
 
 template<class E1>
@@ -182,29 +182,26 @@ double1 log( const expression<E1>& a, double_type  )
 
     _a = a();
     _x = frexp(_a,_e);
-    t  = _x<double1(0.70710678118654752440);
-    e  = cast_type<double1>( select( t, _e - int1(1), _e ) );
+    t  = _x<0.70710678118654752440;
+    e  = cast_type<double1>( select( t, _e - 1, _e ) );
 
-    /* logarithm using log(x) = z + z**3 P(z)/Q(z),
-    * where z = 2(x-1)/x+1)
-    */
-    z  = select( t, _x - double1(0.5), _x - double1(1) );
-    y  = select( t, mad(double1(0.5),_x,double1(0.25)), mad(double1(0.5),_x,double1(0.5)) );
+    /* logarithm using log(x) = z + z**3 P(z)/Q(z), where z = 2(x-1)/x+1) */
+    z  = select( t, _x - 0.5, _x - 1 );
+    y  = select( t, mad(0.5,_x,0.25), mad(0.5,_x,0.5) );
     x  = z / y;
     z  = x*x;
-    r0 = x * ( z * detail::polevl( z, (const double*)R, 3 ) / detail::p1evl( z, (const double*)S, 3 ) )
-         - e*double1(2.121944400546905827679e-4) + x + e*double1(0.693359375);
+    r0 = mad( x, z*detail::polevl( z, (const double*)R, 3 )/detail::p1evl( z, (const double*)S, 3 ), x );
 
     /* logarithm using log(1+x) = x - .5x**2 + x**3 P(x)/Q(x) */
-    x  = select( t, mad(double1(2),_x,double1(-1)), _x - double1(1) );
+    x  = select( t, mad(2,_x,-1), _x - 1 );
     z  = x*x;
-    r1 = x * ( z * polevl( x, (const double*)P, 6 )/p1evl( x, (const double*)Q, 5 ) )
-         - e*double1(2.121944400546905827679e-4) - double1(0.5)*z + x + e*double1(0.693359375);
+    r1 = mad( x, z*polevl( x, (const double*)P, 6 )/p1evl( x, (const double*)Q, 5 ), mad( -0.5, z, x ) );
 
-    t = (_e < int1(-2)) | (_e >= int1(3));
+    t = (_e < -2) | (_e >= 3);
     r = select( t, r0, r1 );
-    r = select( _a == double1(0), double1(-std::numeric_limits<double>::max()), r );
-    r = select( _a <  double1(0), double1(std::numeric_limits<double>::quiet_NaN()), r );
+    r = mad( 0.693359375, e , mad( -2.121944400546905827679e-4, e, r ) );
+    r = select( _a == 0, double1(-std::numeric_limits<double>::max()), r );
+    r = select( _a <  0, double1(std::numeric_limits<double>::quiet_NaN()), r );
 
     return r;
 }
@@ -237,29 +234,26 @@ double2 log( const expression<E1>& a, double2_type  )
 
     _a = a();
     _x = frexp(_a,_e);
-    t  = _x<double2(0.70710678118654752440);
-    e  = cast_type<double2>( select( t, _e - int2(1), _e ) );
+    t  = _x<0.70710678118654752440;
+    e  = cast_type<double2>( select( t, _e - 1, _e ) );
 
-    /* logarithm using log(x) = z + z**3 P(z)/Q(z),
-    * where z = 2(x-1)/x+1)
-    */
-    z  = select( t, _x - double2(0.5), _x - double2(1) );
-    y  = select( t, mad(double2(0.5),_x,double2(0.25)), mad(double2(0.5),_x,double2(0.5)) );
+    /* logarithm using log(x) = z + z**3 P(z)/Q(z), where z = 2(x-1)/x+1) */
+    z  = select( t, _x - 0.5, _x - 1 );
+    y  = select( t, mad(0.5,_x,0.25), mad(0.5,_x,0.5) );
     x  = z / y;
     z  = x*x;
-    r0 = x * ( z * detail::polevl( z, (const double*)R, 3 ) / detail::p1evl( z, (const double*)S, 3 ) ) 
-         - e*double2(2.121944400546905827679e-4) + x + e*double2(0.693359375);
+    r0 = mad( x, z*detail::polevl( z, (const double*)R, 3 )/detail::p1evl( z, (const double*)S, 3 ), x );
 
     /* logarithm using log(1+x) = x - .5x**2 + x**3 P(x)/Q(x) */
-    x  = select( t, mad(double2(2),_x,double2(-1)), _x - double2(1) );
+    x  = select( t, mad(2,_x,-1), _x - 1 );
     z  = x*x;
-    r1 = x * ( z * polevl( x, (const double*)P, 6 )/p1evl( x, (const double*)Q, 5 ) )
-         - e*double2(2.121944400546905827679e-4) - double2(0.5)*z + x + e*double2(0.693359375);
+    r1 = mad( x, z*polevl( x, (const double*)P, 6 )/p1evl( x, (const double*)Q, 5 ), mad( -0.5, z, x ) );
 
-    t = (_e < int2(-2)) | (_e >= int2(3));
+    t = (_e < -2) | (_e >= 3);
     r = select( t, r0, r1 );
-    r = select( _a == double2(0), double2(-std::numeric_limits<double>::max()), r );
-    r = select( _a <  double2(0), double2(std::numeric_limits<double>::quiet_NaN()), r );
+    r = mad( 0.693359375, e , mad( -2.121944400546905827679e-4, e, r ) );
+    r = select( _a == 0, double2(-std::numeric_limits<double>::max()), r );
+    r = select( _a <  0, double2(std::numeric_limits<double>::quiet_NaN()), r );
 
     return r;
 }
