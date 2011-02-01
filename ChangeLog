@@ -8,7 +8,7 @@ Version 0.90
     fixes in lds handling
     emmit_comment function for adding comments to generated IL
     type traits
-    nbody version using double variables for computations
+    nbody example using double variables for computations
     frexp
     more accurate log(double)
     changes to relational operators for double types ( return type matches input vectors length )
@@ -18,10 +18,15 @@ Version 0.90
     native_exp and native_log functions
     native_rsqrt and improved precision for rsqrt(double)
     mixed IL and C types operators (+,-,...)
-    refactoring of math library ( to improve compilation times only required files might be included )
-    changes in file layouts ( cal/il/cal_il.hpp moved to cal/cal_il.hpp, cal/il/cal_il_math.hpp moved to cal/cal_il_math.hpp )
+    refactoring of math library ( to improve compilation times only required files can be included )
+    changes in files layout ( cal/il/cal_il.hpp moved to cal/cal_il.hpp, cal/il/cal_il_math.hpp moved to cal/cal_il_math.hpp )
     improved mul, div, mod operators with C types ( automatic use of shl, shr, ldexp for power of 2 values ) - to enable compile with defined __CAL_USE_IMPROVED_MULDIV - use with caution ( double ldexp may triger CAL driver bug causing invalid results )
     regression directory with not working kernels ( due to bugs in ATI SDK )
+    integer division
+    device target name
+
+Version 0.87.1
+    compilation fix for SDK 2.3
 
 Version 0.87
     IL kernel link bug fix

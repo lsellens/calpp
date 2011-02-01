@@ -32,6 +32,7 @@
 #include <ostream>
 #include <cstdlib>
 #include <stdexcept>
+#include <string>
 #include <vector>
 #include <set>
 #include <map>
@@ -78,6 +79,7 @@ enum CALInfoEnum {
     CAL_DEVICE_AVAILUNCACHEDREMOTERAM, /**< Amount of available uncached remote GPU memory in megabytes */
     CAL_DEVICE_AVAILCACHEDREMOTERAM,   /**< Amount of available cached remote GPU memory in megabytes */
     CAL_DEVICE_INDEX,
+    CAL_DEVICE_NAME,
     CAL_CONTEXT_DEVICES,
     CAL_KERNEL_MAXSCRATCHREGSNEEDED,   /**< Maximum number of scratch regs needed */ 
     CAL_KERNEL_NUMSHAREDGPRUSER,       /**< Number of shared GPRs */
@@ -160,6 +162,7 @@ struct CALDeviceInfoHelper
     CALuint index;
 };
 
+
 template<>
 struct info_traits<CAL_TYPE_CALDEVICE,CALDeviceInfoHelper>
 {
@@ -170,11 +173,40 @@ struct info_traits<CAL_TYPE_CALDEVICE,CALDeviceInfoHelper>
     }
 };
 
+struct CALDeviceNameHelper
+{
+    std::string name;
+};
+
+template<>
+struct info_traits<CAL_TYPE_CALDEVICE,CALDeviceNameHelper>
+{
+    static CALresult getInfo(CALDeviceNameHelper& info, CALdevice dev, CALuint ordinal )
+    {
+        static const char* device_name[18] = { "ATI RV600",     "ATI RV610",     "ATI RV630",
+                                               "ATI RV670",     "ATI RV7XX",     "ATI RV770",
+                                               "ATI RV710",     "ATI RV730",     "ATI CYPRESS",
+                                               "ATI JUNIPER",   "AMD REDWOOD",   "AMD CEDAR",
+                                               "AMD RESERVED0", "AMD RESERVED1", "AMD WRESTLER",
+                                               "AMD CAYMAN",    "AMD RESERVED2", "AMD BARTS" };
+        CALdeviceinfo _info;
+        CALresult     r;
+        r = calDeviceGetInfo(&_info,ordinal);
+        if( r!=CAL_RESULT_OK ) return r;
+
+        if( _info.target<18 ) info.name = device_name[_info.target];
+        else info.name="AMD GPU DEVICE";
+
+        return CAL_RESULT_OK;
+    }
+};
+
 template <int handle_name, int param_name>
 struct param_traits {};
 
 #define __PARAM_NAME_INFO1(F) \
     F(CAL_TYPE_CALDEVICE,CAL_DEVICE_INDEX,CALuint,CALDeviceInfoHelper,index)                         /**< Device index */ \
+    F(CAL_TYPE_CALDEVICE,CAL_DEVICE_NAME,std::string,CALDeviceNameHelper,name)                       /**< Device target name */ \
     F(CAL_TYPE_CALDEVICE,CAL_DEVICE_TARGET,CALtarget,CALdeviceinfo,target)                           /**< Device Kernel ISA  */ \
     F(CAL_TYPE_CALDEVICE,CAL_DEVICE_MAXRESOURCE1DWIDTH,CALuint,CALdeviceinfo,maxResource1DWidth)     /**< Maximum resource 1D width */ \
     F(CAL_TYPE_CALDEVICE,CAL_DEVICE_MAXRESOURCE2DWIDTH,CALuint,CALdeviceinfo,maxResource2DWidth)     /**< Maximum resource 2D width */ \
@@ -1131,6 +1163,12 @@ public:
         if( data().type_>0 ) data().buildFromSource(devices);
         else if( data().type_==0 ) data().buildFromBinary(devices);
         else throw Error(CAL_RESULT_ERROR);                
+    }
+
+    void build( const Device& device )
+    {
+        std::vector<Device> devices(1,device);
+        build(devices);
     }
 
     CALimage operator()() const { return data().handle_; }
