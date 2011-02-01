@@ -158,6 +158,7 @@ public:
         next_literal_index=0;
 
         input_data.clear();
+        uav_data.clear();
         literal_data.clear();
 
         code_stream.str(std::string());

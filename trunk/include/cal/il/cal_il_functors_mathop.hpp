@@ -628,6 +628,68 @@ struct cal_binary_div
     }
 };
 
+template<>
+struct cal_binary_div<int_type,int_type>
+{
+    typedef int_type value_type;
+    static const int temp_reg_count=7;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format( "ilt          r%5%,%2%,l0\n"
+                               "ilt          r%6%,%3%,l0\n"
+                               "inegate      r%7%,%2%\n"
+                               "inegate      r%8%,%3%\n"
+                               "cmov_logical r%9%,r%5%,r%7%,%2%\n"
+                               "cmov_logical r%10%,r%6%,r%8%,%3%\n"
+                               "udiv         r%11%,r%9%,r%10%\n"
+                               "ixor         r%7%,r%5%,r%6%\n"
+                               "inegate      r%8%,r%11%\n"
+                               "cmov_logical %1%,r%7%,r%8%,r%11%\n" ) % mask_output(r) % s0 % s1 % s1 % t0 % (t0+1) % (t0+2) % (t0+3) % (t0+4) % (t0+5) % (t0+6)).str();
+    }
+};
+
+template<>
+struct cal_binary_div<int2_type,int2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=7;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format( "ilt          r%5%,%2%,l0\n"
+                               "ilt          r%6%,%3%,l0\n"
+                               "inegate      r%7%,%2%\n"
+                               "inegate      r%8%,%3%\n"
+                               "cmov_logical r%9%,r%5%,r%7%,%2%\n"
+                               "cmov_logical r%10%,r%6%,r%8%,%3%\n"
+                               "udiv         r%11%,r%9%,r%10%\n"
+                               "ixor         r%7%,r%5%,r%6%\n"
+                               "inegate      r%8%,r%11%\n"
+                               "cmov_logical %1%,r%7%,r%8%,r%11%\n" ) % mask_output(r) % s0 % s1 % s1 % t0 % (t0+1) % (t0+2) % (t0+3) % (t0+4) % (t0+5) % (t0+6)).str();
+    }
+};
+
+template<>
+struct cal_binary_div<int4_type,int4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=7;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, int t0 )
+    {
+        return (boost::format( "ilt          r%5%,%2%,l0\n"
+                               "ilt          r%6%,%3%,l0\n"
+                               "inegate      r%7%,%2%\n"
+                               "inegate      r%8%,%3%\n"
+                               "cmov_logical r%9%,r%5%,r%7%,%2%\n"
+                               "cmov_logical r%10%,r%6%,r%8%,%3%\n"
+                               "udiv         r%11%,r%9%,r%10%\n"
+                               "ixor         r%7%,r%5%,r%6%\n"
+                               "inegate      r%8%,r%11%\n"
+                               "cmov_logical %1%,r%7%,r%8%,r%11%\n" ) % r % s0 % s1 % s1 % t0 % (t0+1) % (t0+2) % (t0+3) % (t0+4) % (t0+5) % (t0+6)).str();
+    }
+};
 
 template<>
 struct cal_binary_div<uint_type,uint_type>
