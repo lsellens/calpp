@@ -24,6 +24,7 @@ Version 0.90
     regression directory with not working kernels ( due to bugs in ATI SDK )
     integer division
     device target name
+    uav atomic functions
 
 Version 0.87.1
     compilation fix for SDK 2.3

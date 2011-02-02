@@ -32,28 +32,80 @@ namespace il {
 
 namespace detail {
 
-template<class T,class E>
-class uav_expression : public detail::swizzable_expression<T,uav_expression<T,E> >
+template<class T,class E,class C>
+class uav_expression_base : public detail::swizzable_expression<T,C>
 {
 protected:
-    typedef uav_expression<T,E>                                  self_type;
-    typedef detail::swizzable_expression<T,uav_expression<T,E> > base_type;
-    typedef const E                                              expression_type;
-    typedef typename E::const_closure_type                       expression_closure_type;
-
-public:
-    typedef T                                                    value_type;
-    typedef const self_type                                      const_closure_type;
-    typedef self_type                                            closure_type;
-    static const int                                             temp_reg_count=1;
-    static const bool                                            swizzle_has_assign=false;
+    typedef uav_expression_base<T,E,C>         self_type;
+    typedef detail::swizzable_expression<T,C > base_type;
+    typedef const E                            expression_type;
+    typedef typename E::const_closure_type     expression_closure_type;
 
 protected:
     int                     uav_index;
+
+    expression_closure_type _e;
+    using base_type::index;
+
+public:
+    using base_type::resultCode;
+    using base_type::operator=;
+
+public:
+    uav_expression_base( int idx, const E& e ) : base_type(), uav_index(idx), _e(e) {}
+    uav_expression_base( const uav_expression_base<T,E,C>& rhs ) : base_type(rhs), uav_index(rhs.uav_index), _e(rhs._e) {}
+    ~uav_expression_base() {}
+
+    template<class E1>
+    void emit_atomic( const std::string& src, const E1& e1 ) const
+    {
+        e1.emitCode(Source::code,Source::code.stream());
+        _e.emitCode(Source::code,Source::code.stream());
+        Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode();
+    }
+
+    template<class E1,class E2>
+    void emit_atomic( const std::string& src, const E1& e1, const E2& e2 ) const
+    {
+        e1.emitCode(Source::code,Source::code.stream());
+        e2.emitCode(Source::code,Source::code.stream());
+        _e.emitCode(Source::code,Source::code.stream());
+        Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode() % e2.resultCode();
+    }
+
+    template<class E1,class E2,class E3>
+    void emit_atomic( const std::string& src, const E1& e1, const E2& e2, const E3& e3 ) const
+    {
+        e1.emitCode(Source::code,Source::code.stream());
+        e2.emitCode(Source::code,Source::code.stream());
+        e3.emitCode(Source::code,Source::code.stream());
+        _e.emitCode(Source::code,Source::code.stream());
+        Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode() % e2.resultCode() % e3.resultCode();
+    }
+};
+
+template<class T,class E>
+class uav_expression : public uav_expression_base<T,E,uav_expression<T,E> >
+{
+protected:
+    typedef uav_expression<T,E>                           self_type;
+    typedef uav_expression_base<T,E,uav_expression<T,E> > base_type;
+    typedef const E                                       expression_type;
+    typedef typename E::const_closure_type                expression_closure_type;
+
+public:
+    typedef T                                             value_type;
+    typedef const self_type                               const_closure_type;
+    typedef self_type                                     closure_type;
+    static const int                                      temp_reg_count=1;
+    static const bool                                     swizzle_has_assign=false;
+
+protected:
     std::string             uav_load;
     std::string             uav_store;
 
-    expression_closure_type _e;
+    using base_type::uav_index;
+    using base_type::_e;
     using base_type::index;
 
 public:
@@ -83,10 +135,10 @@ protected:
     }
 
 public:
-    uav_expression( int idx, const std::string& load, const std::string& store, const E& e ) : base_type(), uav_index(idx), uav_load(load), uav_store(store), _e(e)
+    uav_expression( int idx, const std::string& load, const std::string& store, const E& e ) : base_type(idx,e), uav_load(load), uav_store(store)
     {
     }
-    uav_expression( const uav_expression<T,E>& rhs ) : base_type(rhs), uav_index(rhs.uav_index), uav_load(rhs.uav_load), uav_store(rhs.uav_store), _e(rhs._e)
+    uav_expression( const uav_expression<T,E>& rhs ) : base_type(rhs), uav_load(rhs.uav_load), uav_store(rhs.uav_store)
     {
     }
     ~uav_expression()
@@ -151,25 +203,24 @@ public:
 };
 
 template<class T,class E>
-class uav_typed_expression : public detail::swizzable_expression<T,uav_typed_expression<T,E> >
+class uav_typed_expression : public uav_expression_base<T,E,uav_typed_expression<T,E> >
 {
 protected:
-    typedef uav_typed_expression<T,E>                                  self_type;
-    typedef detail::swizzable_expression<T,uav_typed_expression<T,E> > base_type;
-    typedef const E                                                    expression_type;
-    typedef typename E::const_closure_type                             expression_closure_type;
+    typedef uav_typed_expression<T,E>                           self_type;
+    typedef uav_expression_base<T,E,uav_typed_expression<T,E> > base_type;
+    typedef const E                                             expression_type;
+    typedef typename E::const_closure_type                      expression_closure_type;
 
 public:
-    typedef T                                                          value_type;
-    typedef const self_type                                            const_closure_type;
-    typedef self_type                                                  closure_type;
-    static const int                                                   temp_reg_count=1;
-    static const bool                                                  swizzle_has_assign=false;
+    typedef T                                                   value_type;
+    typedef const self_type                                     const_closure_type;
+    typedef self_type                                           closure_type;
+    static const int                                            temp_reg_count=1;
+    static const bool                                           swizzle_has_assign=false;
 
 protected:
-    int                     uav_index;
-
-    expression_closure_type _e;
+    using base_type::uav_index;
+    using base_type::_e;
     using base_type::index;
 
 public:
@@ -199,10 +250,10 @@ protected:
     }
 
 public:
-    uav_typed_expression( int idx, const E& e ) : base_type(), uav_index(idx), _e(e)
+    uav_typed_expression( int idx, const E& e ) : base_type(idx,e)
     {
     }
-    uav_typed_expression( const uav_typed_expression<T,E>& rhs ) : base_type(rhs), uav_index(rhs.uav_index), _e(rhs._e)
+    uav_typed_expression( const uav_typed_expression<T,E>& rhs ) : base_type(rhs)
     {
     }
     ~uav_typed_expression()
