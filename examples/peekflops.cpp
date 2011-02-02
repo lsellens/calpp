@@ -152,7 +152,7 @@ void show_device_info( int dev )
     std::vector<Device> devices = _context.getInfo<CAL_CONTEXT_DEVICES>();
 
     std::cout << format("Device              %i\n"
-                        "target              %u\n"
+                        "target              %u (%s)\n"
                         "localRAM            %u MB\n"
                         "uncachedRemoteRAM   %u MB\n"
                         "cachedRemoteRAM     %u MB\n"
@@ -173,6 +173,7 @@ void show_device_info( int dev )
                         "maxResource2DHeight %u\n")
     % dev
     % devices[dev].getInfo<CAL_DEVICE_TARGET>()
+    % devices[dev].getInfo<CAL_DEVICE_NAME>()
     % devices[dev].getInfo<CAL_DEVICE_LOCALRAM>()
     % devices[dev].getInfo<CAL_DEVICE_UNCACHEDREMOTERAM>()
     % devices[dev].getInfo<CAL_DEVICE_CACHEDREMOTERAM>()
