@@ -36,9 +36,9 @@
 #include <cal/il/cal_il_operators_muldiv.hpp>
 #include <cal/il/cal_il_flowcontrol.hpp>
 #include <cal/il/cal_il_misc.hpp>
+#include <cal/il/cal_il_lds.hpp>
 #include <cal/il/cal_il_uav.hpp>
 #include <cal/il/cal_il_multimedia.hpp>
 #include <cal/il/cal_il_ocl_functions.hpp>
-#include <cal/il/cal_il_uav_atomics.hpp>
 
 #endif

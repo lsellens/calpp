@@ -168,7 +168,7 @@ variable<T> atom_xchg( const detail::uav_expression_base<T,E,C>& uav, const deta
     return r;
 }
 
-template<class T, class E, class C, class E1>
+template<class E, class C, class E1>
 variable<int_type> atom_min( const detail::uav_expression_base<int_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,int_type> assert_v1;
@@ -179,7 +179,7 @@ variable<int_type> atom_min( const detail::uav_expression_base<int_type,E,C>& ua
     return r;
 }
 
-template<class T, class E, class C, class E1>
+template<class E, class C, class E1>
 variable<int_type> atom_max( const detail::uav_expression_base<int_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,int_type> assert_v1;
@@ -190,7 +190,7 @@ variable<int_type> atom_max( const detail::uav_expression_base<int_type,E,C>& ua
     return r;
 }
 
-template<class T, class E, class C, class E1>
+template<class E, class C, class E1>
 variable<uint_type> atom_min( const detail::uav_expression_base<uint_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,uint_type> assert_v1;
@@ -201,7 +201,7 @@ variable<uint_type> atom_min( const detail::uav_expression_base<uint_type,E,C>& 
     return r;
 }
 
-template<class T, class E, class C, class E1>
+template<class E, class C, class E1>
 variable<uint_type> atom_max( const detail::uav_expression_base<uint_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,uint_type> assert_v1;

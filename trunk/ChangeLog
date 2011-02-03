@@ -25,6 +25,7 @@ Version 0.90
     integer division
     device target name
     uav atomic functions
+    lds atomic functions
 
 Version 0.87.1
     compilation fix for SDK 2.3
