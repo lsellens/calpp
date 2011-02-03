@@ -1,7 +1,7 @@
 /*
  * C++ to IL compiler/generator uav atomic functions
  * 
- * Copyright (C) 2010, 2011 Artur Kornacki
+ * Copyright (C) 2010 Artur Kornacki
  *
  * This file is part of CAL++.
  *
@@ -27,7 +27,7 @@ namespace cal {
 namespace il {
 
 template<class T, class E, class C, class E1>
-void atom_add( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_add( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -38,7 +38,7 @@ void atom_add( const detail::uav_expression_base<T,E,C>& uav, const detail::expr
 }
 
 template<class T, class E, class C, class E1>
-void atom_sub( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_sub( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -49,7 +49,7 @@ void atom_sub( const detail::uav_expression_base<T,E,C>& uav, const detail::expr
 }
 
 template<class E, class C, class E1>
-void atom_min( const detail::uav_expression_base<int_type,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_min( const detail::uav_expression_base<int_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,int_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -58,7 +58,7 @@ void atom_min( const detail::uav_expression_base<int_type,E,C>& uav, const detai
 }
 
 template<class E, class C, class E1>
-void atom_max( const detail::uav_expression_base<int_type,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_max( const detail::uav_expression_base<int_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,int_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -67,7 +67,7 @@ void atom_max( const detail::uav_expression_base<int_type,E,C>& uav, const detai
 }
 
 template<class E, class C, class E1>
-void atom_min( const detail::uav_expression_base<uint_type,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_min( const detail::uav_expression_base<uint_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,uint_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -76,7 +76,7 @@ void atom_min( const detail::uav_expression_base<uint_type,E,C>& uav, const deta
 }
 
 template<class E, class C, class E1>
-void atom_max( const detail::uav_expression_base<uint_type,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_max( const detail::uav_expression_base<uint_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,uint_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -85,7 +85,7 @@ void atom_max( const detail::uav_expression_base<uint_type,E,C>& uav, const deta
 }
 
 template<class T, class E, class C, class E1>
-void atom_and( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_and( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -96,7 +96,7 @@ void atom_and( const detail::uav_expression_base<T,E,C>& uav, const detail::expr
 }
 
 template<class T, class E, class C, class E1>
-void atom_or( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_or( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -107,7 +107,7 @@ void atom_or( const detail::uav_expression_base<T,E,C>& uav, const detail::expre
 }
 
 template<class T, class E, class C, class E1>
-void atom_xor( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
+void _atom_xor( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -118,7 +118,7 @@ void atom_xor( const detail::uav_expression_base<T,E,C>& uav, const detail::expr
 }
 
 template<class T, class E, class C, class E1, class E2>
-void atom_cmpxchg( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& cmp, const detail::expression<E2>& val )
+void _atom_cmpxchg( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& cmp, const detail::expression<E2>& val )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -270,57 +270,57 @@ variable<T> atom_cmpxchg( const detail::uav_expression_base<T,E,C>& uav, const d
 //
 
 template<class T, class E, class C>
-void atom_add( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1 )
+void _atom_add( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1 )
 {
-    atom_add(uav,detail::value<T>(v1));
+    _atom_add(uav,detail::value<T>(v1));
 }
 
 template<class T, class E, class C>
-void atom_sub( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1  )
+void _atom_sub( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1  )
 {
-    atom_sub(uav,detail::value<T>(v1));
+    _atom_sub(uav,detail::value<T>(v1));
 }
 
 template<class T, class E, class C>
-void atom_min( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1 )
+void _atom_min( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1 )
 {
-    atom_min(uav,detail::value<T>(v1));
+    _atom_min(uav,detail::value<T>(v1));
 }
 
 template<class T, class E, class C>
-void atom_max( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1  )
+void _atom_max( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1  )
 {
-    atom_max(uav,detail::value<T>(v1));
+    _atom_max(uav,detail::value<T>(v1));
 }
 
 template<class T, class E, class C>
-void atom_and( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1 )
+void _atom_and( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1 )
 {
-    atom_and(uav,detail::value<T>(v1));
+    _atom_and(uav,detail::value<T>(v1));
 }
 
 template<class T, class E, class C>
-void atom_or( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1  )
+void _atom_or( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1  )
 {
-    atom_or(uav,detail::value<T>(v1));
+    _atom_or(uav,detail::value<T>(v1));
 }
 
 template<class T, class E, class C>
-void atom_xor( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1  )
+void _atom_xor( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& v1  )
 {
-    atom_xor(uav,detail::value<T>(v1));
+    _atom_xor(uav,detail::value<T>(v1));
 }
 
 template<class T, class E, class C, class E1>
-void atom_cmpxchg( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& cmp, const typename T::component_type& val )
+void _atom_cmpxchg( const detail::uav_expression_base<T,E,C>& uav, const detail::expression<E1>& cmp, const typename T::component_type& val )
 {
-    atom_cmpxchg(uav,cmp(),detail::value<T>(val));
+    _atom_cmpxchg(uav,cmp(),detail::value<T>(val));
 }
 
 template<class T, class E, class C, class E1>
-void atom_cmpxchg( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& cmp, const detail::expression<E1>& val  )
+void _atom_cmpxchg( const detail::uav_expression_base<T,E,C>& uav, const typename T::component_type& cmp, const detail::expression<E1>& val  )
 {
-    atom_cmpxchg(uav,detail::value<T>(cmp),val());
+    _atom_cmpxchg(uav,detail::value<T>(cmp),val());
 }
 
 template<class T, class E, class C>

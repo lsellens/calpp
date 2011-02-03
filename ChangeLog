@@ -26,6 +26,7 @@ Version 0.90
     device target name
     uav atomic functions
     lds atomic functions
+    uavatomics example
 
 Version 0.87.1
     compilation fix for SDK 2.3

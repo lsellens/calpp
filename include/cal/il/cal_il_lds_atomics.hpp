@@ -27,7 +27,7 @@ namespace cal {
 namespace il {
 
 template<class T, class E, class E1>
-void atom_add( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
+void _atom_add( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -38,7 +38,7 @@ void atom_add( const detail::lds_expression<T,E>& lds, const detail::expression<
 }
 
 template<class T, class E, class E1>
-void atom_sub( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
+void _atom_sub( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -49,7 +49,7 @@ void atom_sub( const detail::lds_expression<T,E>& lds, const detail::expression<
 }
 
 template<class E, class E1>
-void atom_min( const detail::lds_expression<int_type,E>& lds, const detail::expression<E1>& e1 )
+void _atom_min( const detail::lds_expression<int_type,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,int_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -58,7 +58,7 @@ void atom_min( const detail::lds_expression<int_type,E>& lds, const detail::expr
 }
 
 template<class E, class E1>
-void atom_max( const detail::lds_expression<int_type,E>& lds, const detail::expression<E1>& e1 )
+void _atom_max( const detail::lds_expression<int_type,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,int_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -67,7 +67,7 @@ void atom_max( const detail::lds_expression<int_type,E>& lds, const detail::expr
 }
 
 template<class E, class E1>
-void atom_min( const detail::lds_expression<uint_type,E>& lds, const detail::expression<E1>& e1 )
+void _atom_min( const detail::lds_expression<uint_type,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,uint_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -76,7 +76,7 @@ void atom_min( const detail::lds_expression<uint_type,E>& lds, const detail::exp
 }
 
 template<class E, class E1>
-void atom_max( const detail::lds_expression<uint_type,E>& lds, const detail::expression<E1>& e1 )
+void _atom_max( const detail::lds_expression<uint_type,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<typename E1::value_type,uint_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -85,7 +85,7 @@ void atom_max( const detail::lds_expression<uint_type,E>& lds, const detail::exp
 }
 
 template<class T, class E, class E1>
-void atom_and( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
+void _atom_and( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -96,7 +96,7 @@ void atom_and( const detail::lds_expression<T,E>& lds, const detail::expression<
 }
 
 template<class T, class E, class E1>
-void atom_or( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
+void _atom_or( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -107,7 +107,7 @@ void atom_or( const detail::lds_expression<T,E>& lds, const detail::expression<E
 }
 
 template<class T, class E, class E1>
-void atom_xor( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
+void _atom_xor( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -118,7 +118,7 @@ void atom_xor( const detail::lds_expression<T,E>& lds, const detail::expression<
 }
 
 template<class T, class E, class E1, class E2>
-void atom_cmpxchg( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& cmp, const detail::expression<E2>& val )
+void _atom_cmpxchg( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& cmp, const detail::expression<E2>& val )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -266,7 +266,7 @@ variable<T> atom_cmpxchg( const detail::lds_expression<T,E>& lds, const detail::
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_add( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_add( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -277,7 +277,7 @@ void atom_add( const detail::lds2_expression<T,E1,E2>& lds, const detail::expres
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_sub( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_sub( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -288,7 +288,7 @@ void atom_sub( const detail::lds2_expression<T,E1,E2>& lds, const detail::expres
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_min( const detail::lds2_expression<int_type,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_min( const detail::lds2_expression<int_type,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<typename P1::value_type,int_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -297,7 +297,7 @@ void atom_min( const detail::lds2_expression<int_type,E1,E2>& lds, const detail:
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_max( const detail::lds2_expression<int_type,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_max( const detail::lds2_expression<int_type,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<typename P1::value_type,int_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -306,7 +306,7 @@ void atom_max( const detail::lds2_expression<int_type,E1,E2>& lds, const detail:
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_min( const detail::lds2_expression<uint_type,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_min( const detail::lds2_expression<uint_type,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<typename P1::value_type,uint_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -315,7 +315,7 @@ void atom_min( const detail::lds2_expression<uint_type,E1,E2>& lds, const detail
 }
 
 template<class E1, class E2, class P1>
-void atom_max( const detail::lds2_expression<uint_type,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_max( const detail::lds2_expression<uint_type,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<typename P1::value_type,uint_type>  assert_v1;
     BOOST_STATIC_ASSERT( assert_v1::value );
@@ -324,7 +324,7 @@ void atom_max( const detail::lds2_expression<uint_type,E1,E2>& lds, const detail
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_and( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_and( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -335,7 +335,7 @@ void atom_and( const detail::lds2_expression<T,E1,E2>& lds, const detail::expres
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_or( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_or( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -346,7 +346,7 @@ void atom_or( const detail::lds2_expression<T,E1,E2>& lds, const detail::express
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_xor( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
+void _atom_xor( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -357,7 +357,7 @@ void atom_xor( const detail::lds2_expression<T,E1,E2>& lds, const detail::expres
 }
 
 template<class T, class E1, class E2, class P1, class P2>
-void atom_cmpxchg( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& cmp, const detail::expression<P2>& val )
+void _atom_cmpxchg( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& cmp, const detail::expression<P2>& val )
 {
     typedef boost::is_same<T,int_type>                assert_v1;
     typedef boost::is_same<T,uint_type>               assert_v2;
@@ -509,57 +509,57 @@ variable<T> atom_cmpxchg( const detail::lds2_expression<T,E1,E2>& lds, const det
 //
 
 template<class T, class E>
-void atom_add( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1 )
+void _atom_add( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1 )
 {
-    atom_add(lds,detail::value<T>(v1));
+    _atom_add(lds,detail::value<T>(v1));
 }
 
 template<class T, class E>
-void atom_sub( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1  )
+void _atom_sub( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1  )
 {
-    atom_sub(lds,detail::value<T>(v1));
+    _atom_sub(lds,detail::value<T>(v1));
 }
 
 template<class T, class E>
-void atom_min( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1 )
+void _atom_min( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1 )
 {
-    atom_min(lds,detail::value<T>(v1));
+    _atom_min(lds,detail::value<T>(v1));
 }
 
 template<class T, class E>
-void atom_max( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1  )
+void _atom_max( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1  )
 {
-    atom_max(lds,detail::value<T>(v1));
+    _atom_max(lds,detail::value<T>(v1));
 }
 
 template<class T, class E>
-void atom_and( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1 )
+void _atom_and( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1 )
 {
-    atom_and(lds,detail::value<T>(v1));
+    _atom_and(lds,detail::value<T>(v1));
 }
 
 template<class T, class E>
-void atom_or( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1  )
+void _atom_or( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1  )
 {
-    atom_or(lds,detail::value<T>(v1));
+    _atom_or(lds,detail::value<T>(v1));
 }
 
 template<class T, class E>
-void atom_xor( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1  )
+void _atom_xor( const detail::lds_expression<T,E>& lds, const typename T::component_type& v1  )
 {
-    atom_xor(lds,detail::value<T>(v1));
+    _atom_xor(lds,detail::value<T>(v1));
 }
 
 template<class T, class E, class E1>
-void atom_cmpxchg( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& cmp, const typename T::component_type& val )
+void _atom_cmpxchg( const detail::lds_expression<T,E>& lds, const detail::expression<E1>& cmp, const typename T::component_type& val )
 {
-    atom_cmpxchg(lds,cmp(),detail::value<T>(val));
+    _atom_cmpxchg(lds,cmp(),detail::value<T>(val));
 }
 
 template<class T, class E, class E1>
-void atom_cmpxchg( const detail::lds_expression<T,E>& lds, const typename T::component_type& cmp, const detail::expression<E1>& val  )
+void _atom_cmpxchg( const detail::lds_expression<T,E>& lds, const typename T::component_type& cmp, const detail::expression<E1>& val  )
 {
-    atom_cmpxchg(lds,detail::value<T>(cmp),val());
+    _atom_cmpxchg(lds,detail::value<T>(cmp),val());
 }
 
 template<class T, class E>
@@ -617,57 +617,57 @@ variable<T> atom_cmpxchg( const detail::lds_expression<T,E>& lds, const typename
 }
 
 template<class T, class E1, class E2>
-void atom_add( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1 )
+void _atom_add( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1 )
 {
-    atom_add(lds,detail::value<T>(v1));
+    _atom_add(lds,detail::value<T>(v1));
 }
 
 template<class T, class E1, class E2>
-void atom_sub( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1  )
+void _atom_sub( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1  )
 {
-    atom_sub(lds,detail::value<T>(v1));
+    _atom_sub(lds,detail::value<T>(v1));
 }
 
 template<class T, class E1, class E2>
-void atom_min( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1 )
+void _atom_min( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1 )
 {
-    atom_min(lds,detail::value<T>(v1));
+    _atom_min(lds,detail::value<T>(v1));
 }
 
 template<class T, class E1, class E2>
-void atom_max( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1  )
+void _atom_max( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1  )
 {
-    atom_max(lds,detail::value<T>(v1));
+    _atom_max(lds,detail::value<T>(v1));
 }
 
 template<class T, class E1, class E2>
-void atom_and( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1 )
+void _atom_and( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1 )
 {
-    atom_and(lds,detail::value<T>(v1));
+    _atom_and(lds,detail::value<T>(v1));
 }
 
 template<class T, class E1, class E2>
-void atom_or( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1  )
+void _atom_or( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1  )
 {
-    atom_or(lds,detail::value<T>(v1));
+    _atom_or(lds,detail::value<T>(v1));
 }
 
 template<class T, class E1, class E2>
-void atom_xor( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1  )
+void _atom_xor( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& v1  )
 {
-    atom_xor(lds,detail::value<T>(v1));
+    _atom_xor(lds,detail::value<T>(v1));
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_cmpxchg( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& cmp, const typename T::component_type& val )
+void _atom_cmpxchg( const detail::lds2_expression<T,E1,E2>& lds, const detail::expression<P1>& cmp, const typename T::component_type& val )
 {
-    atom_cmpxchg(lds,cmp(),detail::value<T>(val));
+    _atom_cmpxchg(lds,cmp(),detail::value<T>(val));
 }
 
 template<class T, class E1, class E2, class P1>
-void atom_cmpxchg( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& cmp, const detail::expression<P1>& val  )
+void _atom_cmpxchg( const detail::lds2_expression<T,E1,E2>& lds, const typename T::component_type& cmp, const detail::expression<P1>& val  )
 {
-    atom_cmpxchg(lds,detail::value<T>(cmp),val());
+    _atom_cmpxchg(lds,detail::value<T>(cmp),val());
 }
 
 template<class T, class E1, class E2>
