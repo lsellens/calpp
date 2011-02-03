@@ -1,5 +1,5 @@
 /*
- * C++ to IL compiler/generator math header
+ * C++ to IL compiler/generator atomic functions include file
  * 
  * Copyright (C) 2010 Artur Kornacki
  *
@@ -20,22 +20,12 @@
  *
  */
 
-#ifndef __CAL_IL_MATH_H
-#define __CAL_IL_MATH_H
+#ifndef __CAL_IL_ATOMICS_H
+#define __CAL_IL_ATOMICS_H
 
 #include <cal/cal_il.hpp>
 
-#include <cal/il/math/cal_il_atanh.hpp>
-#include <cal/il/math/cal_il_exp.hpp>
-#include <cal/il/math/cal_il_floor.hpp>
-#include <cal/il/math/cal_il_fract.hpp>
-#include <cal/il/math/cal_il_frexp.hpp>
-#include <cal/il/math/cal_il_ldexp.hpp>
-#include <cal/il/math/cal_il_log.hpp>
-#include <cal/il/math/cal_il_reciprocal.hpp>
-#include <cal/il/math/cal_il_round.hpp>
-#include <cal/il/math/cal_il_rsqrt.hpp>
-#include <cal/il/math/cal_il_sqrt.hpp>
-#include <cal/il/math/cal_il_tanh.hpp>
+#include <cal/il/cal_il_uav_atomics.hpp>
+#include <cal/il/cal_il_lds_atomics.hpp>
 
 #endif

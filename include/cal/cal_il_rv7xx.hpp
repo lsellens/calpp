@@ -23,6 +23,8 @@
 #ifndef __CAL_IL_RV7XX_H
 #define __CAL_IL_RV7XX_H
 
+#include <cal/cal_il.hpp>
+
 #include <cassert>
 #include <boost/type_traits.hpp>
 #include <boost/static_assert.hpp>

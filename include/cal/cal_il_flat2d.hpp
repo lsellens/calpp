@@ -23,6 +23,8 @@
 #ifndef __CAL_IL_FLAT2D_H
 #define __CAL_IL_FLAT2D_H
 
+#include <cal/cal_il.hpp>
+
 #ifdef __CAL_HPP__
   #include <boost/cstdint.hpp>
   #include <boost/array.hpp>
