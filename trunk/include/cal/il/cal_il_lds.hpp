@@ -1,7 +1,7 @@
 /*
  * C++ to IL compiler/generator lds support
  * 
- * Copyright (C) 2010 Artur Kornacki
+ * Copyright (C) 2010, 2011 Artur Kornacki
  *
  * This file is part of CAL++.
  *

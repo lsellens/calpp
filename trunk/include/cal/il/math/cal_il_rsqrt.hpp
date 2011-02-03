@@ -1,7 +1,7 @@
 /*
  * C++ to IL compiler/generator rsqrt
  * 
- * Copyright (C) 2010 Artur Kornacki
+ * Copyright (C) 2010, 2011 Artur Kornacki
  *
  *
  * CAL++ is free software: you can redistribute it and/or modify
