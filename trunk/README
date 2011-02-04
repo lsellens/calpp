@@ -265,9 +265,12 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
     get_group_id<uint1>() - flattened group id
     get_group_id<uint4>()
     get_group_id( int idx )
+    bitalign
+    bytealign
 
     <cal/cal_il_math.hpp> ( all functions support both floatX and doubleX )
     ldexp
+    frexp
     fract
     round
     exp
@@ -276,10 +279,22 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
     tanh
     atanh
     rsqrt
+    sqrt
+    reciprocal
 
-    <cal/il/cal_il_multimedia.hpp>
-    bitalign
-    bytealign
+    <cal/cal_il_atomics.hpp> ( uav and lds atomics )
+    atom_add
+    atom_sub
+    atom_inc
+    atom_dec
+    atom_min
+    atom_max
+    atom_and
+    atom_or
+    atom_xor
+    atom_xchg
+    for each function there is available version with underscore ( _atom_xxx ) which doesn't return value
+
 
 3. CAL++ examples
 
@@ -308,3 +323,6 @@ This is set of templates which allow to convert C++ code directly to CAL IL.
 
 - uavwrite
     Shows how to use various types of UAV.
+
+- uavatomics
+    Shows how to use uav atomics.

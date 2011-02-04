@@ -48,6 +48,18 @@ void _atom_sub( const detail::lds_expression<T,E>& lds, const detail::expression
     lds.emit_atomic("lds_sub_id(%1%) %2%,%3%\n",e1());
 }
 
+template<class T, class E>
+void _atom_inc( const detail::lds_expression<T,E>& lds )
+{
+    _atom_add(lds,detail::value<T>(1));
+}
+
+template<class T, class E>
+void _atom_dec( const detail::lds_expression<T,E>& lds )
+{
+    _atom_sub(lds,detail::value<T>(1));
+}
+
 template<class E, class E1>
 void _atom_min( const detail::lds_expression<int_type,E>& lds, const detail::expression<E1>& e1 )
 {
@@ -153,6 +165,18 @@ variable<T> atom_sub( const detail::lds_expression<T,E>& lds, const detail::expr
     variable<T> r;
     lds.emit_atomic("lds_read_sub_resource(%1%) %3%,%2%,%4%\n",r,e1());
     return r;
+}
+
+template<class T, class E>
+variable<T> atom_inc( const detail::lds_expression<T,E>& lds )
+{
+    return atom_add(lds,detail::value<T>(1));
+}
+
+template<class T, class E>
+variable<T> atom_dec( const detail::lds_expression<T,E>& lds )
+{
+    return atom_sub(lds,detail::value<T>(1));
 }
 
 template<class T, class E, class E1>
@@ -287,6 +311,18 @@ void _atom_sub( const detail::lds2_expression<T,E1,E2>& lds, const detail::expre
     lds.emit_atomic("lds_sub_id(%1%) %2%,%3%\n",e1());
 }
 
+template<class T, class E1, class E2>
+void _atom_inc( const detail::lds2_expression<T,E1,E2>& lds )
+{
+    _atom_add(lds,detail::value<T>(1));
+}
+
+template<class T, class E1, class E2>
+void _atom_dec( const detail::lds2_expression<T,E1,E2>& lds )
+{
+    _atom_sub(lds,detail::value<T>(1));
+}
+
 template<class T, class E1, class E2, class P1>
 void _atom_min( const detail::lds2_expression<int_type,E1,E2>& lds, const detail::expression<P1>& e1 )
 {
@@ -392,6 +428,18 @@ variable<T> atom_sub( const detail::lds2_expression<T,E1,E2>& lds, const detail:
     variable<T> r;
     lds.emit_atomic("lds_read_sub_resource(%1%) %3%,%2%,%4%\n",r,e1());
     return r;
+}
+
+template<class T, class E1, class E2>
+variable<T> atom_inc( const detail::lds2_expression<T,E1,E2>& lds )
+{
+    return atom_add(lds,detail::value<T>(1));
+}
+
+template<class T, class E1, class E2>
+variable<T> atom_dec( const detail::lds2_expression<T,E1,E2>& lds )
+{
+    return atom_sub(lds,detail::value<T>(1));
 }
 
 template<class T, class E1, class E2, class P1>
