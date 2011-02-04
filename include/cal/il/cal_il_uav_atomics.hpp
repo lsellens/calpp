@@ -48,6 +48,18 @@ void _atom_sub( const detail::uav_expression_base<T,E,C>& uav, const detail::exp
     uav.emit_atomic("uav_sub_id(%1%) %2%,%3%\n",e1());
 }
 
+template<class T, class E, class C>
+void _atom_inc( const detail::uav_expression_base<T,E,C>& uav )
+{
+    _atom_add(uav,detail::value<T>(1));
+}
+
+template<class T, class E, class C>
+void _atom_dec( const detail::uav_expression_base<T,E,C>& uav )
+{
+    _atom_sub(uav,detail::value<T>(1));
+}
+
 template<class E, class C, class E1>
 void _atom_min( const detail::uav_expression_base<int_type,E,C>& uav, const detail::expression<E1>& e1 )
 {
@@ -153,6 +165,18 @@ variable<T> atom_sub( const detail::uav_expression_base<T,E,C>& uav, const detai
     variable<T> r;
     uav.emit_atomic("uav_read_sub_id(%1%) %3%,%2%,%4%\n",r,e1());
     return r;
+}
+
+template<class T, class E, class C>
+variable<T> atom_inc( const detail::uav_expression_base<T,E,C>& uav )
+{
+    return atom_add(uav,detail::value<T>(1));
+}
+
+template<class T, class E, class C>
+variable<T> atom_dec( const detail::uav_expression_base<T,E,C>& uav )
+{
+    return atom_sub(uav,detail::value<T>(1));
 }
 
 template<class T, class E, class C, class E1>
