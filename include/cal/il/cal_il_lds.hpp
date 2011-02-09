@@ -103,13 +103,8 @@ public:
 
         switch( T::type_size ) {
         case 1:
-            if( E::value_type::type_size==1 ) {
-                Source::code << boost::format("lds_load_id(%1%) r%5%,%3%,%4%\n"
-                                              "mov %2%,r%5%.xxxx\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % _e.resultCode() % index;
-            } else {
-                Source::code << boost::format("lds_load_id(%1%) r%5%,%3%,%4%\n"
-                                              "mov %2%,r%5%.xxxx\n") % lds_index % detail::mask_output(resultCode()) % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % index;
-            }
+            Source::code << boost::format("lds_load_id(%1%) r%4%,%3%\n"
+                                          "mov %2%,r%4%.xxxx\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % index;
             break;
         case 2:
             if( E::value_type::type_size==1 ) {
