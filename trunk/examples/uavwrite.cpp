@@ -76,10 +76,10 @@ void kernel_D()
     uint1      gid = get_global_id<uint1>();
     uint1      x,y;
 
-    x = gid/WORKGROUP_SIZE;
-    y = gid%WORKGROUP_SIZE;
+    y = gid/WORKGROUP_SIZE;
+    x = gid%WORKGROUP_SIZE;
 
-    uav(y,x) = gid;
+    uav(x,y) = gid;
 }
 
 void kernel_D1()
@@ -88,10 +88,10 @@ void kernel_D1()
     uint1       gid = get_global_id<uint1>();
     uint1       x,y;
 
-    x = gid/WORKGROUP_SIZE;
-    y = gid%WORKGROUP_SIZE;
+    y = gid/WORKGROUP_SIZE;
+    x = gid%WORKGROUP_SIZE;
 
-    uav(y,x) = as_float4( uint4(gid,0,1,2) );
+    uav(x,y) = as_float4( uint4(gid,0,1,2) );
 }
 
 std::string create_kernel( void (*kernel)() )
