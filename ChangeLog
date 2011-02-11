@@ -1,3 +1,8 @@
+Version 0.91-dev
+    various bug fixes
+    input1d now accepts int1 and uint1 types as image index
+    input2d now accepts int2 and uint2 types as image index
+
 Version 0.90
     support for offset in sample load
     new matrix multiplication example
