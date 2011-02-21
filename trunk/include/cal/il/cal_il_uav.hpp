@@ -446,8 +446,8 @@ protected:
     std::string getFormatName( const float_type& ) { return "float"; }
     std::string getFormatName( const float2_type& ) { return "float"; }
     std::string getFormatName( const float4_type& ) { return "float"; }
-    std::string getFormatName( const double_type& ) { return "mixed"; }
-    std::string getFormatName( const double2_type& ) { return "mixed"; }
+    std::string getFormatName( const double_type& ) { return "unknown"; }
+    std::string getFormatName( const double2_type& ) { return "unknown"; }
 
 public:
     uav( int idx, const std::string& type )

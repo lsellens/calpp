@@ -47,6 +47,18 @@ struct cal_unary_cast {
 };
 
 template<>
+struct cal_unary_cast<int_type,int_type>
+{
+    typedef int_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_cast<int_type,uint_type>
 {
     typedef int_type value_type;
@@ -84,6 +96,18 @@ struct cal_unary_cast<int_type,double_type>
 };
 
 template<>
+struct cal_unary_cast<int2_type,int2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_cast<int2_type,uint2_type>
 {
     typedef int2_type value_type;
@@ -112,12 +136,24 @@ struct cal_unary_cast<int2_type,double2_type>
 {
     typedef int2_type value_type;
     static const int temp_reg_count=1;
-    
+
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
         return (boost::format("d2f r%4%.x___, %2%\n"
                               "d2f r%4%._y__, %3%\n"
                               "ftoi %1%,r%4%.xy\n") % r % make_swizzle(s0,1,2,0,0) % make_swizzle(s0,3,4,0,0) % t0).str();
+    }
+};
+
+template<>
+struct cal_unary_cast<int4_type,int4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
     }
 };
 
@@ -142,6 +178,18 @@ struct cal_unary_cast<int4_type,float4_type>
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
         return (boost::format("ftoi %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_cast<uint_type,uint_type>
+{
+    typedef uint_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
     }
 };
 
@@ -179,6 +227,18 @@ struct cal_unary_cast<uint_type,double_type>
     {
         return (boost::format("d2f r%3%.x, %2%\n"
                               "ftou %1%,r%3%.x\n") % r % s0 % t0).str();
+    }
+};
+
+template<>
+struct cal_unary_cast<uint2_type,uint2_type>
+{
+    typedef uint2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
     }
 };
 
@@ -221,6 +281,18 @@ struct cal_unary_cast<uint2_type,double2_type>
 };
 
 template<>
+struct cal_unary_cast<uint4_type,uint4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_cast<uint4_type,int4_type>
 {
     typedef uint4_type value_type;
@@ -241,6 +313,18 @@ struct cal_unary_cast<uint4_type,float4_type>
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
         return (boost::format("ftou %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_cast<float_type,float_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
     }
 };
 
@@ -277,6 +361,18 @@ struct cal_unary_cast<float_type,double_type>
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
         return (boost::format("d2f %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_cast<float2_type,float2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
     }
 };
 
@@ -319,6 +415,18 @@ struct cal_unary_cast<float2_type,double2_type>
 };
 
 template<>
+struct cal_unary_cast<float4_type,float4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_cast<float4_type,int4_type>
 {
     typedef float4_type value_type;
@@ -339,6 +447,18 @@ struct cal_unary_cast<float4_type,uint4_type>
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
         return (boost::format("utof %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_cast<double_type,double_type>
+{
+    typedef double_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
     }
 };
 
@@ -377,6 +497,18 @@ struct cal_unary_cast<double_type,float_type>
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
     {
         return (boost::format("f2d %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_cast<double2_type,double2_type>
+{
+    typedef double2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
     }
 };
 
@@ -439,6 +571,18 @@ struct cal_unary_bitcast {
 };
 
 template<>
+struct cal_unary_bitcast<int_type,int_type>
+{
+    typedef int_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_bitcast<int_type,uint_type>
 {
     typedef int_type value_type;
@@ -454,6 +598,18 @@ template<>
 struct cal_unary_bitcast<int_type,float_type>
 {
     typedef int_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_bitcast<int2_type,int2_type>
+{
+    typedef int2_type value_type;
     static const int temp_reg_count=0;
 
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
@@ -499,6 +655,18 @@ struct cal_unary_bitcast<int2_type,double_type>
 };
 
 template<>
+struct cal_unary_bitcast<int4_type,int4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_bitcast<int4_type,uint4_type>
 {
     typedef int4_type value_type;
@@ -535,6 +703,18 @@ struct cal_unary_bitcast<int4_type,double2_type>
 };
 
 template<>
+struct cal_unary_bitcast<uint_type,uint_type>
+{
+    typedef uint_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_bitcast<uint_type,int_type>
 {
     typedef uint_type value_type;
@@ -550,6 +730,18 @@ template<>
 struct cal_unary_bitcast<uint_type,float_type>
 {
     typedef uint_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_bitcast<uint2_type,uint2_type>
+{
+    typedef uint2_type value_type;
     static const int temp_reg_count=0;
 
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
@@ -595,6 +787,18 @@ struct cal_unary_bitcast<uint2_type,double_type>
 };
 
 template<>
+struct cal_unary_bitcast<uint4_type,uint4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_bitcast<uint4_type,int4_type>
 {
     typedef uint4_type value_type;
@@ -631,6 +835,18 @@ struct cal_unary_bitcast<uint4_type,double2_type>
 };
 
 template<>
+struct cal_unary_bitcast<float_type,float_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_bitcast<float_type,int_type>
 {
     typedef float_type value_type;
@@ -646,6 +862,18 @@ template<>
 struct cal_unary_bitcast<float_type,uint_type>
 {
     typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_bitcast<float2_type,float2_type>
+{
+    typedef float2_type value_type;
     static const int temp_reg_count=0;
 
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
@@ -691,6 +919,18 @@ struct cal_unary_bitcast<float2_type,double_type>
 };
 
 template<>
+struct cal_unary_bitcast<float4_type,float4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_bitcast<float4_type,int4_type>
 {
     typedef float4_type value_type;
@@ -727,6 +967,18 @@ struct cal_unary_bitcast<float4_type,double2_type>
 };
 
 template<>
+struct cal_unary_bitcast<double_type,double_type>
+{
+    typedef double_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
 struct cal_unary_bitcast<double_type,int2_type>
 {
     typedef double_type value_type;
@@ -754,6 +1006,18 @@ template<>
 struct cal_unary_bitcast<double_type,float2_type>
 {
     typedef double_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
+    {
+        return (boost::format("mov %s,%s\n") % r % s0).str();
+    }
+};
+
+template<>
+struct cal_unary_bitcast<double2_type,double2_type>
+{
+    typedef double2_type value_type;
     static const int temp_reg_count=0;
 
     static std::string emitCode( const std::string& r, const std::string& s0, int t0 )
