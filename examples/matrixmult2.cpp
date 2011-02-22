@@ -42,7 +42,6 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <cal/cal.hpp>
 #include <cal/cal_il.hpp>
-#include <cal/il/math/cal_il_floor.hpp>
 
 using namespace boost;
 using namespace cal;
@@ -61,7 +60,7 @@ void kernel_matrixmul( input2d<float4>& A, input2d<float4>& B, global<float4>& C
 
     assert( BX==8 && BY==8 );
 
-    p.xy() = floor(named_variable<float2>("vWinCoord0.xy"))*2;
+    p.xy() = 2*ps::get_global_id<float2>();
     p.zw() = float2(-2,0);
 
     for(i=0;i<BY;i++) {
@@ -127,7 +126,6 @@ std::string create_kernel_matrixmul()
 
     code << "il_ps_2_0\n";
     code << "dcl_cb cb0[1]\n";
-    code << "dcl_input_position_interp(linear_noperspective) vWinCoord0.xy__\n";
 
     Source::begin();
 

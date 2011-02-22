@@ -20,6 +20,11 @@
  *
  */
 
+#include <boost/format.hpp>
+#include <boost/bind.hpp>
+#include <string>
+#include <cal/il/math/cal_il_floor.hpp>
+
 #ifndef __CAL_IL_MISC_H
 #define __CAL_IL_MISC_H
 
@@ -142,6 +147,56 @@ inline void emit_comment( const std::string& comment )
 {
     Source::code << ";" << comment << "\n";
 }
+
+namespace ps {
+
+namespace detail {
+
+    template<int N>
+    struct dcl_helper
+    {
+        static std::string emit_dcl() { return "dcl_input_position_interp(linear_noperspective) vWinCoord0.xy__"; }
+    };
+
+} // detail
+
+template<class T> T get_global_id();
+
+template<>
+inline float2 get_global_id()
+{
+    Source::code.registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
+    return floor(named_variable<float2>("vWinCoord0.xy"));
+}
+
+template<>
+inline uint2 get_global_id()
+{
+    Source::code.registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
+    return cast_type<uint2>(named_variable<float2>("vWinCoord0.xy"));
+}
+
+template<class T> T get_global_id( int idx );
+
+template<>
+inline float1 get_global_id( int idx )
+{
+    Source::code.registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
+
+    if( idx==0 ) return floor(named_variable<float1>("vWinCoord0.x"));
+    return floor(named_variable<float1>("vWinCoord0.y"));
+}
+
+template<>
+inline uint1 get_global_id( int idx )
+{
+    Source::code.registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
+
+    if( idx==0 ) return cast_type<uint1>(named_variable<float1>("vWinCoord0.x"));
+    return cast_type<uint1>(named_variable<float1>("vWinCoord0.y"));
+}
+
+} // ps
 
 } // il
 } // cal

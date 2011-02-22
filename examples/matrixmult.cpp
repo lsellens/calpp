@@ -56,7 +56,7 @@ void kernel_matrixmul( input2d<float4>& A0, input2d<float4>& A1,
 
     assert( BX==8 && BY==8 );
 
-    p.xy() = (named_variable<float2>("vWinCoord0.xy")-0.5);
+    p.xy() = ps::get_global_id<float2>();
     p.zw() = float2( -2, -1 );
 
     for(i=0;i<BY;i++) {
@@ -124,7 +124,6 @@ std::string create_kernel_matrixmul()
 
     code << "il_ps_2_0\n";
     code << "dcl_cb cb0[1]\n";
-    code << "dcl_input_position_interp(linear_noperspective) vWinCoord0.xy__\n";
 
     Source::begin();
 
