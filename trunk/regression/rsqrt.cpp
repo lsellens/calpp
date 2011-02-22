@@ -42,7 +42,7 @@ void kernel()
     uint2                   output_mask,v;
     double2                 x,w,w2;
 
-    input_coord  = named_variable<float2>("vWinCoord0");
+    input_coord  = ps::get_global_id<float2>();
     v            = convert_uint2(input_coord);
     input_offset = ((v.y() << 8) + v.x()) << 1;
 
@@ -68,7 +68,6 @@ std::string create_kernel( Device& device )
     std::stringstream   code;
 
     code << "il_ps_2_0\n";
-    code << "dcl_input_position_interp(linear_noperspective) vWinCoord0.xy__\n";
     code << "dcl_cb cb0[1]\n";
     code << "dcl_output_generic o0\n";
 
