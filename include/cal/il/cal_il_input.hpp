@@ -27,6 +27,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/array.hpp>
+#include <boost/bind.hpp>
 #include <cmath>
 
 namespace cal {
@@ -192,12 +193,19 @@ protected:
     int     input_index;
     int     input_sampler;
 
+protected:
+    static std::string emit_dcl( int id, int size )
+    {
+        return (boost::format("dcl_resource_id(%i)_type(1d,unnorm)_fmtx(unknown)_fmty(unknown)_fmtz(unknown)_fmtw(unknown)") % id).str();
+    }
+
 public:
     input1d( int idx, int s=-1 ) 
     {
         input_index = idx;
         input_sampler = s;
-        Source::code.registerInput(input_index,2,value_type::type_size);
+        Source::code.registerDCL( (boost::format("input:%i") % idx).str(),
+                                  boost::bind(&input1d<T>::emit_dcl,idx,(int)value_type::type_size) );
     }
 
     template<class E>
@@ -249,12 +257,19 @@ protected:
     int     input_index;
     int     input_sampler;
 
+protected:
+    static std::string emit_dcl( int id, int size )
+    {
+        return (boost::format("dcl_resource_id(%i)_type(2d,unnorm)_fmtx(unknown)_fmty(unknown)_fmtz(unknown)_fmtw(unknown)") % id).str();
+    }
+
 public:
     input2d( int idx, int s=-1 )
     {
         input_index = idx;
         input_sampler = s;
-        Source::code.registerInput(input_index,2,value_type::type_size);
+        Source::code.registerDCL( (boost::format("input:%i") % idx).str(),
+                                  boost::bind(&input2d<T>::emit_dcl,idx,(int)value_type::type_size) );
     }
 
     template<class E>
@@ -264,7 +279,6 @@ public:
         typedef boost::is_same<typename E::value_type,int2_type>   assert_v2;
         typedef boost::is_same<typename E::value_type,uint2_type>  assert_v3;
         BOOST_STATIC_ASSERT( assert_v1::value || assert_v2::value || assert_v3::value );
-        
 
         return detail::input_expression<value_type,E,2>(input_index,e(),0,0,input_sampler);
     }

@@ -27,13 +27,13 @@ namespace il {
 
 namespace dd {
 
-void split( const double1& a, double1& hi, double1& lo )
+inline void split( const double1& a, double1& hi, double1& lo )
 {
     hi = a & uint2(0xFC000000,0xFFFFFFFF);
     lo = a - hi;
 }
 
-void split( const double2& a, double2& hi, double2& lo )
+inline void split( const double2& a, double2& hi, double2& lo )
 {
     hi = a & uint4(0xFC000000,0xFFFFFFFF,0xFC000000,0xFFFFFFFF);
     lo = a - hi;

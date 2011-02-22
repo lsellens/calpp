@@ -30,6 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/array.hpp>
 #include <boost/format.hpp>
+#include <boost/function.hpp>
 
 namespace cal {
 namespace il {
@@ -90,11 +91,10 @@ protected:
     unsigned next_instruction_index;
 
 protected:
-    int                                            next_literal_index;
-    std::map<int,std::pair<int,int> >              input_data;
-    std::map<int,uav_data_t>                       uav_data;
-    std::map<boost::array<boost::uint32_t,4>,int>  literal_data;
-    std::stringstream                              code_stream;
+    int                                                    next_literal_index;
+    std::map<std::string,boost::function<std::string ()> > dcl_data;
+    std::map<boost::array<boost::uint32_t,4>,int>          literal_data;
+    std::stringstream                                      code_stream;
 
 public:
     static SourceGenerator<N>              code;
@@ -105,33 +105,12 @@ public:
 protected:
     void iemitHeader( std::ostream& _out )
     {
-        std::map<int,std::pair<int,int> >::iterator     iinput;
-
-        for(iinput=input_data.begin();iinput!=input_data.end();++iinput) {
-            _out << boost::format("dcl_resource_id(%i)_type(%id,unnorm)_fmtx(unknown)_fmty(unknown)_fmtz(unknown)_fmtw(unknown)\n") % iinput->first % iinput->second.first;
-        }
-
-        typename std::map<int,uav_data_t>::iterator iuav;
-
-        for(iuav=uav_data.begin();iuav!=uav_data.end();++iuav) {
-            switch( iuav->second.uav_type ) {
-            case 0:
-                _out << boost::format("dcl_uav_id(%i)_type(%s)_fmtx(%s)\n") % iuav->first % iuav->second.typed_type % iuav->second.typed_format;
-                break;
-            case 1:
-                _out << boost::format("dcl_struct_uav_id(%i) %i\n") % iuav->first % iuav->second.struct_stride;
-                break;
-            case 2:
-                _out << boost::format("dcl_raw_uav_id(%i)\n") % iuav->first;
-                break;
-            case 3:
-                _out << boost::format("dcl_arena_uav_id(%i)\n") % iuav->first;
-                break;
-            }
+        std::map<std::string,boost::function<std::string ()> >::iterator  idcl;
+        for(idcl=dcl_data.begin();idcl!=dcl_data.end();++idcl) {
+            _out << idcl->second() << "\n";
         }
 
         std::map<boost::array<boost::uint32_t,4>,int>::iterator    iliteral;
-
         for(iliteral=literal_data.begin();iliteral!=literal_data.end();++iliteral) {
             _out << boost::format("dcl_literal l%i, 0x%x, 0x%x, 0x%x, 0x%x\n") % iliteral->second % iliteral->first[0] % iliteral->first[1] % iliteral->first[2] % iliteral->first[3];
         }
@@ -157,8 +136,7 @@ public:
         next_instruction_index=0;
         next_literal_index=0;
 
-        input_data.clear();
-        uav_data.clear();
+        dcl_data.clear();
         literal_data.clear();
 
         code_stream.str(std::string());
@@ -177,14 +155,9 @@ public:
         return v;
     }
 
-    void registerInput( int input_index, int dim, int size )
+    void registerDCL( const std::string& idx, const boost::function<std::string ()>& dcl )
     {
-        input_data[input_index] = std::make_pair(dim,size);
-    }
-
-    void registerUAV( int uav_index, int uav_type, int struct_stride, const std::string& typed_type, const std::string& typed_format )
-    {
-        uav_data[uav_index] = uav_data_t( uav_type, struct_stride, typed_type, typed_format );
+        dcl_data[idx] = dcl;
     }
 
     int getLiteral( const boost::array<boost::uint32_t,4>& data )
