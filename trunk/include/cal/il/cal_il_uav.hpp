@@ -26,6 +26,7 @@
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/bind.hpp>
 
 namespace cal {
 namespace il {
@@ -330,12 +331,19 @@ public:
 protected:
     int         uav_index;
 
+protected:
+    static std::string emit_dcl( int id )
+    {
+        return (boost::format("dcl_raw_uav_id(%i)") % id).str();
+    }
+
 public:
     uav_raw( int idx )
     {
         assert( idx>=0 );
         uav_index = idx;
-        Source::code.registerUAV(uav_index,2,0,"","");
+        Source::code.registerDCL( (boost::format("uav:%i") % idx).str(),
+                                  boost::bind(&uav_raw<T>::emit_dcl,idx) );
     }
 
     template<class E>
@@ -370,12 +378,19 @@ public:
 protected:
     int         uav_index;
 
+protected:
+    static std::string emit_dcl( int id, int stride )
+    {
+        return (boost::format("dcl_struct_uav_id(%i) %i") % id % stride).str();
+    }
+
 public:
     uav_struct( int idx, int stride )
     {
         assert( idx>=0 && stride>0 && (stride%4)==0 );
         uav_index  = idx;
-        Source::code.registerUAV(uav_index,1,stride,"","");
+        Source::code.registerDCL( (boost::format("uav:%i") % idx).str(), 
+                                  boost::bind(&uav_struct<T>::emit_dcl,idx,stride) );
     }
 
     template<class E>
@@ -449,19 +464,28 @@ protected:
     std::string getFormatName( const double_type& ) { return "unknown"; }
     std::string getFormatName( const double2_type& ) { return "unknown"; }
 
+    static std::string emit_dcl( int id, const std::string& type, const std::string& format )
+    {
+        return (boost::format("dcl_uav_id(%i)_type(%s)_fmtx(%s)") % id % type % format).str();
+    }
+
 public:
     uav( int idx, const std::string& type )
     {
         assert( idx>=0 );
         uav_index = idx;
-        Source::code.registerUAV(uav_index,0,0,type,getFormatName(typename detail::base_cal_type<T>::value()));
+
+        std::string format = getFormatName(typename detail::base_cal_type<T>::value());
+        Source::code.registerDCL( (boost::format("uav:%i") % idx).str(), 
+                                  boost::bind(&uav<T>::emit_dcl,idx,type,format) );
     }
 
     uav( int idx, const std::string& type, const std::string& format )
     {
         assert( idx>=0 );
         uav_index  = idx;
-        Source::code.registerUAV(uav_index,0,0,type,format);
+        Source::code.registerDCL( (boost::format("uav:%i") % idx).str(),
+                                  boost::bind(&uav<T>::emit_dcl,idx,type,format) );
     }
 
     template<class E>
