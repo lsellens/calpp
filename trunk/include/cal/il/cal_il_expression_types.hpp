@@ -62,10 +62,10 @@ public:
     unary( const unary<E,F>& rhs ) : base_type(rhs), _e(rhs._e) {}
     ~unary() {}
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
-        _e.emitCode(prg,_out);
-        _out << F::emitCode(resultCode(),_e.resultCode(),index);
+        _e.emitCode();
+        Source::code << F::emitCode(resultCode(),_e.resultCode(),index);
     }
 };
 
@@ -102,12 +102,12 @@ public:
     binary( const binary<E1,E2,F>& rhs ) : base_type(rhs), _e1(rhs._e1),_e2(rhs._e2) {}
     ~binary() {}
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
-        _e1.emitCode(prg,_out);
-        _e2.emitCode(prg,_out);
+        _e1.emitCode();
+        _e2.emitCode();
 
-        _out << F::emitCode(resultCode(),_e1.resultCode(),_e2.resultCode(),index);
+        Source::code << F::emitCode(resultCode(),_e1.resultCode(),_e2.resultCode(),index);
     }
 };
 
@@ -147,13 +147,13 @@ public:
     ternary( const ternary<E1,E2,E3,F>& rhs ) : base_type(rhs), _e1(rhs._e1),_e2(rhs._e2),_e3(rhs._e3) {}
     ~ternary() {}
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
-        _e1.emitCode(prg,_out);
-        _e2.emitCode(prg,_out);
-        _e3.emitCode(prg,_out);
+        _e1.emitCode();
+        _e2.emitCode();
+        _e3.emitCode();
 
-        _out << F::emitCode(resultCode(),_e1.resultCode(),_e2.resultCode(),_e3.resultCode(),index);
+        Source::code << F::emitCode(resultCode(),_e1.resultCode(),_e2.resultCode(),_e3.resultCode(),index);
     }
 };
 
@@ -193,9 +193,9 @@ public:
     register_address( const register_address<E>& rhs ) : _e(rhs._e), _offset(rhs._offset) {}
     ~register_address() {}
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
-        _e.emitCode(prg,_out);
+        _e.emitCode();
     }
 
     std::string resultCode() const

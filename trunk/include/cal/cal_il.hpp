@@ -41,5 +41,6 @@
 #include <cal/il/cal_il_uav.hpp>
 #include <cal/il/cal_il_multimedia.hpp>
 #include <cal/il/cal_il_ocl_functions.hpp>
+#include <cal/il/cal_il_func.hpp>
 
 #endif

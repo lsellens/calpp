@@ -137,8 +137,6 @@ std::string create_kernel_matrixmul()
     Source::emitHeader(code);
     Source::emitCode(code);
 
-    code << "end\n";
-
     return code.str();
 }
 

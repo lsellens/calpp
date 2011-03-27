@@ -230,7 +230,5 @@ std::string create_nbody_kernel( cal::Device& device, int num_threads, int worki
     Source::emitHeader(code);
     Source::emitCode(code);
 
-    code << "end\n";
-
     return code.str();
 }

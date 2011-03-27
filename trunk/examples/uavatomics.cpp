@@ -76,8 +76,6 @@ std::string create_kernel( void (*kernel)() )
     Source::emitHeader(code);
     Source::emitCode(code);
 
-    code << "end\n";
-
     return code.str();
 }
 

@@ -89,8 +89,6 @@ std::string create_kernel_coalescing( int step )
     Source::emitHeader(code);
     Source::emitCode(code);
 
-    code << "end\n";
-
     return code.str();
 }
 
