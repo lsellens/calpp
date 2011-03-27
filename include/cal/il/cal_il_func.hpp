@@ -419,97 +419,86 @@ void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4
     Source::code << func.post_call(9,v9);
 }
 
-std::string func_name( const std::string& file, int line )
+std::string func_name( const std::string& file, int line, int id )
 {
-    return (boost::format("func:%s:%i") % file % line).str();
+    return (boost::format("func:%s:%i:%i") % file % line % id).str();
 }
 
 template<typename T0>
-void func_begin( const std::string& file, int line, T0& v0 )
+void func_begin( const std::string& name, T0& v0 )
 {
-    std::string name = func_name(file,line);
-
     func_create(name,v0);
     func_emit_call(name,v0);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1 )
+void func_begin( const std::string& name, T0& v0, T1& v1 )
 {
-    std::string name = func_name(file,line);
     func_create(name,v0,v1);
     func_emit_call(name,v0,v1);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1, T2& v2 )
+void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2 )
 {
-    std::string name = func_name(file,line);
     func_create(name,v0,v1,v2);
     func_emit_call(name,v0,v1,v2);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1, T2& v2, T3& v3 )
+void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3 )
 {
-    std::string name = func_name(file,line);    
     func_create(name,v0,v1,v2,v3);
     func_emit_call(name,v0,v1,v2,v3);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4 )
+void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4 )
 {
-    std::string name = func_name(file,line);
     func_create(name,v0,v1,v2,v3,v4);
     func_emit_call(name,v0,v1,v2,v3,v4);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5 )
+void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5 )
 {
-    std::string name = func_name(file,line);
     func_create(name,v0,v1,v2,v3,v4,v5);
     func_emit_call(name,v0,v1,v2,v3,v4,v5);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6 )
+void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6 )
 {
-    std::string name = func_name(file,line);
     func_create(name,v0,v1,v2,v3,v4,v5,v6);
     func_emit_call(name,v0,v1,v2,v3,v4,v5,v6);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7 )
+void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7 )
 {
-    std::string name = func_name(file,line);
     func_create(name,v0,v1,v2,v3,v4,v5,v6,v7);
     func_emit_call(name,v0,v1,v2,v3,v4,v5,v6,v7);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7, T8& v8 )
-{
-    std::string name = func_name(file,line);
+void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7, T8& v8 )
+{    
     func_create(name,v0,v1,v2,v3,v4,v5,v6,v7,v8);
     func_emit_call(name,v0,v1,v2,v3,v4,v5,v6,v7,v8);
     Source::code.makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
-void func_begin( const std::string& file, int line, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7, T8& v8, T9& v9 )
+void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7, T8& v8, T9& v9 )
 {
-    std::string name = func_name(file,line);
     func_create(name,v0,v1,v2,v3,v4,v5,v6,v7,v8,v9);
     func_emit_call(name,v0,v1,v2,v3,v4,v5,v6,v7,v8,v9);
     Source::code.makeFuncActive(name);
@@ -520,10 +509,27 @@ void func_end()
     Source::code.endFunc();
 }
 
+template<int N>
+class func_name_helper
+{
+protected:    
+    static int counter;
+
+protected:    
+    int id;
+    
+public:    
+    func_name_helper() : id(counter++) {}
+    int operator()() const { return id; }
+};
+
+template<int N>
+int func_name_helper<N>::counter=0;
+
 } // detail
     
-#define il_func(...) ::cal::il::detail::func_begin(__FILE__, __LINE__, __VA_ARGS__);
-#define il_endfunc ::cal::il::detail::func_end();
+#define il_func(...) { static ::cal::il::detail::func_name_helper<0> __id; ::cal::il::detail::func_begin(::cal::il::detail::func_name(__FILE__, __LINE__, __id()), __VA_ARGS__); }
+#define il_endfunc { ::cal::il::detail::func_end(); }
 
 }
 }
