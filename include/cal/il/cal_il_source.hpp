@@ -24,6 +24,7 @@
 #define __CAL_IL_SOURCE_H
 
 #include <map>
+#include <vector>
 #include <sstream>
 #include <cstring>
 #include <boost/cstdint.hpp>
@@ -39,11 +40,72 @@ template<int N>
 class SourceGenerator
 {
 public:
-#if defined(__CAL_HPP__) || defined(__CAL_H__)
-    struct device_info
+    struct func_info
     {
-        int available;
+        static const int ARG_INOUT=0;
+        static const int ARG_IN   =1;
+        static const int ARG_OUT  =2;
 
+        struct arg_info
+        {
+            int type;
+            int id;            
+        
+            arg_info( int _type, int _id ) : type(_type), id(_id) {}
+        };
+        
+        std::string                             source;
+        std::vector<arg_info>                   arg;
+        std::vector<boost::function<void ()> >  change_var;
+        std::vector<boost::function<void ()> >  undo_var;
+        int                                     fid;
+    
+        template<class T>
+        std::string pre_call( int idx, const T& v )
+        {
+            if( arg[idx].type==ARG_INOUT || arg[idx].type==ARG_IN ) {
+                return (boost::format("mov r%i,%s\n") % arg[idx].id % v.resultCode()).str();
+            }
+        
+            return "";
+        }
+    
+        template<class T>
+        std::string post_call( int idx, const T& v )
+        {
+            if( arg[idx].type==ARG_INOUT || arg[idx].type==ARG_OUT ) {
+                return (boost::format("mov %s,r%i\n") % v.resultCode() % arg[idx].id).str();
+            }
+        
+            return "";
+        }
+        
+        void add_source( const std::string& _source )
+        {
+            if( !undo_var.empty() ) source += _source;
+        }
+    
+        void make_changes()
+        {
+            for(unsigned i=0;i<change_var.size();i++) 
+                change_var[i]();
+            change_var.clear();      
+        }
+        
+        void undo_changes()
+        {
+            for(unsigned i=0;i<undo_var.size();i++) 
+                undo_var[i]();
+            undo_var.clear();
+        }
+    };
+    
+    struct state_info
+    {
+        int  emit_ieee;
+        int  available;        
+
+#if defined(__CAL_HPP__) || defined(__CAL_H__)        
         CALtarget  target;
         CALuint    maxResource1DWidth;
         CALuint    maxResource2DWidth;
@@ -73,34 +135,25 @@ public:
         CALuint   availLocalRAM;          /**< Amount of available local GPU RAM in megabytes */
         CALuint   availUncachedRemoteRAM; /**< Amount of available uncached remote GPU memory in megabytes */
         CALuint   availCachedRemoteRAM;   /**< Amount of available cached remote GPU memory in megabytes */
-    };
-#endif
-
-    struct uav_data_t
-    {
-        int         uav_type;
-        int         struct_stride;
-        std::string typed_type;
-        std::string typed_format;
-
-        uav_data_t() : uav_type(-1), struct_stride(0), typed_type(), typed_format() {}
-        uav_data_t( int type, int stride, const std::string& ttype, const std::string& tformat ) : uav_type(type), struct_stride(stride), typed_type(ttype), typed_format(tformat) {}
+#endif        
     };
 
 protected:
-    unsigned next_instruction_index;
-
+    typedef std::map<std::string,func_info>                 func_map;
+    
 protected:
-    int                                                    next_literal_index;
-    std::map<std::string,boost::function<std::string ()> > dcl_data;
-    std::map<boost::array<boost::uint32_t,4>,int>          literal_data;
-    std::stringstream                                      code_stream;
+    unsigned                                                next_instruction_index;
+    int                                                     next_literal_index;
+    int                                                     next_func_index;
+    std::map<std::string,boost::function<std::string ()> >  dcl_data;
+    std::map<boost::array<boost::uint32_t,4>,int>           literal_data;
+    func_map                                                func_data;
+    std::vector<typename func_map::iterator>                func_stack;
+    std::string                                             source;
 
 public:
-    static SourceGenerator<N>              code;
-#if defined(__CAL_HPP__) || defined(__CAL_H__)
-    static device_info                     info;
-#endif
+    static SourceGenerator<N>       code;
+    static state_info               info;
 
 protected:
     void iemitHeader( std::ostream& _out )
@@ -118,7 +171,24 @@ protected:
 
     void iemitCode( std::ostream& _out )
     {
-        _out << code.code_stream.str();
+        typename func_map::iterator  ifunc;
+        
+        _out << source;
+        
+        for(ifunc=func_data.begin();ifunc!=func_data.end();++ifunc) {
+            _out << boost::format("func %i\n") % ifunc->second.fid;
+            _out << ifunc->second.source;
+            _out << "ret\nendfunc\n";
+        }
+        
+        _out << "end\n";        
+    }
+    
+    void iEnd()
+    {
+        assert( next_func_index>=1 ); // calling without Source::begin
+        if( !func_data.empty() ) source += "endmain\n";
+        next_func_index=-1;        
     }
 
 public:
@@ -126,6 +196,7 @@ public:
     {
         next_instruction_index=0;
         next_literal_index = 0; 
+        next_func_index = -1;
     }
     ~SourceGenerator()
     {
@@ -135,11 +206,14 @@ public:
     {
         next_instruction_index=0;
         next_literal_index=0;
+        next_func_index=1;
 
         dcl_data.clear();
         literal_data.clear();
+        func_data.clear();
+        func_stack.clear();
 
-        code_stream.str(std::string());
+        source.clear();        
 
         boost::array<boost::uint32_t,4>    data;
         data.assign(0);
@@ -150,6 +224,8 @@ public:
 
     unsigned getNewID( unsigned count )
     {
+        assert( next_func_index>=1 ); // creating variables before call to Source::begin
+        
         unsigned v = next_instruction_index;
         next_instruction_index+=count;        
         return v;
@@ -170,24 +246,60 @@ public:
         literal_data[data] = next_literal_index;
         return next_literal_index++;
     }
-
-    template<class T>
-    std::ostream& operator<<( const T& r )
+    
+    bool isFuncAvailable( const std::string& name ) const
     {
-        return code_stream << r;
+        return func_data.find(name)!=func_data.end();
+    }
+    
+    func_info& getFunc( const std::string& name )
+    {
+        typename func_map::iterator  ifunc;
+        
+        ifunc = func_data.find(name);
+        if( ifunc==func_data.end() ) {
+            func_data[name].fid = next_func_index++;
+            ifunc = func_data.find(name);            
+        }
+        
+        assert( ifunc!=func_data.end() );
+        return ifunc->second;
+    }
+    
+    void makeFuncActive( const std::string& name )
+    {
+        typename func_map::iterator  ifunc;
+        
+        ifunc = func_data.find(name);
+        assert( ifunc!=func_data.end() );
+                
+        ifunc->second.make_changes();
+        func_stack.push_back(ifunc);
+    }
+    
+    void endFunc()
+    {
+        assert( !func_stack.empty() );
+        func_stack.back()->second.undo_changes();
+        func_stack.pop_back();
     }
 
-    std::ostream& stream()
+    template<class T>
+    SourceGenerator<N>& operator<<( const T& r )
     {
-        return code_stream;
+        std::stringstream    str;
+        str << r;
+        
+        if( func_stack.empty() ) source += str.str();
+        else func_stack.back()->second.add_source(str.str());
+
+        return *this;
     }
 
     static void begin()
     {
         code.clear();
-#if defined(__CAL_HPP__) || defined(__CAL_H__)
         std::memset( &info, 0, sizeof(info) );
-#endif
     }
 
 #if defined(__CAL_H__)
@@ -242,6 +354,7 @@ public:
 
     static void end()
     {
+        code.iEnd();
     }
 
     static void emitHeader( std::ostream& _out )
@@ -256,7 +369,7 @@ public:
 };
 
 template<int N> SourceGenerator<N> SourceGenerator<N>::code;
-template<int N> typename SourceGenerator<N>::device_info SourceGenerator<N>::info;
+template<int N> typename SourceGenerator<N>::state_info SourceGenerator<N>::info;
 
 typedef SourceGenerator<0> Source;
 

@@ -73,8 +73,6 @@ std::string create_kernel_peekperf( int workgroup_size )
     Source::emitHeader(code);
     Source::emitCode(code);
 
-    code << "end\n";
-
     return code.str();
 }
 

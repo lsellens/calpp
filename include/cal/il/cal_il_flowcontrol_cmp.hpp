@@ -37,90 +37,90 @@ namespace detail {
 template<typename T,class E0,class E1,class E2,class S1,class S2>
 void emit_cmp_lt( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, S1, S2, bool neg )
 {
-    e0().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());    
+    e0().emitCode();    
     Source::code << boost::format(neg?T::logicalz:T::logicalnz) % e0().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2>
 void emit_cmp_lt( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, float_type, float_type, bool neg )
 {
-    e1().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
-    e2().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
+    e1().emitCode();
+    e2().emitCode();
     Source::code << boost::format(neg?T::relop_ge:T::relop_lt) % e1().resultCode() % e2().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2,class S1,class S2>
 void emit_cmp_le( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, S1, S2, bool neg )
 {
-    e0().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());        
+    e0().emitCode();        
     Source::code << boost::format(neg?T::logicalz:T::logicalnz) % e0().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2>
 void emit_cmp_le( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, float_type, float_type, bool neg )
 {
-    e1().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
-    e2().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
+    e1().emitCode();
+    e2().emitCode();
     Source::code << boost::format(neg?T::relop_gt:T::relop_le) % e1().resultCode() % e2().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2,class S1,class S2>
 void emit_cmp_ne( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, S1, S2, bool neg )
 {
-    e0().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());        
+    e0().emitCode();        
     Source::code << boost::format(neg?T::logicalz:T::logicalnz) % e0().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2>
 void emit_cmp_ne( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, float_type, float_type, bool neg )
 {
-    e1().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
-    e2().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
+    e1().emitCode();
+    e2().emitCode();
     Source::code << boost::format(neg?T::relop_eq:T::relop_ne) % e1().resultCode() % e2().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2,class S1,class S2>
 void emit_cmp_eq( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, S1, S2, bool neg )
 {
-    e0().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());        
+    e0().emitCode();        
     Source::code << boost::format(neg?T::logicalz:T::logicalnz) % e0().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2>
 void emit_cmp_eq( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, float_type, float_type, bool neg )
 {
-    e1().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
-    e2().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
+    e1().emitCode();
+    e2().emitCode();
     Source::code << boost::format(neg?T::relop_ne:T::relop_eq) % e1().resultCode() % e2().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2,class S1,class S2>
 void emit_cmp_ge( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, S1, S2, bool neg )
 {
-    e0().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());        
+    e0().emitCode();        
     Source::code << boost::format(neg?T::logicalz:T::logicalnz) % e0().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2>
 void emit_cmp_ge( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, float_type, float_type, bool neg )
 {
-    e1().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
-    e2().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
+    e1().emitCode();
+    e2().emitCode();
     Source::code << boost::format(neg?T::relop_lt:T::relop_ge) % e1().resultCode() % e2().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2,class S1,class S2>
 void emit_cmp_gt( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, S1, S2, bool neg )
 {
-    e0().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());        
+    e0().emitCode();        
     Source::code << boost::format(neg?T::logicalz:T::logicalnz) % e0().resultCode();
 }
 
 template<typename T,class E0,class E1,class E2>
 void emit_cmp_gt( T tt, const detail::expression<E0>& e0, const detail::expression<E1>& e1, const detail::expression<E2>& e2, float_type, float_type, bool neg )
 {
-    e1().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
-    e2().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());
+    e1().emitCode();
+    e2().emitCode();
     Source::code << boost::format(neg?T::relop_le:T::relop_gt) % e1().resultCode() % e2().resultCode();
 }
 
@@ -171,21 +171,21 @@ void emit_cmp( T tt, const binary<E1,E2,detail::cal_binary_gt<typename E1::value
 template<typename T,class E>
 void emit_cmp( T tt, const detail::expression<E>& e, uint_type, bool neg )
 {
-    e().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());    
+    e().emitCode();    
     Source::code << boost::format(neg?T::logicalz:T::logicalnz) % e().resultCode();
 }
 
 template<typename T,class E>
 void emit_cmp( T tt, const detail::expression<E>& e, int_type, bool neg )
 {
-    e().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());        
+    e().emitCode();        
     Source::code << boost::format(neg?T::logicalz:T::logicalnz) % e().resultCode();
 }
 
 template<typename T,class E>
 void emit_cmp( T tt, const detail::expression<E>& e,  float_type, bool neg )
 {
-    e().emitCode(::cal::il::Source::code,::cal::il::Source::code.stream());        
+    e().emitCode();        
     Source::code << boost::format(neg?T::z:T::nz) % e().resultCode();
 }
 

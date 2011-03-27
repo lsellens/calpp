@@ -59,8 +59,8 @@ protected:
     template<class E1>
     void iEmitCode( const E1& e ) const
     {
-        e.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e.emitCode();
+        _e.emitCode();
         Source::code << boost::format("mov %s,%s\n") % mask_output(resultCode()) % match_input_to_output(resultCode(),e.resultCode());
     }
 
@@ -77,9 +77,9 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
-        _e.emitCode(prg,_out);
+        _e.emitCode();
     }
 
     std::string resultCode() const

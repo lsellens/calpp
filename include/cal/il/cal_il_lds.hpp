@@ -63,8 +63,8 @@ protected:
     template<class E1>
     void iEmitCode( const E1& e ) const
     {
-        e.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e.emitCode();
+        _e.emitCode();
 
         switch( T::type_size ) {
         case 1:
@@ -95,11 +95,11 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
         std::string rout = (boost::format("r%i") % index).str();
 
-        _e.emitCode(prg,_out);
+        _e.emitCode();
 
         switch( T::type_size ) {
         case 1:
@@ -167,27 +167,27 @@ public:
     template<class E1>
     void emit_atomic( const std::string& src, const E1& e1 ) const
     {
-        e1.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        _e.emitCode();
         Source::code << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode();
     }
 
     template<class E1,class E2>
     void emit_atomic( const std::string& src, const E1& e1, const E2& e2 ) const
     {
-        e1.emitCode(Source::code,Source::code.stream());
-        e2.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        e2.emitCode();
+        _e.emitCode();
         Source::code << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode() % e2.resultCode();
     }
 
     template<class E1,class E2,class E3>
     void emit_atomic( const std::string& src, const E1& e1, const E2& e2, const E3& e3 ) const
     {
-        e1.emitCode(Source::code,Source::code.stream());
-        e2.emitCode(Source::code,Source::code.stream());
-        e3.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        e2.emitCode();
+        e3.emitCode();
+        _e.emitCode();
         Source::code << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode() % e2.resultCode() % e3.resultCode();
     }
 };
@@ -224,9 +224,9 @@ protected:
     template<class E>
     void iEmitCode( const E& e ) const
     {
-        e.emitCode(Source::code,Source::code.stream());
-        _e1.emitCode(Source::code,Source::code.stream());
-        _e2.emitCode(Source::code,Source::code.stream());
+        e.emitCode();
+        _e1.emitCode();
+        _e2.emitCode();
 
         switch(T::type_size) {
         case 1:
@@ -256,12 +256,12 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
         std::string rout = (boost::format("r%i") % index).str();
 
-        _e1.emitCode(prg,_out);
-        _e2.emitCode(prg,_out);
+        _e1.emitCode();
+        _e2.emitCode();
 
         switch(T::type_size) {
         case 1:
@@ -318,9 +318,9 @@ public:
     void emit_atomic( const std::string& src, const P1& e1 ) const
     {
         std::string tmp((boost::format("r%") % index).str());
-        e1.emitCode(Source::code,Source::code.stream());
-        _e1.emitCode(Source::code,Source::code.stream());
-        _e2.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        _e1.emitCode();
+        _e2.emitCode();
         Source::code << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
         Source::code << boost::format(src) % lds_index % tmp % e1.resultCode();
     }
@@ -329,10 +329,10 @@ public:
     void emit_atomic( const std::string& src, const P1& e1, const P2& e2 ) const
     {
         std::string tmp((boost::format("r%") % index).str());
-        e1.emitCode(Source::code,Source::code.stream());
-        e2.emitCode(Source::code,Source::code.stream());
-        _e1.emitCode(Source::code,Source::code.stream());
-        _e2.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        e2.emitCode();
+        _e1.emitCode();
+        _e2.emitCode();
         Source::code << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
         Source::code << boost::format(src) % lds_index % tmp % e1.resultCode() % e2.resultCode();
     }
@@ -341,11 +341,11 @@ public:
     void emit_atomic( const std::string& src, const P1& e1, const P2& e2, const P3& e3 ) const
     {
         std::string tmp((boost::format("r%") % index).str());
-        e1.emitCode(Source::code,Source::code.stream());
-        e2.emitCode(Source::code,Source::code.stream());
-        e3.emitCode(Source::code,Source::code.stream());
-        _e1.emitCode(Source::code,Source::code.stream());
-        _e2.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        e2.emitCode();
+        e3.emitCode();
+        _e1.emitCode();
+        _e2.emitCode();
         Source::code << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
         Source::code << boost::format(src) % lds_index % tmp % e1.resultCode() % e2.resultCode() % e3.resultCode();
     }

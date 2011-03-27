@@ -60,27 +60,27 @@ public:
     template<class E1>
     void emit_atomic( const std::string& src, const E1& e1 ) const
     {
-        e1.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        _e.emitCode();
         Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode();
     }
 
     template<class E1,class E2>
     void emit_atomic( const std::string& src, const E1& e1, const E2& e2 ) const
     {
-        e1.emitCode(Source::code,Source::code.stream());
-        e2.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        e2.emitCode();
+        _e.emitCode();
         Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode() % e2.resultCode();
     }
 
     template<class E1,class E2,class E3>
     void emit_atomic( const std::string& src, const E1& e1, const E2& e2, const E3& e3 ) const
     {
-        e1.emitCode(Source::code,Source::code.stream());
-        e2.emitCode(Source::code,Source::code.stream());
-        e3.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e1.emitCode();
+        e2.emitCode();
+        e3.emitCode();
+        _e.emitCode();
         Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode() % e2.resultCode() % e3.resultCode();
     }
 };
@@ -117,8 +117,8 @@ protected:
     template<class E1>
     void iEmitCode( const E1& e ) const
     {
-        e.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e.emitCode();
+        _e.emitCode();
 
         switch( T::type_size ) {
         case 1:
@@ -146,11 +146,11 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
         std::string rout = (boost::format("r%i") % index).str();
 
-        _e.emitCode(prg,_out);
+        _e.emitCode();
 
         switch( T::type_size ) {
         case 1:
@@ -232,8 +232,8 @@ protected:
     template<class E1>
     void iEmitCode( const E1& e ) const
     {
-        e.emitCode(Source::code,Source::code.stream());
-        _e.emitCode(Source::code,Source::code.stream());
+        e.emitCode();
+        _e.emitCode();
 
         switch( T::type_size ) {
         case 1:
@@ -261,11 +261,11 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
         std::string rout = (boost::format("r%i") % index).str();
 
-        _e.emitCode(prg,_out);
+        _e.emitCode();
 
         switch( T::type_size ) {
         case 1:

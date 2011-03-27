@@ -61,8 +61,8 @@ protected:
     template<class E1>
     void iEmitCode( const E1& e ) const
     {
-        e.emitCode(Source::code,Source::code.stream());
-        emitCode(Source::code,Source::code.stream());
+        e.emitCode();
+        emitCode();
         Source::code << boost::format("mov %s,%s\n") % resultCode() % e.resultCode();
     }
 
@@ -77,9 +77,9 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
-        _e.emitCode(prg,_out);
+        _e.emitCode();
     }
 
     std::string resultCode() const
@@ -138,9 +138,9 @@ public:
     variable_clone( const variable_clone<E>& rhs ) : base_type(rhs), _e() { _e.clone(rhs._e); }
     ~variable_clone() {}
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
-        _e.emitCode(prg,_out);
+        _e.emitCode();
     }
 
     std::string resultCode() const
@@ -212,7 +212,7 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
     }
 
@@ -253,7 +253,7 @@ protected:
     template<class E>
     void iEmitCode( const E& e ) const
     {
-        e.emitCode(Source::code,Source::code.stream());
+        e.emitCode();
         Source::code << boost::format("mov %s,%s\n") % resultCode() % e.resultCode();
     }
 
@@ -456,10 +456,20 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
     }
-
+    
+    unsigned getID() const 
+    {
+        return index;
+    }
+    
+    void setNewID( unsigned id ) 
+    {
+        index = id;
+    }
+        
     variable<T> operator=( const variable<T>& v )
     {
         iEmitCode(v);
@@ -498,7 +508,7 @@ protected:
     template<class E>
     void iEmitCode( const E& e ) const
     {
-        e.emitCode(Source::code,Source::code.stream());
+        e.emitCode();
         Source::code << boost::format("mov %s,%s\n") % detail::mask_output(resultCode()) % detail::match_input_to_output(resultCode(),e.resultCode());
     }
 
@@ -516,7 +526,7 @@ public:
     {
     }
 
-    void emitCode( Source& prg, std::ostream& _out ) const
+    void emitCode() const
     {
     }
 
