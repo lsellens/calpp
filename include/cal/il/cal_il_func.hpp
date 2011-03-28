@@ -23,32 +23,50 @@
 #ifndef _CAL_IL_FUNC_H
 #define _CAL_IL_FUNC_H
 
+#include <boost/type_traits.hpp>
+
 namespace cal {
 namespace il {
  
-template<class T>
-class _in
-{
-    const variable<T>& var;    
-    _in( const variable<T>& _var ) : var(_var) {}
-};
-
-template<class T>
-class _out
-{
-    variable<T>& var;    
-    _out( variable<T>& _var ) : var(_var) {}
-};
-
-template<class T>
-class _inout
-{
-    variable<T>& var;    
-    _inout( variable<T>& _var ) : var(_var) {}    
-};
 
 namespace detail {
+
+template<class T>
+class func_in_wrapper
+{
+public:
+    const variable<T>& var;    
+public:    
+    func_in_wrapper( const variable<T>& _var ) : var(_var) {}
+    func_in_wrapper( const func_in_wrapper<T>& f ) : var(f.var) {}
     
+    std::string resultCode() const { return var.resultCode(); }
+};
+
+template<class T>
+class func_out_wrapper
+{
+public:
+    variable<T>& var;    
+public:    
+    func_out_wrapper( variable<T>& _var ) : var(_var) {}
+    func_out_wrapper( const func_out_wrapper<T>& f ) : var(f.var) {}
+    
+    std::string resultCode() const { return var.resultCode(); }
+};
+
+template<class T>
+class func_inout_wrapper
+{
+public:
+    variable<T>& var;    
+public:        
+    func_inout_wrapper( variable<T>& _var ) : var(_var) {}    
+    func_inout_wrapper( const func_inout_wrapper<T>& f ) : var(f.var) {}
+    
+    std::string resultCode() const { return var.resultCode(); }
+};
+
 template<typename T>
 void func_change_variable( variable<T>& v, int id )
 {
@@ -74,13 +92,13 @@ void func_add_arg( Source::func_info& func, const variable<T>& v )
 }
 
 template<typename T>
-void func_add_arg( Source::func_info& func, const _in<T>& v )
+void func_add_arg( Source::func_info& func, const func_in_wrapper<T>& v )
 {
     func_add_arg(v.var);    
 }
 
 template<typename T>
-void func_add_arg( Source::func_info& func, const _out<T>& v )
+void func_add_arg( Source::func_info& func, const func_out_wrapper<T>& v )
 {
     int id = Source::code.getNewID(1);
     func.arg.push_back(Source::func_info::arg_info(Source::func_info::ARG_OUT,id));
@@ -89,7 +107,7 @@ void func_add_arg( Source::func_info& func, const _out<T>& v )
 }
 
 template<typename T>
-void func_add_arg( Source::func_info& func, const _inout<T>& v )
+void func_add_arg( Source::func_info& func, const func_inout_wrapper<T>& v )
 {
     func_add_arg(v.var);
 }
@@ -530,6 +548,24 @@ int func_name_helper<N>::counter=0;
     
 #define il_func(...) { static ::cal::il::detail::func_name_helper<0> __id; ::cal::il::detail::func_begin(::cal::il::detail::func_name(__FILE__, __LINE__, __id()), __VA_ARGS__); }
 #define il_endfunc { ::cal::il::detail::func_end(); }
+
+template<typename T>
+const detail::func_in_wrapper<T> _in( const variable<T>& v )
+{
+    return detail::func_in_wrapper<T>(v);
+}
+
+template<typename T>
+const detail::func_out_wrapper<T> _out( variable<T>& v )
+{
+    return detail::func_out_wrapper<T>(v);
+}
+
+template<typename T>
+const detail::func_inout_wrapper<T> _inout( variable<T>& v )
+{
+    return detail::func_inout_wrapper<T>(v);
+}
 
 }
 }
