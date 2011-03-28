@@ -24,6 +24,7 @@
 #define _CAL_IL_FUNC_H
 
 #include <boost/type_traits.hpp>
+#include <boost/bind.hpp>
 
 namespace cal {
 namespace il {
@@ -78,8 +79,8 @@ void func_add_arg( Source::func_info& func, variable<T>& v )
 {
     int id = Source::code.getNewID(1);
     func.arg.push_back(Source::func_info::arg_info(Source::func_info::ARG_INOUT,id));
-    func.change_var.push_back( boost::bind(func_change_variable<T>,ref(v),id) );
-    func.undo_var.push_back( boost::bind(func_change_variable<T>,ref(v),v.getID()) );
+    func.change_var.push_back( boost::bind(func_change_variable<T>,boost::ref(v),id) );
+    func.undo_var.push_back( boost::bind(func_change_variable<T>,boost::ref(v),v.getID()) );
 }
 
 template<typename T>
@@ -87,8 +88,8 @@ void func_add_arg( Source::func_info& func, const variable<T>& v )
 {
     int id = Source::code.getNewID(1);
     func.arg.push_back(Source::func_info::arg_info(Source::func_info::ARG_IN,id));
-    func.change_var.push_back( boost::bind(&func_change_variable<T>,ref(const_cast<variable<T>&>(v)),id) ); 
-    func.undo_var.push_back( boost::bind(&func_change_variable<T>,ref(const_cast<variable<T>&>(v)),v.getID()) );    
+    func.change_var.push_back( boost::bind(&func_change_variable<T>,boost::ref(const_cast<variable<T>&>(v)),id) ); 
+    func.undo_var.push_back( boost::bind(&func_change_variable<T>,boost::ref(const_cast<variable<T>&>(v)),v.getID()) );    
 }
 
 template<typename T>
@@ -102,8 +103,8 @@ void func_add_arg( Source::func_info& func, const func_out_wrapper<T>& v )
 {
     int id = Source::code.getNewID(1);
     func.arg.push_back(Source::func_info::arg_info(Source::func_info::ARG_OUT,id));
-    func.change_var.push_back( boost::bind(func_change_variable<T>,ref(v.var),id) );
-    func.undo_var.push_back( boost::bind(func_change_variable<T>,ref(v.var),v.var.getID()) );
+    func.change_var.push_back( boost::bind(func_change_variable<T>,boost::ref(v.var),id) );
+    func.undo_var.push_back( boost::bind(func_change_variable<T>,boost::ref(v.var),v.var.getID()) );
 }
 
 template<typename T>
@@ -437,7 +438,7 @@ void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4
     Source::code << func.post_call(9,v9);
 }
 
-std::string func_name( const std::string& file, int line, int id )
+inline std::string func_name( const std::string& file, int line, int id )
 {
     return (boost::format("func:%s:%i:%i") % file % line % id).str();
 }
@@ -522,8 +523,8 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
     Source::code.makeFuncActive(name);
 }
 
-void func_end()
-{    
+inline void func_end()
+{
     Source::code.endFunc();
 }
 
