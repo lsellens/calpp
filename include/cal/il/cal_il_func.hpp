@@ -95,7 +95,7 @@ void func_add_arg( Source::func_info& func, const variable<T>& v )
 template<typename T>
 void func_add_arg( Source::func_info& func, const func_in_wrapper<T>& v )
 {
-    func_add_arg(v.var);    
+    func_add_arg(func,v.var);    
 }
 
 template<typename T>
@@ -110,7 +110,7 @@ void func_add_arg( Source::func_info& func, const func_out_wrapper<T>& v )
 template<typename T>
 void func_add_arg( Source::func_info& func, const func_inout_wrapper<T>& v )
 {
-    func_add_arg(v.var);
+    func_add_arg(func,v.var);
 }
 
 template<typename T0>
