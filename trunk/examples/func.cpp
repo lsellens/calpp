@@ -38,7 +38,7 @@ variable<float4> functionA( const variable<uint1>& gid )
 {
     variable<float4> r;
     
-    il_func( r, gid ) 
+    il_func( _out(r), gid ) 
     {
         r = float4( convert_float1(gid), convert_float1(gid), convert_float1(gid), convert_float1(gid) );
     } 
