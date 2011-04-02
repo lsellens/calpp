@@ -792,15 +792,22 @@ public:
     CALresource getHandle( int idx ) const
     {
         std::map<CALdevice,CALresource>::const_iterator ihandle;
-        CALdevice                                 device;
+        CALdevice device;
 
         device = remote_?0:device_[idx]();
+
+        return getHandle2(device);
+    }
+    
+    CALresource getHandle2( CALdevice device ) const
+    {
+        std::map<CALdevice,CALresource>::const_iterator ihandle;
 
         ihandle = handle_.find(device);
         if( ihandle==handle_.end() ) throw Error(CAL_RESULT_ERROR);
 
-        return ihandle->second;
-    }
+        return ihandle->second;        
+    }    
 };
 } // detail
 
@@ -825,17 +832,23 @@ public:
     {
     }
 
+    /*
     CALvoid* map( CALuint& pitch, int idx=0 )
     {
+        #pragma message("Memory::map is obsolete. Use CommandQueue::mapMemObject instead")
         return data().map(pitch,idx);
     }
 
     void unmap( int idx=0 )
     {
+        #pragma message("Memory::unmap is obsolete. Use CommandQueue::unmapMemObject instead")
         data().unmap(idx);
     }
+    */
 
-    CALresource operator()( int idx ) const { return data().getHandle(idx); }
+    CALresource operator()( const Device& device ) const { return data().getHandle2(device()); }
+    CALresource operator()( CALdevice device ) const { return data().getHandle2(device); }
+
     CALmem getMem( CALcontext context ) const { return data().getMem(context); }
 
     friend class detail::KernelData;
@@ -1162,7 +1175,7 @@ public:
 
         if( data().type_>0 ) data().buildFromSource(devices);
         else if( data().type_==0 ) data().buildFromBinary(devices);
-        else throw Error(CAL_RESULT_ERROR);                
+        else throw Error(CAL_RESULT_ERROR);
     }
 
     void build( const Device& device )
@@ -1202,20 +1215,54 @@ public:
 
         // data
         Memory          mem;
-        byte_type         data[16];
-        byte_type         *ptr;
+        byte_type       data[16];
+        byte_type       *ptr;
 
         argument_data() : name(), cb_index(-1), cb_offset(0), cb_size(0), ptr(NULL) {}
         argument_data( const std::string& _name ) : name(_name), cb_index(-1), cb_offset(0), cb_size(0), ptr(NULL) {}
         argument_data( const std::string& _name, int _cbi, int _cbo, int _cbs ) : name(_name), cb_index(_cbi), cb_offset(_cbo), cb_size(_cbs), ptr(NULL) {}
     };
 
+    struct arg_state    
+    {
+        CALresource     resource;
+        CALname         name;
+        byte_type       data[16];
+        bool            update;
+        
+        arg_state() : resource(0), name(0), update(true) {}
+    };
+    
+    struct cb_state
+    {
+        Image1D     data;
+        int         size;
+        byte_type*  ptr;
+        bool        update;
+                
+        cb_state() : size(0), ptr(NULL), update(true) {}
+    };
+    
+    struct state_data
+    {
+        std::map<int,cb_state> cb;
+        std::vector<arg_state> arg;
+        
+        CALcontext             ctx;
+        CALdevice              device;
+        CALmodule              module;
+        CALfunc                func;
+        
+        state_data() : ctx(0), module(0), func(0) {}
+        ~state_data() { if( ctx && module ) calModuleUnload(ctx,module); }
+    };
+    
+
 public:
     Program                             program_;
     std::string                         name_;
     std::vector<argument_data>          arg_;
-    std::vector<Image1D>                cb_;
-    std::map<CALcontext,CALmodule>      module_;
+    std::map<CALcontext,state_data>     state_;
 
 protected:
     void registerContext( CALcontext context ) const
@@ -1225,22 +1272,21 @@ protected:
 
     void unregisterContext() const
     {
-        std::map<CALcontext,CALmodule>::const_iterator    imodule;
+        std::map<CALcontext,state_data>::const_iterator   istate;        
 
-        for(imodule=module_.begin();imodule!=module_.end();++imodule) {
-            detail::CALcontext_helper::unregisterCallback(imodule->first,(void*)this);
+        for(istate=state_.begin();istate!=state_.end();++istate) {
+            detail::CALcontext_helper::unregisterCallback(istate->first,(void*)this);
         }
     }
 
     void releaseContext( CALcontext context )
     {
-        std::map<CALcontext,CALmodule>::iterator   imodule;
+        std::map<CALcontext,state_data>::iterator   istate;
 
-        imodule = module_.find(context);
-        if( imodule==module_.end() ) return;
+        istate = state_.find(context);
+        if( istate==state_.end() ) return;
 
-        calModuleUnload(imodule->first,imodule->second);        
-        module_.erase(imodule);
+        state_.erase(istate);
     }
 
     static void callback( void* pKernel, CALcontext context )
@@ -1253,92 +1299,190 @@ public:
     ~KernelData()
     {
         unregisterContext();
-
-        std::map<CALcontext,CALmodule>::iterator    imodule;
-        for(imodule=module_.begin();imodule!=module_.end();++imodule)
-            calModuleUnload(imodule->first,imodule->second);
     }
 
-    void allocCB()
+    void clearState()
     {
-        std::vector<int>    cb_size;
-        int                 cb_count=0;
+        unregisterContext();
+        state_.clear();
+    }
 
-        for(unsigned int i=0;i<arg_.size();i++) {
-            if( arg_[i].cb_index<0 ) continue;
-            cb_count = std::max(cb_count,arg_[i].cb_index+1);
-        }
-        if( cb_count<=0 ) {
-            cb_.clear();
-            return;
-        }
-        
-        cb_size.resize(cb_count,1);
+    void allocCB( state_data& state )
+    {
         for(unsigned int i=0;i<arg_.size();i++) {
             if( arg_[i].cb_index<0 ) continue;            
-            cb_size[arg_[i].cb_index] = std::max( cb_size[arg_[i].cb_index],
-                                        (arg_[i].cb_offset+(arg_[i].cb_size==0?16:arg_[i].cb_size)+15)/16 );
+            state.cb[arg_[i].cb_index].size = std::max( state.cb[arg_[i].cb_index].size,
+                                                        (arg_[i].cb_offset+(arg_[i].cb_size==0?16:arg_[i].cb_size)+15)/16 );
         }
 
-        cb_.resize(cb_count,Image1D());
-        for(int i=0;i<cb_count;i++) {
-            if( !cb_[i].isValid() || cb_[i].getWidth()!=cb_size[i] ) cb_[i] = Image1D(program_.data().context_,cb_size[i], CAL_FORMAT_FLOAT32_4, 0);
+        std::map<int,cb_state>::iterator icb;
+
+        for(icb=state.cb.begin();icb!=state.cb.end();++icb) {
+            icb->second.data = Image1D(program_.data().context_,icb->second.size, CAL_FORMAT_UNSIGNED_INT32_4, 0);
         }
     }
 
-    void attachAll( CALcontext context, CALdevice device )
+    void attachCB( state_data& state )
     {
+        std::map<int,cb_state>::iterator    icb;
+        CALresult                           r;
+        CALname                             name;
+        char                                cname[64];
+
+        for(icb=state.cb.begin();icb!=state.cb.end();++icb) {
+            icb->second.data.attach(state.ctx,state.device);
+            
+            std::sprintf(cname,"cb%i",icb->first);
+            r = calModuleGetName(&name,state.ctx,state.module,cname);
+            if( r!=CAL_RESULT_OK ) throw Error(r);
+            
+            r = calCtxSetMem(state.ctx,name,icb->second.data.getMem(state.ctx));
+            if( r!=CAL_RESULT_OK ) throw Error(r);
+        }        
+    }
+    
+    void argName( state_data& state )
+    {
+        CALresult r;
+        
         for(unsigned i=0;i<arg_.size();i++) {
             if( arg_[i].cb_index>=0 ) continue;
-            arg_[i].mem.attach(context,device);
-        }
-
-        for(unsigned i=0;i<cb_.size();i++) {
-            cb_[i].attach(context,device);
-        }
+                        
+            r = calModuleGetName(&state.arg[i].name,state.ctx,state.module,arg_[i].name.c_str());
+            if( r!=CAL_RESULT_OK ) throw Error(r);            
+        }        
     }
 
-    void mapCB( std::vector<byte_type*>& cb_buffer )
+    state_data& loadState( CALcontext context, CALdevice device )
+    {
+        std::map<CALcontext,state_data>::iterator istate;
+        CALresult r;
+        
+        istate = state_.find(context);
+        if( istate!=state_.end() ) {
+            assert( istate->second.device==device );
+            return istate->second;
+        }
+        
+        istate = state_.insert( std::make_pair(context,state_data()) ).first;
+        
+        registerContext(context);
+        
+        istate->second.ctx    = context;
+        istate->second.device = device;
+        istate->second.arg.resize(arg_.size());
+
+        r = calModuleLoad(&istate->second.module,istate->second.ctx,program_());
+        if( r!=CAL_RESULT_OK ) throw Error(r);
+
+        r = calModuleGetEntry(&istate->second.func,istate->second.ctx,istate->second.module,name_.c_str());
+        if( r!=CAL_RESULT_OK ) throw Error(r);
+                
+        allocCB(istate->second);
+        attachCB(istate->second);
+        argName(istate->second);
+        
+        return istate->second;
+    }
+
+    void mapCB( state_data& state )
     {
         CALuint                 pitch;
-        
-        cb_buffer.clear();
-        for(unsigned i=0;i<cb_.size();i++) {
-            cb_buffer.push_back((byte_type*)cb_[i].map(pitch));
+
+        std::map<int,cb_state>::iterator icb;
+
+        for(icb=state.cb.begin();icb!=state.cb.end();++icb) {
+            if( icb->second.update ) {
+                icb->second.ptr = (byte_type*)icb->second.data.map2(pitch,state.device);
+                icb->second.update = false;
+            }
+        }        
+    }
+
+    void unmapCB( state_data& state )
+    {
+        std::map<int,cb_state>::iterator icb;
+
+        for(icb=state.cb.begin();icb!=state.cb.end();++icb) {
+            if( icb->second.ptr ) {
+                icb->second.data.unmap2(state.device);
+                icb->second.ptr = NULL;
+            }
         }
     }
 
-    void unmapCB()
+    void checkUpdates( state_data& state )
     {
-        for(unsigned i=0;i<cb_.size();i++) {
-            cb_[i].unmap();
-        }
-    }
-
-    void fillArgHandles( CALcontext context, CALmodule module, std::vector<CALname>& arg_name, std::vector<CALname>& cb_name )
-    {
-        CALresult   r;
-        CALname     name;
-        char        cname[64];
-
-        arg_name.clear();
         for(unsigned i=0;i<arg_.size();i++) {
-            if( arg_[i].cb_index<0 ) {
-                r = calModuleGetName(&name,context,module,arg_[i].name.c_str());
-                if( r!=CAL_RESULT_OK ) throw Error(r);
-            } else name=0;
+            if( arg_[i].cb_index>=0 ) {
+                if( !arg_[i].ptr ) {
+                    if( std::memcmp( state.arg[i].data, arg_[i].data, arg_[i].cb_size ) ) {
+                        state.arg[i].update = true;
+                    }
+                } else state.arg[i].update = true;
+            
+                if( state.arg[i].update ) state.cb[arg_[i].cb_index].update = true;
+            } else {
+                if( arg_[i].mem(state.device)!=state.arg[i].resource ) state.arg[i].update = true;
+            }
+        }        
+    }
 
-            arg_name.push_back(name);
+    void copyData( state_data& state )
+    {        
+        for(unsigned i=0;i<arg_.size();i++) {
+            if( arg_[i].cb_index<0 || !state.arg[i].update ) continue;
+
+            if( !arg_[i].ptr ) {
+                std::memcpy( state.cb[arg_[i].cb_index].ptr+arg_[i].cb_offset, arg_[i].data, arg_[i].cb_size );
+                std::memcpy( state.arg[i].data, arg_[i].data, arg_[i].cb_size );
+            } else {
+                std::memcpy( state.cb[arg_[i].cb_index].ptr+arg_[i].cb_offset, arg_[i].ptr, arg_[i].cb_size );
+            }
+            state.arg[i].update = false;
         }
+    }
 
-        cb_name.clear();
-        for(unsigned i=0;i<cb_.size();i++) {
-            std::sprintf(cname,"cb%i",i);
-            r = calModuleGetName(&name,context,module,cname);
+    void attachMem( state_data& state )
+    {
+        CALname     name;
+        CALresult   r;
+        
+        for(unsigned i=0;i<arg_.size();i++) {
+            if( arg_[i].cb_index>=0 || !state.arg[i].update ) continue;
+            
+            arg_[i].mem.attach(state.ctx,state.device);
+            
+            state.arg[i].resource = arg_[i].mem(state.device);
+            
+            r = calCtxSetMem(state.ctx,state.arg[i].name,arg_[i].mem.getMem(state.ctx));
             if( r!=CAL_RESULT_OK ) throw Error(r);
+            
+            state.arg[i].update = false;
+        }        
+    }
 
-            cb_name.push_back(name);            
-        }
+    void prepareKernel( CALcontext context, CALdevice device )
+    {
+        state_data& state(loadState(context,device));                
+
+        checkUpdates(state);
+        
+        mapCB(state);
+        copyData(state);
+        unmapCB(state);
+
+        attachMem(state);
+    }
+
+    CALfunc getFunc( CALcontext context ) 
+    {
+        std::map<CALcontext,state_data>::const_iterator istate;
+        
+        istate = state_.find(context);
+        if( istate==state_.end() ) throw Error(CAL_RESULT_ERROR);
+        
+        return istate->second.func;
     }
 
     /*
@@ -1357,77 +1501,6 @@ public:
         }
     }
     */
-
-    void copyData( std::vector<byte_type*> cb_buffer )
-    {        
-        for(unsigned i=0;i<arg_.size();i++) {
-            if( arg_[i].cb_index<0 ) continue;
-
-            if( arg_[i].ptr ) std::memcpy( cb_buffer[arg_[i].cb_index]+arg_[i].cb_offset, arg_[i].ptr, arg_[i].cb_size );
-            else std::memcpy( cb_buffer[arg_[i].cb_index]+arg_[i].cb_offset, arg_[i].data, arg_[i].cb_size );
-        }
-    }
-
-    void prepareKernel( CALcontext context, CALdevice device )
-    {
-        std::vector<CALname>    arg_name,cb_name;
-        std::vector<byte_type*>   cb_buffer;
-        CALresult               r;
-        CALmodule               module;
-
-        allocCB();
-        attachAll(context,device);
-
-        mapCB(cb_buffer);
-        copyData(cb_buffer);
-        unmapCB();
-
-        module = loadModule(context);
-        fillArgHandles( context, module, arg_name, cb_name );
-
-        for(unsigned i=0;i<arg_.size();i++) {
-            if( arg_name[i]==0 ) continue;
-            r = calCtxSetMem(context,arg_name[i],arg_[i].mem.getMem(context));
-            if( r!=CAL_RESULT_OK ) throw Error(r);            
-        }
-
-        for(unsigned i=0;i<cb_.size();i++) {
-            r = calCtxSetMem(context,cb_name[i],cb_[i].getMem(context));
-            if( r!=CAL_RESULT_OK ) throw Error(r);            
-        }
-    }
-
-    CALmodule loadModule( CALcontext context )
-    {
-        std::map<CALcontext,CALmodule>::iterator    imodule;
-
-        imodule = module_.find(context);
-        if( imodule!=module_.end() ) return imodule->second;
-
-        CALmodule module;
-        CALresult r;
-
-        r = calModuleLoad(&module,context,program_());
-        if( r!=CAL_RESULT_OK ) throw Error(r);
-
-        module_.insert( std::make_pair(context,module) );
-        registerContext(context);
-
-        return module;        
-    }
-
-    CALfunc getFunc( CALcontext context )
-    {
-        CALfunc     func;
-        CALmodule   module;
-        CALresult   r;
-        
-        module = loadModule(context);
-        r = calModuleGetEntry(&func,context,module,name_.c_str());
-        if( r!=CAL_RESULT_OK ) throw Error(r);
-
-        return func;
-    }
 };
 }
 
@@ -1485,6 +1558,8 @@ public:
 
     void setArgBind( int index, const std::string& name )
     {
+        data().clearState();
+        
         data().arg_.resize(index+1);
         data().arg_[index] = arg(name);
     }
@@ -1499,6 +1574,8 @@ public:
 
         if( name.size()<3 || name[0]!='c' || name[1]!='b' )  throw Error(CAL_RESULT_INVALID_PARAMETER);
         
+        data().clearState();
+        
         cb_index = std::strtol(&name[2], &endptr, 10);
         if( endptr!=(&name[0]+name.size()) ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         
@@ -1508,6 +1585,7 @@ public:
 
     Kernel& operator%( const arg& v )
     {
+        data().clearState();        
         data().arg_.push_back(v);
         return *this;
     }
@@ -2137,14 +2215,12 @@ template<int Name>
 typename detail::param_traits<detail::CAL_TYPE_CALMODULE,Name>::param_type Kernel::getInfo( const CommandQueue& queue )
 {
     typename detail::param_traits<detail::CAL_TYPE_CALMODULE,Name>::param_type value;
-    CALfuncInfo info;
-    CALmodule   module;
-    CALfunc     func;
-    CALresult   r;
 
-    module = data().loadModule(queue());
-    func   = data().getFunc(queue());
-    r = calModuleGetFuncInfo(&info,queue(),module,func);
+    detail::KernelData::state_data& state(data().loadState(queue(),queue.data().device_()));
+    CALfuncInfo             info;
+    CALresult               r;
+
+    r = calModuleGetFuncInfo(&info,state.ctx,state.module,state.func);
     if( r!=CAL_RESULT_OK ) throw Error(r);
 
     detail::param_traits<detail::CAL_TYPE_CALMODULE,Name>::getInfo(value,info);

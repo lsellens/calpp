@@ -5,6 +5,7 @@ Version 0.91-dev
     ps::get_global_id for pixel shaders
     il function support ( func example )
     doesn't need 'code << "end\n"' at the end of create_kernel
+    improvements to cal::Kernel class
 
 Version 0.90
     support for offset in sample load
