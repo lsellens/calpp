@@ -6,6 +6,7 @@ Version 0.91-dev
     il function support ( func example )
     doesn't need 'code << "end\n"' at the end of create_kernel
     improvements to cal::Kernel class
+    uav support for forcing cached reads
 
 Version 0.90
     support for offset in sample load

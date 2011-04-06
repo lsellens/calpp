@@ -166,19 +166,19 @@ public:
 
         switch( T::type_size ) {
         case 1:
-            Source::code << boost::format("%6%(%1%)%7 r%4%.x___,%3%\n"
+            Source::code << boost::format("%6%(%1%)%7% r%4%.x___,%3%\n"
                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".x") % uav_load % caching;
             break;
         case 2:
-            Source::code << boost::format("%6%(%1%)%7 r%4%.xy__,%3%\n"
+            Source::code << boost::format("%6%(%1%)%7% r%4%.xy__,%3%\n"
                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy") % uav_load % caching;
             break;
         case 3:
-            Source::code << boost::format("%6%(%1%)%7 r%4%.xyz_,%3%\n"
+            Source::code << boost::format("%6%(%1%)%7% r%4%.xyz_,%3%\n"
                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz") % uav_load % caching;
             break;
         default:
-            Source::code << boost::format("%6%(%1%)%7 r%4%.xyzw,%3%\n"
+            Source::code << boost::format("%6%(%1%)%7% r%4%.xyzw,%3%\n"
                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw") % uav_load % caching;
             break;
         }
@@ -286,19 +286,19 @@ public:
 
         switch( T::type_size ) {
         case 1:
-            Source::code << boost::format("uav_load_id(%1%)%6 r%4%,%3%\n"
+            Source::code << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".x") % caching;
             break;
         case 2:
-            Source::code << boost::format("uav_load_id(%1%)%6 r%4%,%3%\n"
+            Source::code << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy") % caching;
             break;
         case 3:
-            Source::code << boost::format("uav_load_id(%1%)%6 r%4%,%3%\n"
+            Source::code << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz") % caching;
             break;
         default:
-            Source::code << boost::format("uav_load_id(%1%)%6 r%4%,%3%\n"
+            Source::code << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw") % caching;
             break;
         }
