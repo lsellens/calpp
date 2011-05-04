@@ -8,6 +8,9 @@ Version 0.91-dev
     improvements to cal::Kernel class
     uav support for forcing cached reads
     removing use of flat thread index ( much slower on 5xxx )
+    compilation fix for SDK 2.4
+    improved ::cal::Kernel class ( using pinned memory for const transfer, removing unnecessary calls )
+    abs, min, max math functions
 
 Version 0.90
     support for offset in sample load
