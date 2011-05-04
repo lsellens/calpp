@@ -241,6 +241,18 @@ variable<typename E1::value_type> reciprocal( const detail::expression<E1>& e1 )
     return detail::reciprocal(e1(),typename E1::value_type());
 }
 
+template<class E1>
+variable<typename E1::value_type> native_recip( const detail::expression<E1>& e1 )
+{
+    return detail::native_reciprocal(e1(),typename E1::value_type());
+}
+
+template<class E1>
+variable<typename E1::value_type> recip( const detail::expression<E1>& e1 )
+{
+    return detail::reciprocal(e1(),typename E1::value_type());
+}
+
 } // il
 } // cal
 

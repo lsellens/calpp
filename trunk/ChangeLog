@@ -7,6 +7,7 @@ Version 0.91-dev
     doesn't need 'code << "end\n"' at the end of create_kernel
     improvements to cal::Kernel class
     uav support for forcing cached reads
+    removing use of flat thread index ( much slower on 5xxx )
 
 Version 0.90
     support for offset in sample load

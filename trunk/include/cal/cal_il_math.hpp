@@ -25,6 +25,7 @@
 
 #include <cal/cal_il.hpp>
 
+#include <cal/il/math/cal_il_abs.hpp>
 #include <cal/il/math/cal_il_atanh.hpp>
 #include <cal/il/math/cal_il_exp.hpp>
 #include <cal/il/math/cal_il_floor.hpp>
@@ -32,6 +33,8 @@
 #include <cal/il/math/cal_il_frexp.hpp>
 #include <cal/il/math/cal_il_ldexp.hpp>
 #include <cal/il/math/cal_il_log.hpp>
+#include <cal/il/math/cal_il_max.hpp>
+#include <cal/il/math/cal_il_min.hpp>
 #include <cal/il/math/cal_il_reciprocal.hpp>
 #include <cal/il/math/cal_il_round.hpp>
 #include <cal/il/math/cal_il_rsqrt.hpp>

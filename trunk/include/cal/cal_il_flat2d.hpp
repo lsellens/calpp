@@ -60,30 +60,30 @@ inline uint1 get_global_size( int i )
 
 inline uint4 get_local_id()
 {
-    return uint4( named_variable<uint1>("vTidInGrpFlat.x") % named_variable<uint1>("cb0[0].x"),
-                  named_variable<uint1>("vTidInGrpFlat.x") / named_variable<uint1>("cb0[0].x"),
+    return uint4( named_variable<uint1>("vTidInGrp.x") % named_variable<uint1>("cb0[0].x"),
+                  named_variable<uint1>("vTidInGrp.x") / named_variable<uint1>("cb0[0].x"),
                   uint1(0), uint1(0) );
 }
 
 inline uint1 get_local_id( int i )
 {
     assert( i>=0 && i<2 );
-    if( i==0 ) return named_variable<uint1>("vTidInGrpFlat.x") % named_variable<uint1>("cb0[0].x");
-    return named_variable<uint1>("vTidInGrpFlat.x") / named_variable<uint1>("cb0[0].x");
+    if( i==0 ) return named_variable<uint1>("vTidInGrp.x") % named_variable<uint1>("cb0[0].x");
+    return named_variable<uint1>("vTidInGrp.x") / named_variable<uint1>("cb0[0].x");
 }
 
 inline uint4 get_global_id()
 {
-    return uint4( named_variable<uint1>("vAbsTidFlat.x") % named_variable<uint1>("cb0[0].z"),
-                  named_variable<uint1>("vAbsTidFlat.x") / named_variable<uint1>("cb0[0].z"),
+    return uint4( named_variable<uint1>("vAbsTid.x") % named_variable<uint1>("cb0[0].z"),
+                  named_variable<uint1>("vAbsTid.x") / named_variable<uint1>("cb0[0].z"),
                   uint1(0), uint1(0) );
 }
 
 inline uint1 get_global_id( int i )
 {
     assert( i>=0 && i<2 );
-    if( i==0 ) return named_variable<uint1>("vAbsTidFlat.x") % named_variable<uint1>("cb0[0].z");
-    return named_variable<uint1>("vAbsTidFlat.x") / named_variable<uint1>("cb0[0].z");
+    if( i==0 ) return named_variable<uint1>("vAbsTid.x") % named_variable<uint1>("cb0[0].z");
+    return named_variable<uint1>("vAbsTid.x") / named_variable<uint1>("cb0[0].z");
 }
 
 
@@ -103,16 +103,16 @@ inline uint1 get_num_groups( int i )
 
 inline uint4 get_group_id()
 {
-    return uint4( named_variable<uint1>("vThreadGrpIdFlat.x") % get_num_groups(0),
-                  named_variable<uint1>("vThreadGrpIdFlat.x") / get_num_groups(0),
+    return uint4( named_variable<uint1>("vThreadGrpId.x") % get_num_groups(0),
+                  named_variable<uint1>("vThreadGrpId.x") / get_num_groups(0),
                   uint1(0), uint1(0) );
 }
 
 inline uint1 get_group_id( int i )
 {
     assert( i>=0 && i<2 );
-    if( i==0 ) return named_variable<uint1>("vThreadGrpIdFlat.x") % get_num_groups(0);
-    return named_variable<uint1>("vThreadGrpIdFlat.x") / get_num_groups(0);
+    if( i==0 ) return named_variable<uint1>("vThreadGrpId.x") % get_num_groups(0);
+    return named_variable<uint1>("vThreadGrpId.x") / get_num_groups(0);
 }
 
 #ifdef __CAL_HPP__

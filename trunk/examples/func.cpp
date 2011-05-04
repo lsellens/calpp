@@ -40,7 +40,10 @@ variable<float4> functionA( const variable<uint1>& gid )
     
     il_func( _out(r), gid ) 
     {
-        r = float4( convert_float1(gid), convert_float1(gid), convert_float1(gid), convert_float1(gid) );
+        float1 v;
+        
+        v = convert_float1(gid);
+        r = float4( v, v, v, v );
     } 
     il_endfunc
     
