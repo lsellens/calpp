@@ -23,6 +23,7 @@
 #define __CAL_IL_MATH_TANH_H
 
 #include <cal/il/math/cal_il_exp.hpp>
+#include <cal/il/math/cal_il_reciprocal.hpp>
 
 namespace cal {
 namespace il {
@@ -35,7 +36,7 @@ variable<typename E1::value_type> tanh( const detail::expression<E1>& _x )
 
     x = _x();
 
-    return 1 - 2/(exp(x+x)+1);
+    return mad( -2, reciprocal(exp(x+x)+1), 1 );
 }
 
 }

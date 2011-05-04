@@ -29,9 +29,10 @@
 #include <cassert>
 #include <cstring>
 #include <cstdio>
-#include <ostream>
 #include <cstdlib>
+#include <cstddef>
 #include <stdexcept>
+#include <ostream>
 #include <string>
 #include <vector>
 #include <set>
@@ -42,7 +43,8 @@
 #endif
 
 #define __CAL_DONT_USE_TYPE_TRAITS  1
-//#define __CAL_USE_NON_BLOCKING_WAIT 1
+//#define __CAL_USE_BLOCKING_WAIT 1
+#define __CAL_KERNEL_USE_PINNED_MEMORY 1
 
 #ifndef __CAL_DONT_USE_TYPE_TRAITS
   #include <type_traits>
@@ -769,15 +771,17 @@ public:
         imap->second.ptr = NULL;
     }
 
+    /*
     CALvoid* map( CALuint& pitch, int idx=0 )
     {
         return map2( pitch, device_[idx]() );
     }
-
+    
     void unmap( int idx=0 )
     {
         return unmap2( device_[idx]() );
     }
+    */
 
     void addDevices( const std::vector<Device>& device )
     {
@@ -789,15 +793,28 @@ public:
         } else map_.insert( std::make_pair((CALdevice)0,map_info(NULL,0,0)) );
     }
 
+    void addDevices( const std::vector<CALdevice>& device )
+    {
+        if( !remote_ ) {
+            for(unsigned i=0;i<device.size();i++) {
+                map_.insert( std::make_pair(device[i],map_info(NULL,0,0)) );
+            }
+        } else map_.insert( std::make_pair((CALdevice)0,map_info(NULL,0,0)) );
+    }
+
+    /*
     CALresource getHandle( int idx ) const
     {
         std::map<CALdevice,CALresource>::const_iterator ihandle;
         CALdevice device;
+        
+        assert( idx>=0 && idx<device_.size() );
 
         device = remote_?0:device_[idx]();
 
         return getHandle2(device);
     }
+    */
     
     CALresource getHandle2( CALdevice device ) const
     {
@@ -807,7 +824,7 @@ public:
         if( ihandle==handle_.end() ) throw Error(CAL_RESULT_ERROR);
 
         return ihandle->second;        
-    }    
+    }
 };
 } // detail
 
@@ -864,6 +881,29 @@ public:
 
 class Image1D : public Image
 {
+protected:
+    Image1D( CALdevice device, CALuint width, CALformat format, CALuint flags, CALvoid* host_ptr, int size ) : Image()
+    {
+        std::vector<CALdevice>   devices;
+        CALresource              res;
+        CALresult                r;
+
+        devices.push_back(device);
+        
+        createInstance();
+
+        if( !detail::cal_extension_table<0>::data.calResCreate1D ) throw Error(CAL_RESULT_NOT_SUPPORTED);        
+
+        r = detail::cal_extension_table<0>::data.calResCreate1D(&res,device,host_ptr,width,format,size,flags);
+        if( r!=CAL_RESULT_OK ) throw Error(r);
+          
+        data().handle_.insert( std::make_pair(device, res) );
+
+        data().remote_ = false;                
+        data().addDevices(devices);
+        data().width_  = width;
+    }
+    
 public:
     Image1D() : Image()
     {
@@ -945,8 +985,9 @@ public:
         data().width_  = width;
     }
 
-
     int getWidth() const { return data().width_; }
+    
+    friend class detail::KernelData;
 };
 
 class Image2D : public Image
@@ -1236,11 +1277,19 @@ public:
     struct cb_state
     {
         Image1D     data;
-        int         size;
+        int         size;        
+#ifdef __CAL_KERNEL_USE_PINNED_MEMORY
+        void*       host_ptr;
+#endif
         byte_type*  ptr;
         bool        update;
-                
+
+#ifdef __CAL_KERNEL_USE_PINNED_MEMORY        
+        cb_state() : size(0), host_ptr(NULL), ptr(NULL), update(true) {}
+        ~cb_state() { if( host_ptr ) std::free(host_ptr); }
+#else
         cb_state() : size(0), ptr(NULL), update(true) {}
+#endif
     };
     
     struct state_data
@@ -1318,7 +1367,13 @@ public:
         std::map<int,cb_state>::iterator icb;
 
         for(icb=state.cb.begin();icb!=state.cb.end();++icb) {
-            icb->second.data = Image1D(program_.data().context_,icb->second.size, CAL_FORMAT_UNSIGNED_INT32_4, 0);
+#ifdef __CAL_KERNEL_USE_PINNED_MEMORY
+            icb->second.host_ptr = std::malloc( 16*icb->second.size + 4096 );
+            icb->second.ptr      = (byte_type*)(((ptrdiff_t)icb->second.host_ptr + (ptrdiff_t)4095) & (~(ptrdiff_t)0xFFF));
+            icb->second.data     = Image1D(state.device, icb->second.size, CAL_FORMAT_UNSIGNED_INT32_4, 0, icb->second.ptr, 16*icb->second.size );
+#else       
+            icb->second.data = Image1D(program_.data().context_, icb->second.size, CAL_FORMAT_UNSIGNED_INT32_4, 0);
+#endif            
         }
     }
 
@@ -1387,6 +1442,7 @@ public:
 
     void mapCB( state_data& state )
     {
+#ifndef __CAL_KERNEL_USE_PINNED_MEMORY
         CALuint                 pitch;
 
         std::map<int,cb_state>::iterator icb;
@@ -1397,10 +1453,12 @@ public:
                 icb->second.update = false;
             }
         }        
+#endif        
     }
 
     void unmapCB( state_data& state )
     {
+#ifndef __CAL_KERNEL_USE_PINNED_MEMORY        
         std::map<int,cb_state>::iterator icb;
 
         for(icb=state.cb.begin();icb!=state.cb.end();++icb) {
@@ -1409,6 +1467,7 @@ public:
                 icb->second.ptr = NULL;
             }
         }
+#endif
     }
 
     void checkUpdates( state_data& state )
@@ -1770,7 +1829,7 @@ public:
 
         if( !event() ) return;
 
-#ifdef __CAL_USE_NON_BLOCKING_WAIT
+#ifdef __CAL_USE_BLOCKING_WAIT
         if( detail::cal_extension_table<0>::data.calCtxWaitForEvents ) {
             r = detail::cal_extension_table<0>::data.calCtxWaitForEvents(data().handle_,(CALevent*)&event(),1,0);
             if( r!=CAL_RESULT_OK ) throw Error(r);
@@ -1788,7 +1847,7 @@ public:
 
     void waitForEvents( const std::vector<Event>& events )
     {
-#ifdef __CAL_USE_NON_BLOCKING_WAIT
+#ifdef __CAL_USE_BLOCKING_WAIT
         if( detail::cal_extension_table<0>::data.calCtxWaitForEvents ) {
             CALresult r = detail::cal_extension_table<0>::data.calCtxWaitForEvents(data().handle_,(CALevent*)&events[0],events.size(),0);
             if( r!=CAL_RESULT_OK ) throw Error(r);
