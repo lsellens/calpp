@@ -89,6 +89,25 @@ struct cal_ternary_bytealign {
     }
 };
 
+//
+// bfi
+//
+
+template<class S1, class S2, class S3>
+struct cal_ternary_bfi {
+    typedef S1 value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        typedef boost::is_same<S1,S2> assert_value;
+        BOOST_STATIC_ASSERT( assert_value::value );
+        BOOST_STATIC_ASSERT( S1::type_size==S3::type_size ); 
+        BOOST_STATIC_ASSERT( S1::component_count==S3::component_count );
+
+        return (boost::format("bfi %1%,%2%,%3%,%4%\n") % r  % s0 % s1 % s2).str();
+    }
+};
 
 } // detail
 } // cal

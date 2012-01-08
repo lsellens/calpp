@@ -23,9 +23,9 @@
 #ifndef __CAL_HPP__
 #define __CAL_HPP__
 
-#include <cal.h>
-#include <calcl.h>
-#include <cal_ext.h>
+#include <cal/cal.h>
+#include <cal/calcl.h>
+#include <cal/cal_ext.h>
 #include <cassert>
 #include <cstring>
 #include <cstdio>
@@ -52,6 +52,7 @@
 
 
 enum CALInfoEnum {
+    CAL_CONTEXT_DEVICES,             /**  Context devices */
     CAL_DEVICE_TARGET,               /**< Device Kernel ISA  */ 
     CAL_DEVICE_MAXRESOURCE1DWIDTH,   /**< Maximum resource 1D width */
     CAL_DEVICE_MAXRESOURCE2DWIDTH,   /**< Maximum resource 2D width */
@@ -80,9 +81,8 @@ enum CALInfoEnum {
     CAL_DEVICE_AVAILLOCALRAM,          /**< Amount of available local GPU RAM in megabytes */
     CAL_DEVICE_AVAILUNCACHEDREMOTERAM, /**< Amount of available uncached remote GPU memory in megabytes */
     CAL_DEVICE_AVAILCACHEDREMOTERAM,   /**< Amount of available cached remote GPU memory in megabytes */
-    CAL_DEVICE_INDEX,
-    CAL_DEVICE_NAME,
-    CAL_CONTEXT_DEVICES,
+    CAL_DEVICE_INDEX,                  /**  Device index */
+    CAL_DEVICE_NAME,                   /**  Device name */
     CAL_KERNEL_MAXSCRATCHREGSNEEDED,   /**< Maximum number of scratch regs needed */ 
     CAL_KERNEL_NUMSHAREDGPRUSER,       /**< Number of shared GPRs */
     CAL_KERNEL_NUMSHAREDGPRTOTAL,      /**< Number of shared GPRs including ones used by SC */
@@ -94,7 +94,9 @@ enum CALInfoEnum {
     CAL_KERNEL_TOTALNUMTHREADGROUP,    /**< Total number of thread groups */
     CAL_KERNEL_NUMWAVEFRONTPERSIMD,    /**< Number of wavefronts per SIMD */
     CAL_KERNEL_ISMAXNUMWAVEPERSIMD,    /**< Is this the max num active wavefronts per SIMD */
-    CAL_KERNEL_SETBUFFERFORNUMGROUP    /**< Need to set up buffer for info on number of thread groups? */
+    CAL_KERNEL_SETBUFFERFORNUMGROUP,   /**< Need to set up buffer for info on number of thread groups? */
+    CAL_PROGRAM_BINARY,                /**  Return program binary */
+    CAL_PROGRAM_BINARY_SIZE            /** Size of program binary */
 };
 
 enum CALTargetTypeEnum {
@@ -124,7 +126,7 @@ enum CALTypeInfoEnum {
     CAL_TYPE_CALMEM,
     CAL_TYPE_CALMODULE,
     CAL_TYPE_CALOBJECT,
-    CAL_TYPE_CALIMAGE
+    CAL_TYPE_CALIMAGE,
 };
 
 template<int HN, typename info_type>
@@ -296,6 +298,37 @@ template<>
 struct param_traits<CAL_TYPE_CALCONTEXT,CAL_CONTEXT_DEVICES>
 {
     typedef const std::vector<Device>& param_type;
+};
+
+template<>
+struct param_traits<CAL_TYPE_CALIMAGE,CAL_PROGRAM_BINARY_SIZE>
+{
+    typedef CALuint param_type;
+
+    static CALresult getInfo( CALimage handle, param_type& size )            
+    {        
+        return calclImageGetSize(&size, handle);
+    }
+};
+
+template<>
+struct param_traits<CAL_TYPE_CALIMAGE,CAL_PROGRAM_BINARY>
+{
+    typedef std::vector<byte_type> param_type;
+
+    static CALresult getInfo( CALimage handle, param_type& image )
+    {
+        CALuint    size;
+        CALresult  r;
+        
+        r = calclImageGetSize(&size, handle);
+        if( r!=CAL_RESULT_OK ) return r;
+        
+        image.resize(size);        
+        r = calclImageWrite((CALvoid*)&image[0], size, handle);
+        
+        return r;
+    }
 };
 
 template<class D>
@@ -1231,6 +1264,18 @@ public:
     {
         log_stream<0>::ptr_ = &out;
         calclDisassembleImage(data().handle_, &outputToStream);        
+    }
+    
+    template<int Name>
+    typename detail::param_traits<detail::CAL_TYPE_CALIMAGE,Name>::param_type getInfo() const
+    {
+        typename detail::param_traits<detail::CAL_TYPE_CALIMAGE,Name>::param_type result;
+        CALresult r;
+                
+        r = detail::param_traits<detail::CAL_TYPE_CALIMAGE,Name>::getInfo(data().handle_,result);
+        if( r!=CAL_RESULT_OK ) throw Error(r);
+        
+        return result;
     }
 
     friend class Kernel;

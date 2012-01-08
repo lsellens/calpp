@@ -11,6 +11,10 @@ Version 0.91-dev
     compilation fix for SDK 2.4
     improved ::cal::Kernel class ( using pinned memory for const transfer, removing unnecessary calls )
     abs, min, max math functions
+    support for program binary image
+    class for file caching binary images ( cal/cal_program_cache.hpp )
+    redistributing CAL related header files from AMD SDK ( removing dependency on AMD SDK - only drivers required )
+    bitselect function
 
 Version 0.90
     support for offset in sample load

@@ -208,11 +208,23 @@ variable<typename E1::value_type> rotate( const detail::expression<E1>& e1, int 
 {
 #if defined(__CAL_H__)
     if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
-       return bitalign(e1(),e1(),value<typename detail::resize_base_type<uint_type,E1::value_type::component_count>::value>(32-shift));
+        return bitalign(e1(),e1(),value<typename detail::resize_base_type<uint_type,E1::value_type::component_count>::value>(32-shift));
     }
 #endif
     return ( e1() << value<uint_type>(shift) ) |
            ( e1() >> value<uint_type>(32-shift) );
+}
+
+template<class E1,class E2,class E3>
+variable<typename E1::value_type> bitselect( const detail::expression<E1>& e1, const detail::expression<E2>& e2, const detail::expression<E3>& e3 )
+{
+#if defined(__CAL_H__)
+    typedef detail::ternary<E1,E2,E3,detail::cal_ternary_bfi<typename E1::value_type,typename E2::value_type,typename E3::value_type> > expression_type;
+    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
+        return expression_type(e3(),e2(),e1());
+    }
+#endif
+    return (e1() & ~e3()) | (e2() & e3());
 }
 
 } // il
