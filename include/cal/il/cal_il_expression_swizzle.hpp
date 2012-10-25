@@ -61,7 +61,7 @@ protected:
     {
         e.emitCode();
         _e.emitCode();
-        Source::code << boost::format("mov %s,%s\n") % mask_output(resultCode()) % match_input_to_output(resultCode(),e.resultCode());
+        Source::code() << boost::format("mov %s,%s\n") % mask_output(resultCode()) % match_input_to_output(resultCode(),e.resultCode());
     }
 
 public:

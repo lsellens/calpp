@@ -130,7 +130,7 @@ double1 max( const expression<E1>& e1, const expression<E2>& e2, double_type )
     typedef binary<E1,E2,cal_binary_max<typename E1::value_type,typename E2::value_type> > max_type;
     
 #if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) return max_type(e1(),e2());
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) return max_type(e1(),e2());
 #endif
 
     double1 a,b;
@@ -147,7 +147,7 @@ double2 max( const expression<E1>& e1, const expression<E2>& e2, double2_type )
     typedef binary<E1,E2,cal_binary_max<typename E1::value_type,typename E2::value_type> > max_type;
     
 #if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) return max_type(e1(),e2());
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) return max_type(e1(),e2());
 #endif
 
     double2 a,b;

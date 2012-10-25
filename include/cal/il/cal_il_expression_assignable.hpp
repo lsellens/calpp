@@ -94,7 +94,7 @@ public:
 
     std::string resultCode() const
     {
-        int     idx = Source::code.getLiteral( _data.hex );
+        int     idx = Source::code().getLiteral( _data.hex );
         return detail::make_swizzle( (boost::format("l%i") % idx).str(), value_type::type_size );
     }
 

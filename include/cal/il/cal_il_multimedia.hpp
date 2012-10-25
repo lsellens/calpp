@@ -42,8 +42,22 @@ bytealign( const detail::expression<E1>& e1, const detail::expression<E2>& e2, c
     return expression_type(e1(),e2(),e3());
 }
 
+template<class E3,class E2,class E1>
+detail::ternary<E1,E2,E3,detail::cal_ternary_bitextract<typename E1::value_type,typename E2::value_type,typename E3::value_type> >
+amd_bfe( const detail::expression<E3>& src, const detail::expression<E2>& offset, const detail::expression<E1>& width )
+{
+    typedef detail::ternary<E1,E2,E3,detail::cal_ternary_bitextract<typename E1::value_type,typename E2::value_type,typename E3::value_type> > expression_type;
+    return expression_type(width(),offset(),src());
+}
+
+template<class E1>
+variable<typename E1::value_type> amd_bfe( const detail::expression<E1>& e1, int offset, int width )
+{
+    return amd_bfe( e1(), value<typename detail::resize_base_type<uint_type,E1::value_type::component_count>::value>(offset),
+                          value<typename detail::resize_base_type<uint_type,E1::value_type::component_count>::value>(width) );
+}
+
 } // il
 } // cal
 
 #endif
-

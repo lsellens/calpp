@@ -129,12 +129,12 @@ void emit_if( const detail::expression<E>& e )
 
 inline void emit_else()
 {
-    Source::code << "else\n";
+    Source::code() << "else\n";
 }
 
 inline void emit_endif()
 {
-    Source::code << "endif\n";
+    Source::code() << "endif\n";
 }
 
 template<class E>
@@ -145,7 +145,7 @@ void emit_break( const detail::expression<E>& e )
 
 inline void emit_break()
 {
-    Source::code << "break\n";
+    Source::code() << "break\n";
 }
 
 template<class E>
@@ -156,24 +156,24 @@ void emit_continue( const detail::expression<E>& e )
 
 inline void emit_continue()
 {
-    Source::code << "continue\n";
+    Source::code() << "continue\n";
 }
 
 template<class E>
 void emit_while( const detail::expression<E>& e )
 {
-    Source::code << "whileloop\n";
+    Source::code() << "whileloop\n";
     emit_cmp( break_code<0>(), e(), true );
 }
 
 inline void emit_whileloop()
 {
-    Source::code << "whileloop\n";
+    Source::code() << "whileloop\n";
 }
 
 inline void emit_endloop()
 {
-    Source::code << "endloop\n";
+    Source::code() << "endloop\n";
 }
 
 } // detail

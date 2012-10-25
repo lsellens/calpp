@@ -969,6 +969,43 @@ struct cal_ternary_mad<uint4_type,uint4_type,uint4_type>
     }
 };
 
+#ifdef __CAL_USE_AUTOFMA
+template<>
+struct cal_ternary_mad<float_type,float_type,float_type>
+{
+    typedef float_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("fma %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
+
+template<>
+struct cal_ternary_mad<float2_type,float2_type,float2_type>
+{
+    typedef float2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("fma %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
+
+template<>
+struct cal_ternary_mad<float4_type,float4_type,float4_type>
+{
+    typedef float4_type value_type;
+    static const int temp_reg_count=0; 
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("fma %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
+#else
 template<>
 struct cal_ternary_mad<float_type,float_type,float_type>
 {
@@ -1004,6 +1041,7 @@ struct cal_ternary_mad<float4_type,float4_type,float4_type>
         return (boost::format("mad %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
     }
 };
+#endif
 
 template<>
 struct cal_ternary_mad<double_type,double_type,double_type>

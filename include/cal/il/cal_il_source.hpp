@@ -32,6 +32,9 @@
 #include <boost/array.hpp>
 #include <boost/format.hpp>
 #include <boost/function.hpp>
+#ifdef __CAL_THREADSAFE
+  #include <boost/thread/tss.hpp>
+#endif
 
 namespace cal {
 namespace il {
@@ -140,7 +143,7 @@ public:
 
 protected:
     typedef std::map<std::string,func_info>                 func_map;
-    
+
 protected:
     unsigned                                                next_instruction_index;
     int                                                     next_literal_index;
@@ -151,9 +154,14 @@ protected:
     std::vector<typename func_map::iterator>                func_stack;
     std::string                                             source;
 
-public:
-    static SourceGenerator<N>       code;
-    static state_info               info;
+protected:
+#ifdef __CAL_THREADSAFE
+    static boost::thread_specific_ptr<SourceGenerator<N> > _code;
+    static boost::thread_specific_ptr<state_info>          _info;
+#else
+    static SourceGenerator<N>       _code;
+    static state_info               _info;
+#endif
 
 protected:
     void iemitHeader( std::ostream& _out )
@@ -213,7 +221,7 @@ public:
         func_data.clear();
         func_stack.clear();
 
-        source.clear();        
+        source.clear();
 
         boost::array<boost::uint32_t,4>    data;
         data.assign(0);
@@ -289,7 +297,7 @@ public:
     {
         std::stringstream    str;
         str << r;
-        
+
         if( func_stack.empty() ) source += str.str();
         else func_stack.back()->second.add_source(str.str());
 
@@ -298,8 +306,8 @@ public:
 
     static void begin()
     {
-        code.clear();
-        std::memset( &info, 0, sizeof(info) );
+        code().clear();
+        std::memset( &info(), 0, sizeof(state_info) );
     }
 
 #if defined(__CAL_H__)
@@ -315,33 +323,33 @@ public:
         if( calDeviceGetInfo(&_info,ordinal)!=CAL_RESULT_OK ) return;
         if( calDeviceGetAttribs(&_attribs,ordinal)!=CAL_RESULT_OK ) return;
 
-        info.available = 1;
+        info().available = 1;
 
-        info.target = _info.target;
-        info.maxResource1DWidth = _info.maxResource1DWidth;
-        info.maxResource2DWidth = _info.maxResource2DWidth;
-        info.maxResource2DHeight = _info.maxResource2DHeight;
+        info().target = _info.target;
+        info().maxResource1DWidth = _info.maxResource1DWidth;
+        info().maxResource2DWidth = _info.maxResource2DWidth;
+        info().maxResource2DHeight = _info.maxResource2DHeight;
 
-        info.localRAM = _attribs.localRAM;
-        info.uncachedRemoteRAM = _attribs.uncachedRemoteRAM;
-        info.cachedRemoteRAM = _attribs.cachedRemoteRAM;
-        info.engineClock = _attribs.engineClock;
-        info.memoryClock = _attribs.memoryClock;
-        info.wavefrontSize = _attribs.wavefrontSize;
-        info.numberOfSIMD = _attribs.numberOfSIMD;
-        info.doublePrecision = _attribs.doublePrecision;
-        info.localDataShare = _attribs.localDataShare;
-        info.globalDataShare = _attribs.globalDataShare;
-        info.globalGPR = _attribs.globalGPR;
-        info.computeShader = _attribs.computeShader;
-        info.memExport = _attribs.memExport;
-        info.pitch_alignment = _attribs.pitch_alignment;
-        info.surface_alignment = _attribs.surface_alignment;
-        info.numberOfUAVs = _attribs.numberOfUAVs;
-        info.bUAVMemExport = _attribs.bUAVMemExport;
-        info.b3dProgramGrid = _attribs.b3dProgramGrid;
-        info.numberOfShaderEngines = _attribs.numberOfShaderEngines;
-        info.targetRevision = _attribs.targetRevision;
+        info().localRAM = _attribs.localRAM;
+        info().uncachedRemoteRAM = _attribs.uncachedRemoteRAM;
+        info().cachedRemoteRAM = _attribs.cachedRemoteRAM;
+        info().engineClock = _attribs.engineClock;
+        info().memoryClock = _attribs.memoryClock;
+        info().wavefrontSize = _attribs.wavefrontSize;
+        info().numberOfSIMD = _attribs.numberOfSIMD;
+        info().doublePrecision = _attribs.doublePrecision;
+        info().localDataShare = _attribs.localDataShare;
+        info().globalDataShare = _attribs.globalDataShare;
+        info().globalGPR = _attribs.globalGPR;
+        info().computeShader = _attribs.computeShader;
+        info().memExport = _attribs.memExport;
+        info().pitch_alignment = _attribs.pitch_alignment;
+        info().surface_alignment = _attribs.surface_alignment;
+        info().numberOfUAVs = _attribs.numberOfUAVs;
+        info().bUAVMemExport = _attribs.bUAVMemExport;
+        info().b3dProgramGrid = _attribs.b3dProgramGrid;
+        info().numberOfShaderEngines = _attribs.numberOfShaderEngines;
+        info().targetRevision = _attribs.targetRevision;
     }
 #endif
 
@@ -354,22 +362,61 @@ public:
 
     static void end()
     {
-        code.iEnd();
+        code().iEnd();
     }
 
     static void emitHeader( std::ostream& _out )
     {
-        code.iemitHeader(_out);
+        code().iemitHeader(_out);
     }
 
     static void emitCode( std::ostream& _out )
     {
-        code.iemitCode(_out);
+        code().iemitCode(_out);
+    }
+
+    static SourceGenerator<N>& code() 
+    {
+#ifdef __CAL_THREADSAFE
+        SourceGenerator<N>* ptr;
+
+        ptr = _code.get();
+        if( !ptr ) {
+            ptr = new SourceGenerator<N>();
+            _code.reset(ptr);
+        }
+
+        return *ptr;
+#else
+        return _code;
+#endif
+    }
+
+    static state_info& info()
+    {
+#ifdef __CAL_THREADSAFE
+        state_info* ptr;
+
+        ptr = _info.get();
+        if( !ptr ) {
+            ptr = new state_info();
+            _info.reset(ptr);
+        }
+
+        return *ptr;
+#else
+        return _info;
+#endif
     }
 };
 
-template<int N> SourceGenerator<N> SourceGenerator<N>::code;
-template<int N> typename SourceGenerator<N>::state_info SourceGenerator<N>::info;
+#ifdef __CAL_THREADSAFE
+template<int N> boost::thread_specific_ptr<SourceGenerator<N> > SourceGenerator<N>::_code;
+template<int N> boost::thread_specific_ptr<typename SourceGenerator<N>::state_info> SourceGenerator<N>::_info;
+#else
+template<int N> SourceGenerator<N> SourceGenerator<N>::_code;
+template<int N> typename SourceGenerator<N>::state_info SourceGenerator<N>::_info;
+#endif
 
 typedef SourceGenerator<0> Source;
 
@@ -385,7 +432,7 @@ protected:
     int index;
 
 public:
-    expression() { index = Source::code.getNewID(E::temp_reg_count+1); }
+    expression() { index = Source::code().getNewID(E::temp_reg_count+1); }
     expression( const expression<E>& rhs ) : index(rhs.index) {}
     ~expression() {}
 

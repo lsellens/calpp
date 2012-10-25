@@ -139,7 +139,7 @@ double1 native_rsqrt( const expression<E1>& e1, double_type  )
     typedef unary<E1,cal_unary_rsq<typename E1::value_type> > rsq_type;
 
 #if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) return rsq_type(e1());
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) return rsq_type(e1());
 #endif
     double1 w,x;
     int1    e;
@@ -159,7 +159,7 @@ double2 native_rsqrt( const expression<E1>& e1, double2_type  )
     typedef unary<E1,cal_unary_rsq<typename E1::value_type> > rsq_type;
 
 #if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) return rsq_type(e1());
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) return rsq_type(e1());
 #endif
     double2 w,x;
     int2    e;

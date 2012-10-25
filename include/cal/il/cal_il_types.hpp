@@ -63,7 +63,7 @@ protected:
     {
         e.emitCode();
         emitCode();
-        Source::code << boost::format("mov %s,%s\n") % resultCode() % e.resultCode();
+        Source::code() << boost::format("mov %s,%s\n") % resultCode() % e.resultCode();
     }
 
 public:
@@ -218,7 +218,7 @@ public:
 
     std::string resultCode() const
     {
-        int     idx = Source::code.getLiteral( _data.hex );
+        int     idx = Source::code().getLiteral( _data.hex );
         return detail::make_swizzle( (boost::format("l%i") % idx).str(), value_type::type_size );
     }
 };
@@ -254,7 +254,7 @@ protected:
     void iEmitCode( const E& e ) const
     {
         e.emitCode();
-        Source::code << boost::format("mov %s,%s\n") % resultCode() % e.resultCode();
+        Source::code() << boost::format("mov %s,%s\n") % resultCode() % e.resultCode();
     }
 
 public:
@@ -509,7 +509,7 @@ protected:
     void iEmitCode( const E& e ) const
     {
         e.emitCode();
-        Source::code << boost::format("mov %s,%s\n") % detail::mask_output(resultCode()) % detail::match_input_to_output(resultCode(),e.resultCode());
+        Source::code() << boost::format("mov %s,%s\n") % detail::mask_output(resultCode()) % detail::match_input_to_output(resultCode(),e.resultCode());
     }
 
 public:

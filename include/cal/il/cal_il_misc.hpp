@@ -47,7 +47,7 @@ inline void cal_fence( int type )
     if( type&CAL_LOCAL_MEM_FENCE  ) txt += "_lds";
     if( type&CAL_GLOBAL_MEM_FENCE ) txt += "_memory";
     if( type&CAL_SR_FENCE         ) txt += "_sr";
-    Source::code << txt << "\n";
+    Source::code() << txt << "\n";
 }
 
 inline void barrier( int type )
@@ -66,7 +66,7 @@ inline void read_mem_fence( int type )
     std::string txt = "fence";
     if( type&CAL_LOCAL_MEM_FENCE ) txt += "_lds";
     if( type&CAL_GLOBAL_MEM_FENCE ) txt += "_mem_read_only";
-    Source::code << txt << "\n";
+    Source::code() << txt << "\n";
 }
 
 inline void write_mem_fence( int type )
@@ -74,7 +74,7 @@ inline void write_mem_fence( int type )
     std::string txt = "fence";
     if( type&CAL_LOCAL_MEM_FENCE ) txt += "_lds";
     if( type&CAL_GLOBAL_MEM_FENCE ) txt += "_mem_write_only";
-    Source::code << txt << "\n";
+    Source::code() << txt << "\n";
 }
 
 template<class T> named_variable<T> get_global_id();
@@ -145,7 +145,7 @@ inline named_variable<uint1> get_group_id( int idx )
 
 inline void emit_comment( const std::string& comment )
 {
-    Source::code << ";" << comment << "\n";
+    Source::code() << ";" << comment << "\n";
 }
 
 namespace ps {
@@ -165,14 +165,14 @@ template<class T> T get_global_id();
 template<>
 inline float2 get_global_id()
 {
-    Source::code.registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
+    Source::code().registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
     return floor(named_variable<float2>("vWinCoord0.xy"));
 }
 
 template<>
 inline uint2 get_global_id()
 {
-    Source::code.registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
+    Source::code().registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
     return cast_type<uint2>(named_variable<float2>("vWinCoord0.xy"));
 }
 
@@ -181,7 +181,7 @@ template<class T> T get_global_id( int idx );
 template<>
 inline float1 get_global_id( int idx )
 {
-    Source::code.registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
+    Source::code().registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
 
     if( idx==0 ) return floor(named_variable<float1>("vWinCoord0.x"));
     return floor(named_variable<float1>("vWinCoord0.y"));
@@ -190,7 +190,7 @@ inline float1 get_global_id( int idx )
 template<>
 inline uint1 get_global_id( int idx )
 {
-    Source::code.registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
+    Source::code().registerDCL( "ps:vWinCoord0", boost::bind(&detail::dcl_helper<0>::emit_dcl) );
 
     if( idx==0 ) return cast_type<uint1>(named_variable<float1>("vWinCoord0.x"));
     return cast_type<uint1>(named_variable<float1>("vWinCoord0.y"));
