@@ -77,7 +77,7 @@ void func_change_variable( variable<T>& v, int id )
 template<typename T>
 void func_add_arg( Source::func_info& func, variable<T>& v )
 {
-    int id = Source::code.getNewID(1);
+    int id = Source::code().getNewID(1);
     func.arg.push_back(Source::func_info::arg_info(Source::func_info::ARG_INOUT,id));
     func.change_var.push_back( boost::bind(func_change_variable<T>,boost::ref(v),id) );
     func.undo_var.push_back( boost::bind(func_change_variable<T>,boost::ref(v),v.getID()) );
@@ -86,7 +86,7 @@ void func_add_arg( Source::func_info& func, variable<T>& v )
 template<typename T>
 void func_add_arg( Source::func_info& func, const variable<T>& v )
 {
-    int id = Source::code.getNewID(1);
+    int id = Source::code().getNewID(1);
     func.arg.push_back(Source::func_info::arg_info(Source::func_info::ARG_IN,id));
     func.change_var.push_back( boost::bind(&func_change_variable<T>,boost::ref(const_cast<variable<T>&>(v)),id) ); 
     func.undo_var.push_back( boost::bind(&func_change_variable<T>,boost::ref(const_cast<variable<T>&>(v)),v.getID()) );    
@@ -101,7 +101,7 @@ void func_add_arg( Source::func_info& func, const func_in_wrapper<T>& v )
 template<typename T>
 void func_add_arg( Source::func_info& func, const func_out_wrapper<T>& v )
 {
-    int id = Source::code.getNewID(1);
+    int id = Source::code().getNewID(1);
     func.arg.push_back(Source::func_info::arg_info(Source::func_info::ARG_OUT,id));
     func.change_var.push_back( boost::bind(func_change_variable<T>,boost::ref(v.var),id) );
     func.undo_var.push_back( boost::bind(func_change_variable<T>,boost::ref(v.var),v.var.getID()) );
@@ -116,18 +116,18 @@ void func_add_arg( Source::func_info& func, const func_inout_wrapper<T>& v )
 template<typename T0>
 void func_create(const std::string& name, T0& v0)
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
 }
 
 template<typename T0, typename T1>
 void func_create(const std::string& name, T0& v0, T1& v1 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
 }
@@ -135,9 +135,9 @@ void func_create(const std::string& name, T0& v0, T1& v1 )
 template<typename T0, typename T1, typename T2>
 void func_create(const std::string& name, T0& v0, T1& v1, T2& v2 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
     func_add_arg(func,v2);
@@ -146,9 +146,9 @@ void func_create(const std::string& name, T0& v0, T1& v1, T2& v2 )
 template<typename T0, typename T1, typename T2, typename T3>
 void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
     func_add_arg(func,v2);
@@ -158,9 +158,9 @@ void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3 )
 template<typename T0, typename T1, typename T2, typename T3, typename T4>
 void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
     func_add_arg(func,v2);
@@ -171,9 +171,9 @@ void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
 void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
     func_add_arg(func,v2);
@@ -185,9 +185,9 @@ void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
 void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
     func_add_arg(func,v2);
@@ -200,9 +200,9 @@ void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
 void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
     func_add_arg(func,v2);
@@ -216,9 +216,9 @@ void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
 void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7, T8& v8 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
     func_add_arg(func,v2);
@@ -233,9 +233,9 @@ void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
 void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7, T8& v8, T9& v9 )
 {
-    if( Source::code.isFuncAvailable(name) ) return;
+    if( Source::code().isFuncAvailable(name) ) return;
 
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     func_add_arg(func,v0);
     func_add_arg(func,v1);
     func_add_arg(func,v2);
@@ -251,191 +251,191 @@ void func_create(const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 template<typename T0>
 void func_emit_call( const std::string& name, T0& v0 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);    
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);    
 }
 
 template<typename T0, typename T1>
 void func_emit_call( const std::string& name, T0& v0, T1& v1 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
 }
 
 template<typename T0, typename T1, typename T2>
 void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << func.pre_call(2,v2);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
-    Source::code << func.post_call(2,v2);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << func.pre_call(2,v2);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
+    Source::code() << func.post_call(2,v2);
 }
 
 template<typename T0, typename T1, typename T2, typename T3>
 void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << func.pre_call(2,v2);
-    Source::code << func.pre_call(3,v3);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
-    Source::code << func.post_call(2,v2);
-    Source::code << func.post_call(3,v3);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << func.pre_call(2,v2);
+    Source::code() << func.pre_call(3,v3);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
+    Source::code() << func.post_call(2,v2);
+    Source::code() << func.post_call(3,v3);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4>
 void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << func.pre_call(2,v2);
-    Source::code << func.pre_call(3,v3);
-    Source::code << func.pre_call(4,v4);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
-    Source::code << func.post_call(2,v2);
-    Source::code << func.post_call(3,v3);
-    Source::code << func.post_call(4,v4);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << func.pre_call(2,v2);
+    Source::code() << func.pre_call(3,v3);
+    Source::code() << func.pre_call(4,v4);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
+    Source::code() << func.post_call(2,v2);
+    Source::code() << func.post_call(3,v3);
+    Source::code() << func.post_call(4,v4);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
 void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << func.pre_call(2,v2);
-    Source::code << func.pre_call(3,v3);
-    Source::code << func.pre_call(4,v4);
-    Source::code << func.pre_call(5,v5);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
-    Source::code << func.post_call(2,v2);
-    Source::code << func.post_call(3,v3);
-    Source::code << func.post_call(4,v4);
-    Source::code << func.post_call(5,v5);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << func.pre_call(2,v2);
+    Source::code() << func.pre_call(3,v3);
+    Source::code() << func.pre_call(4,v4);
+    Source::code() << func.pre_call(5,v5);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
+    Source::code() << func.post_call(2,v2);
+    Source::code() << func.post_call(3,v3);
+    Source::code() << func.post_call(4,v4);
+    Source::code() << func.post_call(5,v5);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
 void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << func.pre_call(2,v2);
-    Source::code << func.pre_call(3,v3);
-    Source::code << func.pre_call(4,v4);
-    Source::code << func.pre_call(5,v5);
-    Source::code << func.pre_call(6,v6);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
-    Source::code << func.post_call(2,v2);
-    Source::code << func.post_call(3,v3);
-    Source::code << func.post_call(4,v4);
-    Source::code << func.post_call(5,v5);
-    Source::code << func.post_call(6,v6);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << func.pre_call(2,v2);
+    Source::code() << func.pre_call(3,v3);
+    Source::code() << func.pre_call(4,v4);
+    Source::code() << func.pre_call(5,v5);
+    Source::code() << func.pre_call(6,v6);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
+    Source::code() << func.post_call(2,v2);
+    Source::code() << func.post_call(3,v3);
+    Source::code() << func.post_call(4,v4);
+    Source::code() << func.post_call(5,v5);
+    Source::code() << func.post_call(6,v6);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
 void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << func.pre_call(2,v2);
-    Source::code << func.pre_call(3,v3);
-    Source::code << func.pre_call(4,v4);
-    Source::code << func.pre_call(5,v5);
-    Source::code << func.pre_call(6,v6);
-    Source::code << func.pre_call(7,v7);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
-    Source::code << func.post_call(2,v2);
-    Source::code << func.post_call(3,v3);
-    Source::code << func.post_call(4,v4);
-    Source::code << func.post_call(5,v5);
-    Source::code << func.post_call(6,v6);
-    Source::code << func.post_call(7,v7);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << func.pre_call(2,v2);
+    Source::code() << func.pre_call(3,v3);
+    Source::code() << func.pre_call(4,v4);
+    Source::code() << func.pre_call(5,v5);
+    Source::code() << func.pre_call(6,v6);
+    Source::code() << func.pre_call(7,v7);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
+    Source::code() << func.post_call(2,v2);
+    Source::code() << func.post_call(3,v3);
+    Source::code() << func.post_call(4,v4);
+    Source::code() << func.post_call(5,v5);
+    Source::code() << func.post_call(6,v6);
+    Source::code() << func.post_call(7,v7);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
 void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7, T8& v8 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << func.pre_call(2,v2);
-    Source::code << func.pre_call(3,v3);
-    Source::code << func.pre_call(4,v4);
-    Source::code << func.pre_call(5,v5);
-    Source::code << func.pre_call(6,v6);
-    Source::code << func.pre_call(7,v7);
-    Source::code << func.pre_call(8,v8);
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
-    Source::code << func.post_call(2,v2);
-    Source::code << func.post_call(3,v3);
-    Source::code << func.post_call(4,v4);
-    Source::code << func.post_call(5,v5);
-    Source::code << func.post_call(6,v6);
-    Source::code << func.post_call(7,v7);
-    Source::code << func.post_call(8,v8);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << func.pre_call(2,v2);
+    Source::code() << func.pre_call(3,v3);
+    Source::code() << func.pre_call(4,v4);
+    Source::code() << func.pre_call(5,v5);
+    Source::code() << func.pre_call(6,v6);
+    Source::code() << func.pre_call(7,v7);
+    Source::code() << func.pre_call(8,v8);
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
+    Source::code() << func.post_call(2,v2);
+    Source::code() << func.post_call(3,v3);
+    Source::code() << func.post_call(4,v4);
+    Source::code() << func.post_call(5,v5);
+    Source::code() << func.post_call(6,v6);
+    Source::code() << func.post_call(7,v7);
+    Source::code() << func.post_call(8,v8);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
 void func_emit_call( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4, T5& v5, T6& v6, T7& v7, T8& v8, T9& v9 )
 {
-    Source::func_info& func(Source::code.getFunc(name));
+    Source::func_info& func(Source::code().getFunc(name));
     
-    Source::code << func.pre_call(0,v0);
-    Source::code << func.pre_call(1,v1);
-    Source::code << func.pre_call(2,v2);
-    Source::code << func.pre_call(3,v3);
-    Source::code << func.pre_call(4,v4);
-    Source::code << func.pre_call(5,v5);
-    Source::code << func.pre_call(6,v6);
-    Source::code << func.pre_call(7,v7);
-    Source::code << func.pre_call(8,v8);
-    Source::code << func.pre_call(9,v9);    
-    Source::code << boost::format("call %i\n") % func.fid;
-    Source::code << func.post_call(0,v0);
-    Source::code << func.post_call(1,v1);
-    Source::code << func.post_call(2,v2);
-    Source::code << func.post_call(3,v3);
-    Source::code << func.post_call(4,v4);
-    Source::code << func.post_call(5,v5);
-    Source::code << func.post_call(6,v6);
-    Source::code << func.post_call(7,v7);
-    Source::code << func.post_call(8,v8);
-    Source::code << func.post_call(9,v9);
+    Source::code() << func.pre_call(0,v0);
+    Source::code() << func.pre_call(1,v1);
+    Source::code() << func.pre_call(2,v2);
+    Source::code() << func.pre_call(3,v3);
+    Source::code() << func.pre_call(4,v4);
+    Source::code() << func.pre_call(5,v5);
+    Source::code() << func.pre_call(6,v6);
+    Source::code() << func.pre_call(7,v7);
+    Source::code() << func.pre_call(8,v8);
+    Source::code() << func.pre_call(9,v9);    
+    Source::code() << boost::format("call %i\n") % func.fid;
+    Source::code() << func.post_call(0,v0);
+    Source::code() << func.post_call(1,v1);
+    Source::code() << func.post_call(2,v2);
+    Source::code() << func.post_call(3,v3);
+    Source::code() << func.post_call(4,v4);
+    Source::code() << func.post_call(5,v5);
+    Source::code() << func.post_call(6,v6);
+    Source::code() << func.post_call(7,v7);
+    Source::code() << func.post_call(8,v8);
+    Source::code() << func.post_call(9,v9);
 }
 
 inline std::string func_name( const std::string& file, int line, int id )
@@ -448,7 +448,7 @@ void func_begin( const std::string& name, T0& v0 )
 {
     func_create(name,v0);
     func_emit_call(name,v0);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1>
@@ -456,7 +456,7 @@ void func_begin( const std::string& name, T0& v0, T1& v1 )
 {
     func_create(name,v0,v1);
     func_emit_call(name,v0,v1);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2>
@@ -464,7 +464,7 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2 )
 {
     func_create(name,v0,v1,v2);
     func_emit_call(name,v0,v1,v2);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3>
@@ -472,7 +472,7 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3 )
 {
     func_create(name,v0,v1,v2,v3);
     func_emit_call(name,v0,v1,v2,v3);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4>
@@ -480,7 +480,7 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 {
     func_create(name,v0,v1,v2,v3,v4);
     func_emit_call(name,v0,v1,v2,v3,v4);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
@@ -488,7 +488,7 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 {
     func_create(name,v0,v1,v2,v3,v4,v5);
     func_emit_call(name,v0,v1,v2,v3,v4,v5);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
@@ -496,7 +496,7 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 {
     func_create(name,v0,v1,v2,v3,v4,v5,v6);
     func_emit_call(name,v0,v1,v2,v3,v4,v5,v6);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
@@ -504,7 +504,7 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 {
     func_create(name,v0,v1,v2,v3,v4,v5,v6,v7);
     func_emit_call(name,v0,v1,v2,v3,v4,v5,v6,v7);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
@@ -512,7 +512,7 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 {    
     func_create(name,v0,v1,v2,v3,v4,v5,v6,v7,v8);
     func_emit_call(name,v0,v1,v2,v3,v4,v5,v6,v7,v8);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 template<typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
@@ -520,12 +520,12 @@ void func_begin( const std::string& name, T0& v0, T1& v1, T2& v2, T3& v3, T4& v4
 {
     func_create(name,v0,v1,v2,v3,v4,v5,v6,v7,v8,v9);
     func_emit_call(name,v0,v1,v2,v3,v4,v5,v6,v7,v8,v9);
-    Source::code.makeFuncActive(name);
+    Source::code().makeFuncActive(name);
 }
 
 inline void func_end()
 {
-    Source::code.endFunc();
+    Source::code().endFunc();
 }
 
 template<int N>

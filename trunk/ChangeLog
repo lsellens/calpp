@@ -15,6 +15,9 @@ Version 0.91-dev
     class for file caching binary images ( cal/cal_program_cache.hpp )
     redistributing CAL related header files from AMD SDK ( removing dependency on AMD SDK - only drivers required )
     bitselect function
+    bitextract function ( amd_bfe )
+    thread safety ( enabled by flag __CALTHREADSAFE )
+    automatic use of fma instead of mad ( with flag __CAL_USE_AUTOFMA )
 
 Version 0.90
     support for offset in sample load

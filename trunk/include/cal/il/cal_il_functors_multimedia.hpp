@@ -36,7 +36,8 @@ namespace detail {
 //
 
 template<class S1, class S2, class S3>
-struct cal_ternary_bitalign {
+struct cal_ternary_bitalign 
+{
     typedef S1 value_type;
     static const int temp_reg_count=0;
 
@@ -65,7 +66,8 @@ struct cal_ternary_bitalign {
 //
 
 template<class S1, class S2, class S3>
-struct cal_ternary_bytealign {
+struct cal_ternary_bytealign 
+{
     typedef S1 value_type;
     static const int temp_reg_count=0;
 
@@ -94,7 +96,8 @@ struct cal_ternary_bytealign {
 //
 
 template<class S1, class S2, class S3>
-struct cal_ternary_bfi {
+struct cal_ternary_bfi 
+{
     typedef S1 value_type;
     static const int temp_reg_count=0;
 
@@ -106,6 +109,95 @@ struct cal_ternary_bfi {
         BOOST_STATIC_ASSERT( S1::component_count==S3::component_count );
 
         return (boost::format("bfi %1%,%2%,%3%,%4%\n") % r  % s0 % s1 % s2).str();
+    }
+};
+
+//
+// bitextract
+// 
+
+template<class S1, class S2, class S3>
+struct cal_ternary_bitextract 
+{
+    typedef S1 value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        BOOST_STATIC_ASSERT(sizeof(S1) != sizeof(S1));
+        return std::string();
+    }
+};
+
+template<>
+struct cal_ternary_bitextract<uint_type,uint_type,uint_type>
+{
+    typedef uint_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("ubit_extract %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
+
+template<>
+struct cal_ternary_bitextract<uint2_type,uint2_type,uint2_type>
+{
+    typedef uint2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("ubit_extract %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
+
+template<>
+struct cal_ternary_bitextract<uint4_type,uint4_type,uint4_type>
+{
+    typedef uint4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("ubit_extract %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
+
+template<>
+struct cal_ternary_bitextract<int_type,uint_type,uint_type>
+{
+    typedef int_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("ibit_extract %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
+
+template<>
+struct cal_ternary_bitextract<int2_type,uint2_type,uint2_type>
+{
+    typedef int2_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("ibit_extract %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
+    }
+};
+
+template<>
+struct cal_ternary_bitextract<int4_type,uint4_type,uint4_type>
+{
+    typedef int4_type value_type;
+    static const int temp_reg_count=0;
+
+    static std::string emitCode( const std::string& r, const std::string& s0, const std::string& s1, const std::string& s2, int t0 )
+    {
+        return (boost::format("ibit_extract %1%,%2%,%3%,%4%\n") % r % s0 % s1 % s2).str();
     }
 };
 

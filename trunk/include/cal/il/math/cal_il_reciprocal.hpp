@@ -139,7 +139,7 @@ variable<typename E1::value_type> native_reciprocal( const detail::expression<E1
     typedef detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> >        rcp_type;
 
 #if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) return rcp_type(e1());
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) return rcp_type(e1());
 #endif
     double1 s;
     int1    e;
@@ -157,7 +157,7 @@ variable<typename E1::value_type> native_reciprocal( const detail::expression<E1
     typedef detail::unary<E1,detail::cal_unary_rcp<typename E1::value_type> >        rcp_type;
 
 #if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) return rcp_type(e1());
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) return rcp_type(e1());
 #endif
     double2 s;
     int2    e;

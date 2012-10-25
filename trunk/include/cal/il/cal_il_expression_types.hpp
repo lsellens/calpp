@@ -65,7 +65,7 @@ public:
     void emitCode() const
     {
         _e.emitCode();
-        Source::code << F::emitCode(resultCode(),_e.resultCode(),index);
+        Source::code() << F::emitCode(resultCode(),_e.resultCode(),index);
     }
 };
 
@@ -107,7 +107,7 @@ public:
         _e1.emitCode();
         _e2.emitCode();
 
-        Source::code << F::emitCode(resultCode(),_e1.resultCode(),_e2.resultCode(),index);
+        Source::code() << F::emitCode(resultCode(),_e1.resultCode(),_e2.resultCode(),index);
     }
 };
 
@@ -153,7 +153,7 @@ public:
         _e2.emitCode();
         _e3.emitCode();
 
-        Source::code << F::emitCode(resultCode(),_e1.resultCode(),_e2.resultCode(),_e3.resultCode(),index);
+        Source::code() << F::emitCode(resultCode(),_e1.resultCode(),_e2.resultCode(),_e3.resultCode(),index);
     }
 };
 
@@ -227,7 +227,7 @@ public:
     register_address( const register_address<void>& rhs ) : _offset(rhs._offset) {}
     ~register_address() {}
 
-    void emitCode( Source& prg, std::ostream& _out ) const {}
+    void emitCode() const {}
 
     std::string resultCode() const
     {

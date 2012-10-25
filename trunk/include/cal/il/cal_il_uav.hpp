@@ -69,7 +69,7 @@ public:
     {
         e1.emitCode();
         _e.emitCode();
-        Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode();
+        Source::code() << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode();
     }
 
     template<class E1,class E2>
@@ -78,7 +78,7 @@ public:
         e1.emitCode();
         e2.emitCode();
         _e.emitCode();
-        Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode() % e2.resultCode();
+        Source::code() << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode() % e2.resultCode();
     }
 
     template<class E1,class E2,class E3>
@@ -88,7 +88,7 @@ public:
         e2.emitCode();
         e3.emitCode();
         _e.emitCode();
-        Source::code << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode() % e2.resultCode() % e3.resultCode();
+        Source::code() << boost::format(src) % uav_index % _e.resultCode() % e1.resultCode() % e2.resultCode() % e3.resultCode();
     }
 };
 
@@ -130,16 +130,16 @@ protected:
 
         switch( T::type_size ) {
         case 1:
-            Source::code << boost::format("%4%(%1%) mem.x,%2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode() % uav_store;
+            Source::code() << boost::format("%4%(%1%) mem.x,%2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode() % uav_store;
             break;
         case 2:
-            Source::code << boost::format("%4%(%1%) mem.xy,%2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode() % uav_store;
+            Source::code() << boost::format("%4%(%1%) mem.xy,%2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode() % uav_store;
             break;
         case 3:
-            Source::code << boost::format("%4%(%1%) mem.xyz,%2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode() % uav_store;
+            Source::code() << boost::format("%4%(%1%) mem.xyz,%2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode() % uav_store;
             break;
         default:
-            Source::code << boost::format("%4%(%1%) mem.xyzw,%2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode() % uav_store;
+            Source::code() << boost::format("%4%(%1%) mem.xyzw,%2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode() % uav_store;
         }
     }
 
@@ -166,20 +166,20 @@ public:
 
         switch( T::type_size ) {
         case 1:
-            Source::code << boost::format("%6%(%1%)%7% r%4%.x___,%3%\n"
-                                          "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".x") % uav_load % caching;
+            Source::code() << boost::format("%6%(%1%)%7% r%4%.x___,%3%\n"
+                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".x") % uav_load % caching;
             break;
         case 2:
-            Source::code << boost::format("%6%(%1%)%7% r%4%.xy__,%3%\n"
-                                          "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy") % uav_load % caching;
+            Source::code() << boost::format("%6%(%1%)%7% r%4%.xy__,%3%\n"
+                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy") % uav_load % caching;
             break;
         case 3:
-            Source::code << boost::format("%6%(%1%)%7% r%4%.xyz_,%3%\n"
-                                          "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz") % uav_load % caching;
+            Source::code() << boost::format("%6%(%1%)%7% r%4%.xyz_,%3%\n"
+                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz") % uav_load % caching;
             break;
         default:
-            Source::code << boost::format("%6%(%1%)%7% r%4%.xyzw,%3%\n"
-                                          "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw") % uav_load % caching;
+            Source::code() << boost::format("%6%(%1%)%7% r%4%.xyzw,%3%\n"
+                                           "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw") % uav_load % caching;
             break;
         }
     }
@@ -250,16 +250,16 @@ protected:
 
         switch( T::type_size ) {
         case 1:
-            Source::code << boost::format("uav_store_id(%1%) %2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode();
+            Source::code() << boost::format("uav_store_id(%1%) %2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode();
             break;
         case 2:
-            Source::code << boost::format("uav_store_id(%1%) %2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode();
+            Source::code() << boost::format("uav_store_id(%1%) %2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode();
             break;
         case 3:
-            Source::code << boost::format("uav_store_id(%1%) %2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode();
+            Source::code() << boost::format("uav_store_id(%1%) %2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode();
             break;
         default:
-            Source::code << boost::format("uav_store_id(%1%) %2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode();
+            Source::code() << boost::format("uav_store_id(%1%) %2%,%3%\n") %  uav_index % _e.resultCode() % e.resultCode();
         }
     }
 
@@ -286,20 +286,20 @@ public:
 
         switch( T::type_size ) {
         case 1:
-            Source::code << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
-                                          "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".x") % caching;
+            Source::code() << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
+                                            "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".x") % caching;
             break;
         case 2:
-            Source::code << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
-                                          "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy") % caching;
+            Source::code() << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
+                                            "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy") % caching;
             break;
         case 3:
-            Source::code << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
-                                          "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz") % caching;
+            Source::code() << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
+                                            "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz") % caching;
             break;
         default:
-            Source::code << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
-                                          "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw") % caching;
+            Source::code() << boost::format("uav_load_id(%1%)%6% r%4%,%3%\n"
+                                            "mov %2%,%5%\n") % uav_index % detail::mask_output(resultCode()) % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw") % caching;
             break;
         }
     }
@@ -360,8 +360,8 @@ public:
         assert( idx>=0 );
         uav_index   = idx;
         uav_caching = caching;
-        Source::code.registerDCL( (boost::format("uav:%i") % idx).str(),
-                                  boost::bind(&uav_raw<T>::emit_dcl,idx) );
+        Source::code().registerDCL( (boost::format("uav:%i") % idx).str(),
+                                    boost::bind(&uav_raw<T>::emit_dcl,idx) );
     }
 
     void cached( bool enable=true )
@@ -419,8 +419,8 @@ public:
         assert( idx>=0 && stride>0 && (stride%4)==0 );
         uav_index   = idx;
         uav_caching = caching;
-        Source::code.registerDCL( (boost::format("uav:%i") % idx).str(), 
-                                  boost::bind(&uav_struct<T>::emit_dcl,idx,stride) );
+        Source::code().registerDCL( (boost::format("uav:%i") % idx).str(), 
+                                    boost::bind(&uav_struct<T>::emit_dcl,idx,stride) );
     }
 
     void cached( bool enable=true )
@@ -518,8 +518,8 @@ public:
         uav_caching = caching;
 
         std::string format = getFormatName(typename detail::base_cal_type<T>::value());
-        Source::code.registerDCL( (boost::format("uav:%i") % idx).str(), 
-                                  boost::bind(&uav<T>::emit_dcl,idx,type,format) );
+        Source::code().registerDCL( (boost::format("uav:%i") % idx).str(), 
+                                    boost::bind(&uav<T>::emit_dcl,idx,type,format) );
     }
 
     uav( int idx, const std::string& type, const std::string& format, CALuavcacheflags caching=UAV_AUTO_CACHE )
@@ -527,8 +527,8 @@ public:
         assert( idx>=0 );
         uav_index   = idx;
         uav_caching = caching;
-        Source::code.registerDCL( (boost::format("uav:%i") % idx).str(),
-                                  boost::bind(&uav<T>::emit_dcl,idx,type,format) );
+        Source::code().registerDCL( (boost::format("uav:%i") % idx).str(),
+                                    boost::bind(&uav<T>::emit_dcl,idx,type,format) );
     }
 
     void cached( bool enable=true )

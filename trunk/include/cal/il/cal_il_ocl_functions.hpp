@@ -188,7 +188,7 @@ template<class E1,class E2>
 variable<typename E1::value_type> rotate( const detail::expression<E1>& e1, const detail::expression<E2>& e2 )
 {
 #if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) {
         if( E1::value_type::component_count>1 && E2::value_type::component_count==1 ) {
             variable<typename E2::value_type> p = value<typename E2::value_type>(32)-e2();
 
@@ -207,7 +207,7 @@ template<class E1>
 variable<typename E1::value_type> rotate( const detail::expression<E1>& e1, int shift )
 {
 #if defined(__CAL_H__)
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) {
         return bitalign(e1(),e1(),value<typename detail::resize_base_type<uint_type,E1::value_type::component_count>::value>(32-shift));
     }
 #endif
@@ -220,7 +220,7 @@ variable<typename E1::value_type> bitselect( const detail::expression<E1>& e1, c
 {
 #if defined(__CAL_H__)
     typedef detail::ternary<E1,E2,E3,detail::cal_ternary_bfi<typename E1::value_type,typename E2::value_type,typename E3::value_type> > expression_type;
-    if( Source::info.available && Source::info.target>=CAL_TARGET_CYPRESS ) {
+    if( Source::info().available && Source::info().target>=CAL_TARGET_CYPRESS ) {
         return expression_type(e3(),e2(),e1());
     }
 #endif

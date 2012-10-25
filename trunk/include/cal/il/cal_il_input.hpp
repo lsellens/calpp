@@ -70,14 +70,14 @@ public:
             conv_float conv;
             int        idx;
             conv.base[0] = xoffset; conv.base[1] = yoffset; conv.base[2] = 0; conv.base[3] = 0;
-            idx = Source::code.getLiteral( conv.hex );
-            Source::code << boost::format("add r%1%,%2%000,l%3%.x000\n") % (index+1) % make_swizzle(_e.resultCode(),1,0,0,0) % idx;
-            Source::code << boost::format("sample_resource(%1%)_sampler(%2%) %3%,r%4%\n") % input_index % s % resultCode() % (index+1);
+            idx = Source::code().getLiteral( conv.hex );
+            Source::code() << boost::format("add r%1%,%2%000,l%3%.x000\n") % (index+1) % make_swizzle(_e.resultCode(),1,0,0,0) % idx;
+            Source::code() << boost::format("sample_resource(%1%)_sampler(%2%) %3%,r%4%\n") % input_index % s % resultCode() % (index+1);
             return;
         }
 
-        if( xoffset!=0 || yoffset!=0 ) Source::code << boost::format("sample_resource(%1%)_sampler(%2%)_aoffimmi(%3%,%4%,0) %5%,%6%000\n") % input_index % s % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,0,0,0);
-        else Source::code << boost::format("sample_resource(%1%)_sampler(%2%) %3%,%4%000\n") % input_index % s % resultCode() % make_swizzle(_e.resultCode(),1,0,0,0);
+        if( xoffset!=0 || yoffset!=0 ) Source::code() << boost::format("sample_resource(%1%)_sampler(%2%)_aoffimmi(%3%,%4%,0) %5%,%6%000\n") % input_index % s % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,0,0,0);
+        else Source::code() << boost::format("sample_resource(%1%)_sampler(%2%) %3%,%4%000\n") % input_index % s % resultCode() % make_swizzle(_e.resultCode(),1,0,0,0);
     }
 
     void iemitCode( int s, float2_type ) const
@@ -86,14 +86,14 @@ public:
             conv_float conv;
             int        idx;
             conv.base[0] = xoffset; conv.base[1] = yoffset; conv.base[2] = 0; conv.base[3] = 0;
-            idx = Source::code.getLiteral( conv.hex );
-            Source::code << boost::format("add r%1%,%2%00,l%3%.xy00\n") % (index+1) % make_swizzle(_e.resultCode(),1,2,0,0) % idx;
-            Source::code << boost::format("sample_resource(%1%)_sampler(%2%) %3%,r%4%\n") % input_index % s % resultCode() % (index+1);
+            idx = Source::code().getLiteral( conv.hex );
+            Source::code() << boost::format("add r%1%,%2%00,l%3%.xy00\n") % (index+1) % make_swizzle(_e.resultCode(),1,2,0,0) % idx;
+            Source::code() << boost::format("sample_resource(%1%)_sampler(%2%) %3%,r%4%\n") % input_index % s % resultCode() % (index+1);
             return;
         }
 
-        if( xoffset!=0 || yoffset!=0 ) Source::code << boost::format("sample_resource(%1%)_sampler(%2%)_aoffimmi(%3%,%4%,0) %5%,%6%00\n") % input_index % s % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
-        else Source::code << boost::format("sample_resource(%1%)_sampler(%2%) %3%,%4%00\n") % input_index % s % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
+        if( xoffset!=0 || yoffset!=0 ) Source::code() << boost::format("sample_resource(%1%)_sampler(%2%)_aoffimmi(%3%,%4%,0) %5%,%6%00\n") % input_index % s % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
+        else Source::code() << boost::format("sample_resource(%1%)_sampler(%2%) %3%,%4%00\n") % input_index % s % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
     }
 
     void iemitCode( int s, int_type ) const
@@ -102,9 +102,9 @@ public:
             conv_int   conv;
             int        idx;
             conv.base[0] = xoffset; conv.base[1] = yoffset; conv.base[2] = 0; conv.base[3] = 0;
-            idx = Source::code.getLiteral( conv.hex );
-            Source::code << boost::format("iadd r%1%,%2%000,l%3%.x000\n") % (index+1) % make_swizzle(_e.resultCode(),1,0,0,0) % idx;
-            Source::code << boost::format("load_resource(%1%) %2%,r%3%\n") % input_index % resultCode() % (index+1);
+            idx = Source::code().getLiteral( conv.hex );
+            Source::code() << boost::format("iadd r%1%,%2%000,l%3%.x000\n") % (index+1) % make_swizzle(_e.resultCode(),1,0,0,0) % idx;
+            Source::code() << boost::format("load_resource(%1%) %2%,r%3%\n") % input_index % resultCode() % (index+1);
             return;
         }
 
@@ -118,14 +118,14 @@ public:
             conv_int   conv;
             int        idx;
             conv.base[0] = xoffset; conv.base[1] = yoffset; conv.base[2] = 0; conv.base[3] = 0;
-            idx = Source::code.getLiteral( conv.hex );
-            Source::code << boost::format("iadd r%1%,%2%00,l%3%.xy00\n") % (index+1) % make_swizzle(_e.resultCode(),1,2,0,0) % idx;
-            Source::code << boost::format("load_resource(%1%) %2%,r%3%\n") % input_index % resultCode() % (index+1);
+            idx = Source::code().getLiteral( conv.hex );
+            Source::code() << boost::format("iadd r%1%,%2%00,l%3%.xy00\n") % (index+1) % make_swizzle(_e.resultCode(),1,2,0,0) % idx;
+            Source::code() << boost::format("load_resource(%1%) %2%,r%3%\n") % input_index % resultCode() % (index+1);
             return;
         }
 
-        if( xoffset!=0 || yoffset!=0 ) Source::code << boost::format("load_resource(%1%)_aoffimmi(%2%,%3%,0) %4%,%5%00\n") % input_index % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
-        else Source::code << boost::format("load_resource(%1%) %2%,%3%00\n") % input_index % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
+        if( xoffset!=0 || yoffset!=0 ) Source::code() << boost::format("load_resource(%1%)_aoffimmi(%2%,%3%,0) %4%,%5%00\n") % input_index % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
+        else Source::code() << boost::format("load_resource(%1%) %2%,%3%00\n") % input_index % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
     }
 
     void iemitCode( int s, uint_type ) const
@@ -134,14 +134,14 @@ public:
             conv_int   conv;
             int        idx;
             conv.base[0] = xoffset; conv.base[1] = yoffset; conv.base[2] = 0; conv.base[3] = 0;
-            idx = Source::code.getLiteral( conv.hex );
-            Source::code << boost::format("iadd r%1%,%2%000,l%3%.x000\n") % (index+1) % make_swizzle(_e.resultCode(),1,0,0,0) % idx;
-            Source::code << boost::format("load_resource(%1%) %2%,r%3%\n") % input_index % resultCode() % (index+1);
+            idx = Source::code().getLiteral( conv.hex );
+            Source::code() << boost::format("iadd r%1%,%2%000,l%3%.x000\n") % (index+1) % make_swizzle(_e.resultCode(),1,0,0,0) % idx;
+            Source::code() << boost::format("load_resource(%1%) %2%,r%3%\n") % input_index % resultCode() % (index+1);
             return;
         }
 
-        if( xoffset!=0 || yoffset!=0 ) Source::code << boost::format("load_resource(%1%)_aoffimmi(%2%,%3%,0) %4%,%5%000\n") % input_index % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,0,0,0);
-        else Source::code << boost::format("load_resource(%1%) %2%,%3%000\n") % input_index % resultCode() % make_swizzle(_e.resultCode(),1,0,0,0);
+        if( xoffset!=0 || yoffset!=0 ) Source::code() << boost::format("load_resource(%1%)_aoffimmi(%2%,%3%,0) %4%,%5%000\n") % input_index % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,0,0,0);
+        else Source::code() << boost::format("load_resource(%1%) %2%,%3%000\n") % input_index % resultCode() % make_swizzle(_e.resultCode(),1,0,0,0);
     }
 
     void iemitCode( int s, uint2_type ) const
@@ -150,14 +150,14 @@ public:
             conv_int   conv;
             int        idx;
             conv.base[0] = xoffset; conv.base[1] = yoffset; conv.base[2] = 0; conv.base[3] = 0;
-            idx = Source::code.getLiteral( conv.hex );
-            Source::code << boost::format("iadd r%1%,%2%00,l%3%.xy00\n") % (index+1) % make_swizzle(_e.resultCode(),1,2,0,0) % idx;
-            Source::code << boost::format("load_resource(%1%) %2%,r%3%\n") % input_index % resultCode() % (index+1);
+            idx = Source::code().getLiteral( conv.hex );
+            Source::code() << boost::format("iadd r%1%,%2%00,l%3%.xy00\n") % (index+1) % make_swizzle(_e.resultCode(),1,2,0,0) % idx;
+            Source::code() << boost::format("load_resource(%1%) %2%,r%3%\n") % input_index % resultCode() % (index+1);
             return;
         }
 
-        if( xoffset!=0 || yoffset!=0 ) Source::code << boost::format("load_resource(%1%)_aoffimmi(%2%,%3%,0) %4%,%5%00\n") % input_index % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
-        else Source::code << boost::format("load_resource(%1%) %2%,%3%00\n") % input_index % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
+        if( xoffset!=0 || yoffset!=0 ) Source::code() << boost::format("load_resource(%1%)_aoffimmi(%2%,%3%,0) %4%,%5%00\n") % input_index % xoffset % yoffset % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
+        else Source::code() << boost::format("load_resource(%1%) %2%,%3%00\n") % input_index % resultCode() % make_swizzle(_e.resultCode(),1,2,0,0);
     }
 
 public:
@@ -204,8 +204,8 @@ public:
     {
         input_index = idx;
         input_sampler = s;
-        Source::code.registerDCL( (boost::format("input:%i") % idx).str(),
-                                  boost::bind(&input1d<T>::emit_dcl,idx,(int)value_type::type_size) );
+        Source::code().registerDCL( (boost::format("input:%i") % idx).str(),
+                                    boost::bind(&input1d<T>::emit_dcl,idx,(int)value_type::type_size) );
     }
 
     template<class E>
@@ -268,8 +268,8 @@ public:
     {
         input_index = idx;
         input_sampler = s;
-        Source::code.registerDCL( (boost::format("input:%i") % idx).str(),
-                                  boost::bind(&input2d<T>::emit_dcl,idx,(int)value_type::type_size) );
+        Source::code().registerDCL( (boost::format("input:%i") % idx).str(),
+                                    boost::bind(&input2d<T>::emit_dcl,idx,(int)value_type::type_size) );
     }
 
     template<class E>

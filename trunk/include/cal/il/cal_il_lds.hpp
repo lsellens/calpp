@@ -68,19 +68,19 @@ protected:
 
         switch( T::type_size ) {
         case 1:
-            Source::code << boost::format("lds_store_id(%1%) %2%,%3%\n") % lds_index % _e.resultCode() % e.resultCode();
+            Source::code() << boost::format("lds_store_id(%1%) %2%,%3%\n") % lds_index % _e.resultCode() % e.resultCode();
             break;
         case 2:
-            if( E::value_type::type_size==1 ) Source::code << boost::format("lds_store_vec_id(%1%) mem.xy,%2%,%3%,%4%\n") % lds_index % _e.resultCode() % _e.resultCode() % e.resultCode();
-            else Source::code << boost::format("lds_store_vec_id(%1%) mem.xy,%2%,%3%,%4%\n") % lds_index % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % e.resultCode();
+            if( E::value_type::type_size==1 ) Source::code() << boost::format("lds_store_vec_id(%1%) mem.xy,%2%,%3%,%4%\n") % lds_index % _e.resultCode() % _e.resultCode() % e.resultCode();
+            else Source::code() << boost::format("lds_store_vec_id(%1%) mem.xy,%2%,%3%,%4%\n") % lds_index % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % e.resultCode();
             break;
         case 3:
-            if( E::value_type::type_size==1 ) Source::code << boost::format("lds_store_vec_id(%1%) mem.xyz,%2%,%3%,%4%\n") % lds_index % _e.resultCode() % _e.resultCode() % e.resultCode();
-            else Source::code << boost::format("lds_store_vec_id(%1%) mem.xyz,%2%,%3%,%4%\n") % lds_index % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % e.resultCode();
+            if( E::value_type::type_size==1 ) Source::code() << boost::format("lds_store_vec_id(%1%) mem.xyz,%2%,%3%,%4%\n") % lds_index % _e.resultCode() % _e.resultCode() % e.resultCode();
+            else Source::code() << boost::format("lds_store_vec_id(%1%) mem.xyz,%2%,%3%,%4%\n") % lds_index % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % e.resultCode();
             break;
         default:
-            if( E::value_type::type_size==1 ) Source::code << boost::format("lds_store_vec_id(%1%) mem.xyzw,%2%,%3%,%4%\n") % lds_index % _e.resultCode() % _e.resultCode() % e.resultCode();
-            else Source::code << boost::format("lds_store_vec_id(%1%) mem.xyzw,%2%,%3%,%4%\n") % lds_index % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % e.resultCode();
+            if( E::value_type::type_size==1 ) Source::code() << boost::format("lds_store_vec_id(%1%) mem.xyzw,%2%,%3%,%4%\n") % lds_index % _e.resultCode() % _e.resultCode() % e.resultCode();
+            else Source::code() << boost::format("lds_store_vec_id(%1%) mem.xyzw,%2%,%3%,%4%\n") % lds_index % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % e.resultCode();
         }
     }
 
@@ -103,33 +103,33 @@ public:
 
         switch( T::type_size ) {
         case 1:
-            Source::code << boost::format("lds_load_id(%1%) r%4%,%3%\n"
-                                          "mov %2%,r%4%.xxxx\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % index;
+            Source::code() << boost::format("lds_load_id(%1%) r%4%,%3%\n"
+                                            "mov %2%,r%4%.xxxx\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % index;
             break;
         case 2:
             if( E::value_type::type_size==1 ) {
-                Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xy__,%3%,%4%\n"
-                                              "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy");
+                Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xy__,%3%,%4%\n"
+                                                "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy");
             } else {
-                Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xy__,%3%,%4%\n"
-                                              "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % index % detail::match_input_to_output(resultCode(),rout+".xy");
+                Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xy__,%3%,%4%\n"
+                                                "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % index % detail::match_input_to_output(resultCode(),rout+".xy");
             }
             break;
         case 3:
             if( E::value_type::type_size==1 ) {
-                Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xyz_,%3%,%4%\n"
-                                              "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz");
+                Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xyz_,%3%,%4%\n"
+                                                "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz");
             } else {
-                Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xyz_,%3%,%4%\n"
-                                              "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % index % detail::match_input_to_output(resultCode(),rout+".xyz");
+                Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xyz_,%3%,%4%\n"
+                                                "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % index % detail::match_input_to_output(resultCode(),rout+".xyz");
             }
         default:
             if( E::value_type::type_size==1 ) {
-                Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xyzw,%3%,%4%\n"
-                                              "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw");
+                Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xyzw,%3%,%4%\n"
+                                                "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e.resultCode() % _e.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw");
             } else {
-                Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xyzw,%3%,%4%\n"
-                                              "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % index % detail::match_input_to_output(resultCode(),rout+".xyzw");
+                Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xyzw,%3%,%4%\n"
+                                                "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % detail::make_swizzle(_e.resultCode(),1,0,0,0) % detail::make_swizzle(_e.resultCode(),2,0,0,0) % index % detail::match_input_to_output(resultCode(),rout+".xyzw");
             }
         }
     }
@@ -169,7 +169,7 @@ public:
     {
         e1.emitCode();
         _e.emitCode();
-        Source::code << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode();
+        Source::code() << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode();
     }
 
     template<class E1,class E2>
@@ -178,7 +178,7 @@ public:
         e1.emitCode();
         e2.emitCode();
         _e.emitCode();
-        Source::code << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode() % e2.resultCode();
+        Source::code() << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode() % e2.resultCode();
     }
 
     template<class E1,class E2,class E3>
@@ -188,7 +188,7 @@ public:
         e2.emitCode();
         e3.emitCode();
         _e.emitCode();
-        Source::code << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode() % e2.resultCode() % e3.resultCode();
+        Source::code() << boost::format(src) % lds_index % _e.resultCode() % e1.resultCode() % e2.resultCode() % e3.resultCode();
     }
 };
 
@@ -230,18 +230,18 @@ protected:
 
         switch(T::type_size) {
         case 1:
-            Source::code << boost::format("mov r%5%.x___,%2%\n"
-                                          "mov r%5%._y__,%3%\n"
-                                          "lds_store_id(%1%) r%5%,%4%\n") % lds_index % _e1.resultCode() % _e2.resultCode() % e.resultCode() % index;
+            Source::code() << boost::format("mov r%5%.x___,%2%\n"
+                                            "mov r%5%._y__,%3%\n"
+                                            "lds_store_id(%1%) r%5%,%4%\n") % lds_index % _e1.resultCode() % _e2.resultCode() % e.resultCode() % index;
             break;
         case 2:
-            Source::code << boost::format("lds_store_vec_id(%1%) mem.xy__,%2%,%3%,%4%\n") % lds_index % _e1.resultCode() % _e2.resultCode() % e.resultCode();
+            Source::code() << boost::format("lds_store_vec_id(%1%) mem.xy__,%2%,%3%,%4%\n") % lds_index % _e1.resultCode() % _e2.resultCode() % e.resultCode();
             break;
         case 3:
-            Source::code << boost::format("lds_store_vec_id(%1%) mem.xyz_,%2%,%3%,%4%\n") % lds_index % _e1.resultCode() % _e2.resultCode() % e.resultCode();
+            Source::code() << boost::format("lds_store_vec_id(%1%) mem.xyz_,%2%,%3%,%4%\n") % lds_index % _e1.resultCode() % _e2.resultCode() % e.resultCode();
             break;
         default:
-            Source::code << boost::format("lds_store_vec_id(%1%) mem.xyzw,%2%,%3%,%4%\n") % lds_index % _e1.resultCode() % _e2.resultCode() % e.resultCode();
+            Source::code() << boost::format("lds_store_vec_id(%1%) mem.xyzw,%2%,%3%,%4%\n") % lds_index % _e1.resultCode() % _e2.resultCode() % e.resultCode();
         }
     }
 
@@ -265,22 +265,22 @@ public:
 
         switch(T::type_size) {
         case 1:
-            Source::code << boost::format("mov r%5%.x___,%3%\n"
-                                          "mov r%5%._y__,%4%\n"
-                                          "lds_load_id(%1%) r%6%,r%5%\n"
-                                          "mov %2%,r%6%.xxxx\n") % lds_index % detail::mask_output(resultCode()) % _e1.resultCode() % _e2.resultCode() % index % (index+1);
+            Source::code() << boost::format("mov r%5%.x___,%3%\n"
+                                            "mov r%5%._y__,%4%\n"
+                                            "lds_load_id(%1%) r%6%,r%5%\n"
+                                            "mov %2%,r%6%.xxxx\n") % lds_index % detail::mask_output(resultCode()) % _e1.resultCode() % _e2.resultCode() % index % (index+1);
             break;
         case 2:
-            Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xy__,%3%,%4%\n"
-                                          "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e1.resultCode() % _e2.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy");
+            Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xy__,%3%,%4%\n"
+                                            "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e1.resultCode() % _e2.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xy");
             break;
         case 3:
-            Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xyz_,%3%,%4%\n"
-                                          "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e1.resultCode() % _e2.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz");
+            Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xyz_,%3%,%4%\n"
+                                            "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e1.resultCode() % _e2.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyz");
             break;
         default:
-            Source::code << boost::format("lds_load_vec_id(%1%) r%5%.xyzw,%3%,%4%\n"
-                                          "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e1.resultCode() % _e2.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw");
+            Source::code() << boost::format("lds_load_vec_id(%1%) r%5%.xyzw,%3%,%4%\n"
+                                            "mov %2%,%6%\n") % lds_index % detail::mask_output(resultCode()) % _e1.resultCode() % _e2.resultCode() % index % detail::match_input_to_output(resultCode(),rout+".xyzw");
         }
     }
 
@@ -321,8 +321,8 @@ public:
         e1.emitCode();
         _e1.emitCode();
         _e2.emitCode();
-        Source::code << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
-        Source::code << boost::format(src) % lds_index % tmp % e1.resultCode();
+        Source::code() << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
+        Source::code() << boost::format(src) % lds_index % tmp % e1.resultCode();
     }
 
     template<class P1,class P2>
@@ -333,8 +333,8 @@ public:
         e2.emitCode();
         _e1.emitCode();
         _e2.emitCode();
-        Source::code << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
-        Source::code << boost::format(src) % lds_index % tmp % e1.resultCode() % e2.resultCode();
+        Source::code() << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
+        Source::code() << boost::format(src) % lds_index % tmp % e1.resultCode() % e2.resultCode();
     }
 
     template<class P1,class P2,class P3>
@@ -346,8 +346,8 @@ public:
         e3.emitCode();
         _e1.emitCode();
         _e2.emitCode();
-        Source::code << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
-        Source::code << boost::format(src) % lds_index % tmp % e1.resultCode() % e2.resultCode() % e3.resultCode();
+        Source::code() << boost::format("mov %1%.x___,%2%\nmov r%1%._y__,%3%\n") % tmp % _e1.resultCode() % _e2.resultCode();
+        Source::code() << boost::format(src) % lds_index % tmp % e1.resultCode() % e2.resultCode() % e3.resultCode();
     }
 };
 
