@@ -1,6 +1,6 @@
 /*
  * C++ wrapper for ATI CAL
- * 
+ *
  * Copyright (C) 2010, 2011 Artur Kornacki
  *
  * This file is part of CAL++.
@@ -50,10 +50,14 @@
   #include <type_traits>
 #endif
 
+#ifdef __CAL_THREADSAFE
+  #include <boost/thread.hpp>
+#endif
+
 
 enum CALInfoEnum {
     CAL_CONTEXT_DEVICES,             /**  Context devices */
-    CAL_DEVICE_TARGET,               /**< Device Kernel ISA  */ 
+    CAL_DEVICE_TARGET,               /**< Device Kernel ISA  */
     CAL_DEVICE_MAXRESOURCE1DWIDTH,   /**< Maximum resource 1D width */
     CAL_DEVICE_MAXRESOURCE2DWIDTH,   /**< Maximum resource 2D width */
     CAL_DEVICE_MAXRESOURCE2DHEIGHT,  /**< Maximum resource 2D height */
@@ -83,7 +87,7 @@ enum CALInfoEnum {
     CAL_DEVICE_AVAILCACHEDREMOTERAM,   /**< Amount of available cached remote GPU memory in megabytes */
     CAL_DEVICE_INDEX,                  /**  Device index */
     CAL_DEVICE_NAME,                   /**  Device name */
-    CAL_KERNEL_MAXSCRATCHREGSNEEDED,   /**< Maximum number of scratch regs needed */ 
+    CAL_KERNEL_MAXSCRATCHREGSNEEDED,   /**< Maximum number of scratch regs needed */
     CAL_KERNEL_NUMSHAREDGPRUSER,       /**< Number of shared GPRs */
     CAL_KERNEL_NUMSHAREDGPRTOTAL,      /**< Number of shared GPRs including ones used by SC */
     CAL_KERNEL_ECSSETUPMODE,           /**< Slow mode */
@@ -305,8 +309,8 @@ struct param_traits<CAL_TYPE_CALIMAGE,CAL_PROGRAM_BINARY_SIZE>
 {
     typedef CALuint param_type;
 
-    static CALresult getInfo( CALimage handle, param_type& size )            
-    {        
+    static CALresult getInfo( CALimage handle, param_type& size )
+    {
         return calclImageGetSize(&size, handle);
     }
 };
@@ -320,13 +324,13 @@ struct param_traits<CAL_TYPE_CALIMAGE,CAL_PROGRAM_BINARY>
     {
         CALuint    size;
         CALresult  r;
-        
+
         r = calclImageGetSize(&size, handle);
         if( r!=CAL_RESULT_OK ) return r;
-        
-        image.resize(size);        
+
+        image.resize(size);
         r = calclImageWrite((CALvoid*)&image[0], size, handle);
-        
+
         return r;
     }
 };
@@ -341,14 +345,35 @@ protected:
         typedef shared_counter* ptr;
 
     protected:
-        int     count_;
+        int             count_;
+#ifdef __CAL_THREADSAFE
+        boost::mutex    lock_;
+#endif
 
     public:
         shared_counter() : D(), count_(1) {}
         ~shared_counter() {}
 
-        void retain() { count_++; }
-        bool release() { count_--; if( count_>0 ) return false; delete this; return true; }
+        void retain()
+        {
+#ifdef __CAL_THREADSAFE
+            boost::lock_guard<boost::mutex> guard(lock_);
+#endif
+            count_++;
+         }
+
+        bool release()
+        {
+            {
+#ifdef __CAL_THREADSAFE
+                boost::lock_guard<boost::mutex> guard(lock_);
+#endif
+                count_--;
+                if( count_>0 ) return false;
+            }
+            delete this;
+            return true;
+        }
     };
 
 protected:
@@ -379,16 +404,15 @@ public:
         return *this;
     }
 
-
     const D& data() const
     {
-        assert( isValid() );        
+        assert( isValid() );
         return *data_;
     }
 
     D& data()
     {
-        assert( isValid() );        
+        assert( isValid() );
         return *data_;
     }
 
@@ -409,16 +433,20 @@ struct CALcontext_helper
     typedef std::map<void*,callback_functor>                                ptrcall_container;
     typedef std::map<CALcontext,ptrcall_container>                          callback_container;
 
-    typedef CALcontext handle_type;    
+    typedef CALcontext handle_type;
 
     template<int N>
     struct release_callback
     {
         static callback_container data;
+        static boost::mutex       data_mutex;
     };
 
     static void release(CALcontext context)
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(release_callback<0>::data_mutex);
+#endif
         callback_container::iterator    imap;
         ptrcall_container::iterator     icall;
 
@@ -428,24 +456,31 @@ struct CALcontext_helper
         for(icall=imap->second.begin();icall!=imap->second.end();++icall) {
             icall->second(icall->first,context);
         }
-     
+
         release_callback<0>::data.erase(imap);
     }
 
     static void registerCallback( CALcontext context, void* ptr, const callback_functor& func )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(release_callback<0>::data_mutex);
+#endif
         release_callback<0>::data[context].insert(std::make_pair(ptr,func));
     }
 
     static void unregisterCallback( CALcontext context, void* ptr )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(release_callback<0>::data_mutex);
+#endif
         release_callback<0>::data[context].erase(ptr);
     }
 };
 
 template<int N>
 CALcontext_helper::callback_container   CALcontext_helper::release_callback<N>::data;
-
+template<int N>
+boost::mutex                            CALcontext_helper::release_callback<N>::data_mutex;
 
 template<int N>
 struct cal_extension_table
@@ -474,6 +509,17 @@ struct cal_extension_table
 };
 
 template<int N> cal_extension_table<N> cal_extension_table<N>::data;
+
+#ifdef __CAL_THREADSAFE
+template<int N>
+struct cal_global_locks
+{
+    static boost::mutex compiler_lock;
+};
+
+template<int N>
+boost::mutex  cal_global_locks<N>::compiler_lock;
+#endif
 
 } // namespace detail
 
@@ -506,8 +552,8 @@ public:
 
 template<int N>
 const char* Error::error_text<N>::data[CAL_RESULT_WARNING+1] = {
-        "No error",        
-        "Operational error",        
+        "No error",
+        "Operational error",
         "Parameter passed in is invalid",
         "Function used properly but currently not supported",
         "Stateful operation requested has already been performed",
@@ -522,16 +568,18 @@ namespace detail {
 class DeviceData
 {
 public:
-    CALdevice   handle_;
-    CALuint     ordinal_;
+    CALdevice    handle_;
+    CALuint      ordinal_;
+#ifdef __CAL_THREADSAFE
+    boost::recursive_mutex lock_;
+#endif
 
 public:
-    DeviceData() : handle_(0), ordinal_(0) {}    
+    DeviceData() : handle_(0), ordinal_(0) {}
     ~DeviceData() { if( handle_ ) calDeviceClose(handle_); }
 };
 
 class KernelData;
-
 } // detail
 
 class Device : public detail::shared_data<detail::DeviceData>
@@ -546,10 +594,10 @@ public:
     }
 
     Device( CALuint ordinal ) : detail::shared_data<detail::DeviceData>(1)
-    {        
+    {
         CALdevice   dev;
         CALresult   res;
-        
+
         res = calDeviceOpen(&dev,ordinal);
         if( res!=CAL_RESULT_OK ) throw Error(res);
 
@@ -560,9 +608,12 @@ public:
     template <int Name>
     typename detail::param_traits<detail::CAL_TYPE_CALDEVICE,Name>::param_type getInfo() const
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(data().lock_));
+#endif
         typename detail::param_traits<detail::CAL_TYPE_CALDEVICE,Name>::param_type   v;
         CALresult   r;
-                
+
         r = detail::param_traits<detail::CAL_TYPE_CALDEVICE,Name>::getInfo(v,data().handle_,data().ordinal_);
         if( r!=CAL_RESULT_OK ) throw Error(r);
 
@@ -572,6 +623,9 @@ public:
     template<typename T>
     void getInfo( T& param ) const
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(data().lock_);
+#endif
         CALresult   r;
 
         r = detail::info_traits<detail::CAL_TYPE_CALDEVICE,T>::getInfo(param,data().handle_,data().ordinal_);
@@ -595,6 +649,35 @@ public:
 
 class Context : public detail::shared_data<detail::ContextData>
 {
+public:
+#ifdef __CAL_THREADSAFE
+    class lock_iterator_type
+    {
+    public:
+        typedef boost::recursive_mutex                  value_type;
+        typedef std::vector<Device>::difference_type    difference_type;
+        typedef std::forward_iterator_tag               iterator_category;
+        typedef boost::recursive_mutex*                 pointer;
+        typedef boost::recursive_mutex&                 reference;
+
+    protected:
+        std::vector<Device>::const_iterator idx_;
+
+    public:
+        lock_iterator_type( std::vector<Device>::const_iterator idx ) : idx_(idx) {}
+
+        lock_iterator_type& operator++() { ++idx_; return *this; }
+        lock_iterator_type  operator++(int) { lock_iterator_type result(idx_); ++idx_; return result; }
+        reference operator*() { return const_cast<value_type&>(idx_->data().lock_); };
+        pointer   operator->() { return &const_cast<value_type&>(idx_->data().lock_); };
+        bool operator!=( const lock_iterator_type& iter ) const { return idx_!=iter.idx_; }
+        bool operator==( const lock_iterator_type& iter ) const { return idx_==iter.idx_; }
+    };
+
+    lock_iterator_type begin_lock() const { return lock_iterator_type(data().devices_.begin()); }
+    lock_iterator_type end_lock() const { return lock_iterator_type(data().devices_.end()); }
+#endif
+
 public:
     Context() : detail::shared_data<detail::ContextData>(0)
     {
@@ -635,7 +718,7 @@ public:
     friend class Image2D;
 };
 
-class Event 
+class Event
 {
 public:
     typedef CALevent    element_type;
@@ -648,13 +731,13 @@ public:
     Event( CALevent event ) : event_(event) {}
 
     const CALevent& operator()() const { return event_; }
-    CALevent& operator()() { return event_; }    
+    CALevent& operator()() { return event_; }
 };
 
 namespace detail {
 class MemoryData
 {
-public: 
+public:
     struct map_info
     {
         void*   ptr;
@@ -670,15 +753,19 @@ public:
     int                             width_,height_;
     std::map<CALdevice,map_info>    map_;
     bool                            remote_;
+    boost::recursive_mutex          lock_;
 
 protected:
     void registerContext( CALcontext context ) const
-    {        
+    {
         detail::CALcontext_helper::registerCallback(context,(void*)this,std::ptr_fun(&callback));
     }
 
     void unregisterContext() const
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(lock_));
+#endif
         std::map<CALcontext,CALmem>::const_iterator   imem;
 
         for(imem=mem_.begin();imem!=mem_.end();++imem) {
@@ -688,6 +775,9 @@ protected:
 
     void releaseContext( CALcontext context )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(lock_);
+#endif
         std::map<CALcontext,CALmem>::iterator   imem;
 
         imem = mem_.find(context);
@@ -717,6 +807,9 @@ public:
 
     void attach( CALcontext context, CALdevice device )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(lock_);
+#endif
         if( isAttached(context) ) return;
 
         std::map<CALdevice,CALresource>::iterator ihandle;
@@ -735,11 +828,17 @@ public:
 
     bool isAttached( CALcontext context ) const
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(lock_));
+#endif
         return mem_.find(context)!=mem_.end();
     }
 
     CALmem getMem( CALcontext context ) const
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(lock_));
+#endif
         std::map<CALcontext,CALmem>::const_iterator imem;
 
         imem = mem_.find(context);
@@ -750,6 +849,10 @@ public:
 
     CALvoid* map2( CALuint& pitch, CALdevice device )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(lock_);
+#endif
+
         std::map<CALdevice,map_info>::iterator imap;
 
         if( remote_ ) device=0;
@@ -782,6 +885,10 @@ public:
 
     void unmap2( CALdevice device )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(lock_);
+#endif
+
         std::map<CALdevice,map_info>::iterator imap;
 
         if( remote_ ) device=0;
@@ -809,7 +916,7 @@ public:
     {
         return map2( pitch, device_[idx]() );
     }
-    
+
     void unmap( int idx=0 )
     {
         return unmap2( device_[idx]() );
@@ -818,6 +925,9 @@ public:
 
     void addDevices( const std::vector<Device>& device )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(lock_);
+#endif
         device_ = device;
         if( !remote_ ) {
             for(unsigned i=0;i<device.size();i++) {
@@ -828,6 +938,10 @@ public:
 
     void addDevices( const std::vector<CALdevice>& device )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(lock_);
+#endif
+
         if( !remote_ ) {
             for(unsigned i=0;i<device.size();i++) {
                 map_.insert( std::make_pair(device[i],map_info(NULL,0,0)) );
@@ -840,7 +954,7 @@ public:
     {
         std::map<CALdevice,CALresource>::const_iterator ihandle;
         CALdevice device;
-        
+
         assert( idx>=0 && idx<device_.size() );
 
         device = remote_?0:device_[idx]();
@@ -848,15 +962,19 @@ public:
         return getHandle2(device);
     }
     */
-    
+
     CALresource getHandle2( CALdevice device ) const
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(lock_));
+#endif
+
         std::map<CALdevice,CALresource>::const_iterator ihandle;
 
         ihandle = handle_.find(device);
         if( ihandle==handle_.end() ) throw Error(CAL_RESULT_ERROR);
 
-        return ihandle->second;        
+        return ihandle->second;
     }
 };
 } // detail
@@ -922,21 +1040,21 @@ protected:
         CALresult                r;
 
         devices.push_back(device);
-        
+
         createInstance();
 
-        if( !detail::cal_extension_table<0>::data.calResCreate1D ) throw Error(CAL_RESULT_NOT_SUPPORTED);        
+        if( !detail::cal_extension_table<0>::data.calResCreate1D ) throw Error(CAL_RESULT_NOT_SUPPORTED);
 
         r = detail::cal_extension_table<0>::data.calResCreate1D(&res,device,host_ptr,width,format,size,flags);
         if( r!=CAL_RESULT_OK ) throw Error(r);
-          
+
         data().handle_.insert( std::make_pair(device, res) );
 
-        data().remote_ = false;                
+        data().remote_ = false;
         data().addDevices(devices);
         data().width_  = width;
     }
-    
+
 public:
     Image1D() : Image()
     {
@@ -961,6 +1079,9 @@ public:
             std::vector<CALresource> _res;
 
             for(unsigned i=0;i<context.data().devices_.size();i++) {
+#ifdef __CAL_THREADSAFE
+               boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(context.data().devices_[i].data().lock_));
+#endif
                r = calResAllocLocal1D(&res,context.data().devices_[i](),width,format,flags);
                if( r!=CAL_RESULT_OK ) {
                    for(unsigned j=0;j<_res.size();j++) calResFree(_res[i]);
@@ -969,14 +1090,20 @@ public:
                _res.push_back(res);
             }
 
-            for(unsigned i=0;i<_res.size();i++) 
+            for(unsigned i=0;i<_res.size();i++)
                 data().handle_.insert( std::make_pair(context.data().devices_[i](), _res[i]) );
         } else {
             std::vector<CALdevice>  devices;
             CALresource             res;
 
             for(unsigned i=0;i<context.data().devices_.size();i++) devices.push_back(context.data().devices_[i]());
+#ifdef __CAL_THREADSAFE
+            boost::lock(context.begin_lock(),context.end_lock());
+#endif
             r = calResAllocRemote1D(&res,&devices[0],devices.size(),width,format,flags);
+#ifdef __CAL_THREADSAFE
+            for(unsigned i=0;i<context.data().devices_.size();i++) const_cast<boost::recursive_mutex&>(context.data().devices_[i].data().lock_).unlock();
+#endif
             if( r!=CAL_RESULT_OK ) throw Error(r);
 
             data().handle_.insert( std::make_pair((CALdevice)0,res) );
@@ -1002,6 +1129,9 @@ public:
         if( host_ptr.size()!=context.data().devices_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
 
         for(unsigned i=0;i<context.data().devices_.size();i++) {
+#ifdef __CAL_THREADSAFE
+           boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(context.data().devices_[i].data().lock_));
+#endif
            r = detail::cal_extension_table<0>::data.calResCreate1D(&res,context.data().devices_[i](),host_ptr[i],width,format,size,flags);
            if( r!=CAL_RESULT_OK ) {
                for(unsigned j=0;j<_res.size();j++) calResFree(_res[i]);
@@ -1010,7 +1140,7 @@ public:
            _res.push_back(res);
         }
 
-        for(unsigned i=0;i<_res.size();i++) 
+        for(unsigned i=0;i<_res.size();i++)
             data().handle_.insert( std::make_pair(context.data().devices_[i](), _res[i]) );
 
         data().remote_ = false;
@@ -1019,7 +1149,7 @@ public:
     }
 
     int getWidth() const { return data().width_; }
-    
+
     friend class detail::KernelData;
 };
 
@@ -1043,6 +1173,9 @@ public:
             std::vector<CALresource> _res;
 
             for(unsigned i=0;i<context.data().devices_.size();i++) {
+#ifdef __CAL_THREADSAFE
+               boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(context.data().devices_[i].data().lock_));
+#endif
                r = calResAllocLocal2D(&res,context.data().devices_[i](),width,height,format,flags);
                if( r!=CAL_RESULT_OK ) {
                    for(unsigned j=0;j<_res.size();j++) calResFree(_res[i]);
@@ -1051,14 +1184,20 @@ public:
                _res.push_back(res);
             }
 
-            for(unsigned i=0;i<_res.size();i++) 
+            for(unsigned i=0;i<_res.size();i++)
                 data().handle_.insert( std::make_pair(context.data().devices_[i](), _res[i]) );
         } else {
             std::vector<CALdevice>  devices;
             CALresource             res;
 
             for(unsigned i=0;i<context.data().devices_.size();i++) devices.push_back(context.data().devices_[i]());
+#ifdef __CAL_THREADSAFE
+            boost::lock(context.begin_lock(),context.end_lock());
+#endif
             r = calResAllocRemote2D(&res,&devices[0],devices.size(),width,height,format,flags);
+#ifdef __CAL_THREADSAFE
+            for(unsigned i=0;i<context.data().devices_.size();i++) const_cast<boost::recursive_mutex&>(context.data().devices_[i].data().lock_).unlock();
+#endif
             if( r!=CAL_RESULT_OK ) throw Error(r);
 
             data().handle_.insert( std::make_pair((CALdevice)0,res) );
@@ -1086,6 +1225,9 @@ public:
         if( host_ptr.size()!=context.data().devices_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
 
         for(unsigned i=0;i<context.data().devices_.size();i++) {
+#ifdef __CAL_THREADSAFE
+           boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(context.data().devices_[i].data().lock_));
+#endif
            r = detail::cal_extension_table<0>::data.calResCreate2D(&res,context.data().devices_[i](),host_ptr[i],width,height,format,size,flags);
            if( r!=CAL_RESULT_OK ) {
                for(unsigned j=0;j<_res.size();j++) calResFree(_res[i]);
@@ -1094,7 +1236,7 @@ public:
            _res.push_back(res);
         }
 
-        for(unsigned i=0;i<_res.size();i++) 
+        for(unsigned i=0;i<_res.size();i++)
             data().handle_.insert( std::make_pair(context.data().devices_[i](), _res[i]) );
 
         data().remote_ = false;
@@ -1111,11 +1253,11 @@ class NDRange : public CALdomain3D
 public:
     NDRange()
     {
-        width = height = depth = 1;    
+        width = height = depth = 1;
     }
 
     //! Create a 1D range
-    NDRange(CALuint size0) 
+    NDRange(CALuint size0)
     {
         width = size0;
         height = depth = 1;
@@ -1157,6 +1299,9 @@ public:
 
     void buildFromSource( const std::vector<Device>& devices )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(detail::cal_global_locks<0>::compiler_lock);
+#endif
         std::vector<CALobject>  object;
         std::set<CALtarget>     target;
         CALimage                image;
@@ -1189,11 +1334,14 @@ public:
 
     void buildFromBinary( const std::vector<Device>& devices )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(detail::cal_global_locks<0>::compiler_lock);
+#endif
         CALimage                image;
         CALresult               r;
 
         r = calImageRead(&image,(CALvoid*)&buffer_[0],buffer_.size());
-        if( r!=CAL_RESULT_OK ) throw Error(r);        
+        if( r!=CAL_RESULT_OK ) throw Error(r);
 
         handle_ = image;
     }
@@ -1262,19 +1410,25 @@ public:
 
     void disassemble( std::ostream& out ) const
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(detail::cal_global_locks<0>::compiler_lock);
+#endif
         log_stream<0>::ptr_ = &out;
-        calclDisassembleImage(data().handle_, &outputToStream);        
+        calclDisassembleImage(data().handle_, &outputToStream);
     }
-    
+
     template<int Name>
     typename detail::param_traits<detail::CAL_TYPE_CALIMAGE,Name>::param_type getInfo() const
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(detail::cal_global_locks<0>::compiler_lock);
+#endif
         typename detail::param_traits<detail::CAL_TYPE_CALIMAGE,Name>::param_type result;
         CALresult r;
-                
+
         r = detail::param_traits<detail::CAL_TYPE_CALIMAGE,Name>::getInfo(data().handle_,result);
         if( r!=CAL_RESULT_OK ) throw Error(r);
-        
+
         return result;
     }
 
@@ -1309,48 +1463,48 @@ public:
         argument_data( const std::string& _name, int _cbi, int _cbo, int _cbs ) : name(_name), cb_index(_cbi), cb_offset(_cbo), cb_size(_cbs), ptr(NULL) {}
     };
 
-    struct arg_state    
+    struct arg_state
     {
         CALresource     resource;
         CALname         name;
         byte_type       data[16];
         bool            update;
-        
+
         arg_state() : resource(0), name(0), update(true) {}
     };
-    
+
     struct cb_state
     {
         Image1D     data;
-        int         size;        
+        int         size;
 #ifdef __CAL_KERNEL_USE_PINNED_MEMORY
         void*       host_ptr;
 #endif
         byte_type*  ptr;
         bool        update;
 
-#ifdef __CAL_KERNEL_USE_PINNED_MEMORY        
+#ifdef __CAL_KERNEL_USE_PINNED_MEMORY
         cb_state() : size(0), host_ptr(NULL), ptr(NULL), update(true) {}
         ~cb_state() { if( host_ptr ) std::free(host_ptr); }
 #else
         cb_state() : size(0), ptr(NULL), update(true) {}
 #endif
     };
-    
+
     struct state_data
     {
         std::map<int,cb_state> cb;
         std::vector<arg_state> arg;
-        
+
         CALcontext             ctx;
         CALdevice              device;
         CALmodule              module;
         CALfunc                func;
-        
+
         state_data() : ctx(0), module(0), func(0) {}
         ~state_data() { if( ctx && module ) calModuleUnload(ctx,module); }
     };
-    
+
 
 public:
     Program                             program_;
@@ -1366,7 +1520,7 @@ protected:
 
     void unregisterContext() const
     {
-        std::map<CALcontext,state_data>::const_iterator   istate;        
+        std::map<CALcontext,state_data>::const_iterator   istate;
 
         for(istate=state_.begin();istate!=state_.end();++istate) {
             detail::CALcontext_helper::unregisterCallback(istate->first,(void*)this);
@@ -1387,7 +1541,7 @@ protected:
     {
         static_cast<KernelData*>(pKernel)->releaseContext(context);
     }
-    
+
 public:
     KernelData() {}
     ~KernelData()
@@ -1404,7 +1558,7 @@ public:
     void allocCB( state_data& state )
     {
         for(unsigned int i=0;i<arg_.size();i++) {
-            if( arg_[i].cb_index<0 ) continue;            
+            if( arg_[i].cb_index<0 ) continue;
             state.cb[arg_[i].cb_index].size = std::max( state.cb[arg_[i].cb_index].size,
                                                         (arg_[i].cb_offset+(arg_[i].cb_size==0?16:arg_[i].cb_size)+15)/16 );
         }
@@ -1416,9 +1570,9 @@ public:
             icb->second.host_ptr = std::malloc( 16*icb->second.size + 4096 );
             icb->second.ptr      = (byte_type*)(((ptrdiff_t)icb->second.host_ptr + (ptrdiff_t)4095) & (~(ptrdiff_t)0xFFF));
             icb->second.data     = Image1D(state.device, icb->second.size, CAL_FORMAT_UNSIGNED_INT32_4, 0, icb->second.ptr, 16*icb->second.size );
-#else       
+#else
             icb->second.data = Image1D(program_.data().context_, icb->second.size, CAL_FORMAT_UNSIGNED_INT32_4, 0);
-#endif            
+#endif
         }
     }
 
@@ -1431,43 +1585,43 @@ public:
 
         for(icb=state.cb.begin();icb!=state.cb.end();++icb) {
             icb->second.data.attach(state.ctx,state.device);
-            
+
             std::sprintf(cname,"cb%i",icb->first);
             r = calModuleGetName(&name,state.ctx,state.module,cname);
             if( r!=CAL_RESULT_OK ) throw Error(r);
-            
+
             r = calCtxSetMem(state.ctx,name,icb->second.data.getMem(state.ctx));
             if( r!=CAL_RESULT_OK ) throw Error(r);
-        }        
+        }
     }
-    
+
     void argName( state_data& state )
     {
         CALresult r;
-        
+
         for(unsigned i=0;i<arg_.size();i++) {
             if( arg_[i].cb_index>=0 ) continue;
-                        
+
             r = calModuleGetName(&state.arg[i].name,state.ctx,state.module,arg_[i].name.c_str());
-            if( r!=CAL_RESULT_OK ) throw Error(r);            
-        }        
+            if( r!=CAL_RESULT_OK ) throw Error(r);
+        }
     }
 
     state_data& loadState( CALcontext context, CALdevice device )
     {
         std::map<CALcontext,state_data>::iterator istate;
         CALresult r;
-        
+
         istate = state_.find(context);
         if( istate!=state_.end() ) {
             assert( istate->second.device==device );
             return istate->second;
         }
-        
+
         istate = state_.insert( std::make_pair(context,state_data()) ).first;
-        
+
         registerContext(context);
-        
+
         istate->second.ctx    = context;
         istate->second.device = device;
         istate->second.arg.resize(arg_.size());
@@ -1477,11 +1631,11 @@ public:
 
         r = calModuleGetEntry(&istate->second.func,istate->second.ctx,istate->second.module,name_.c_str());
         if( r!=CAL_RESULT_OK ) throw Error(r);
-                
+
         allocCB(istate->second);
         attachCB(istate->second);
         argName(istate->second);
-        
+
         return istate->second;
     }
 
@@ -1497,13 +1651,13 @@ public:
                 icb->second.ptr = (byte_type*)icb->second.data.map2(pitch,state.device);
                 icb->second.update = false;
             }
-        }        
-#endif        
+        }
+#endif
     }
 
     void unmapCB( state_data& state )
     {
-#ifndef __CAL_KERNEL_USE_PINNED_MEMORY        
+#ifndef __CAL_KERNEL_USE_PINNED_MEMORY
         std::map<int,cb_state>::iterator icb;
 
         for(icb=state.cb.begin();icb!=state.cb.end();++icb) {
@@ -1524,16 +1678,16 @@ public:
                         state.arg[i].update = true;
                     }
                 } else state.arg[i].update = true;
-            
+
                 if( state.arg[i].update ) state.cb[arg_[i].cb_index].update = true;
             } else {
                 if( arg_[i].mem(state.device)!=state.arg[i].resource ) state.arg[i].update = true;
             }
-        }        
+        }
     }
 
     void copyData( state_data& state )
-    {        
+    {
         for(unsigned i=0;i<arg_.size();i++) {
             if( arg_[i].cb_index<0 || !state.arg[i].update ) continue;
 
@@ -1551,27 +1705,27 @@ public:
     {
         CALname     name;
         CALresult   r;
-        
+
         for(unsigned i=0;i<arg_.size();i++) {
             if( arg_[i].cb_index>=0 || !state.arg[i].update ) continue;
-            
+
             arg_[i].mem.attach(state.ctx,state.device);
-            
+
             state.arg[i].resource = arg_[i].mem(state.device);
-            
+
             r = calCtxSetMem(state.ctx,state.arg[i].name,arg_[i].mem.getMem(state.ctx));
             if( r!=CAL_RESULT_OK ) throw Error(r);
-            
+
             state.arg[i].update = false;
-        }        
+        }
     }
 
     void prepareKernel( CALcontext context, CALdevice device )
     {
-        state_data& state(loadState(context,device));                
+        state_data& state(loadState(context,device));
 
         checkUpdates(state);
-        
+
         mapCB(state);
         copyData(state);
         unmapCB(state);
@@ -1579,13 +1733,13 @@ public:
         attachMem(state);
     }
 
-    CALfunc getFunc( CALcontext context ) 
+    CALfunc getFunc( CALcontext context )
     {
         std::map<CALcontext,state_data>::const_iterator istate;
-        
+
         istate = state_.find(context);
         if( istate==state_.end() ) throw Error(CAL_RESULT_ERROR);
-        
+
         return istate->second.func;
     }
 
@@ -1621,7 +1775,7 @@ protected:
 #ifndef __CAL_DONT_USE_TYPE_TRAITS
     template<typename T>
     void isetArg( int index, const T& val, const std::false_type& )
-    {        
+    {
         if( index<0 || index>=(int)data().arg_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( sizeof(val)>16 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index<0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
@@ -1635,14 +1789,14 @@ protected:
 
     template<typename T>
     void isetArg( int index, const T& mem, const std::true_type& )
-    {        
+    {
         if( index<0 || index>=(int)data().arg_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index>=0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
 
         data().arg_[index].mem = mem;
     }
 #endif
-         
+
 public:
     Kernel() : detail::shared_data<detail::KernelData>()
     {
@@ -1663,7 +1817,7 @@ public:
     void setArgBind( int index, const std::string& name )
     {
         data().clearState();
-        
+
         data().arg_.resize(index+1);
         data().arg_[index] = arg(name);
     }
@@ -1677,19 +1831,19 @@ public:
         char*   endptr;
 
         if( name.size()<3 || name[0]!='c' || name[1]!='b' )  throw Error(CAL_RESULT_INVALID_PARAMETER);
-        
+
         data().clearState();
-        
+
         cb_index = std::strtol(&name[2], &endptr, 10);
         if( endptr!=(&name[0]+name.size()) ) throw Error(CAL_RESULT_INVALID_PARAMETER);
-        
+
         data().arg_.resize(index+1);
         data().arg_[index] = arg(name,cb_index,cb_offset,cb_size);
     }
 
     Kernel& operator%( const arg& v )
     {
-        data().clearState();        
+        data().clearState();
         data().arg_.push_back(v);
         return *this;
     }
@@ -1702,21 +1856,21 @@ public:
     }
 #else
     void setArg( int index, const Memory& mem )
-    {        
+    {
         if( index<0 || index>=(int)data().arg_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index>=0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
 
         data().arg_[index].mem = mem;
     }
     void setArg( int index, const Image1D& mem )
-    {        
+    {
         if( index<0 || index>=(int)data().arg_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index>=0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
 
         data().arg_[index].mem = mem;
     }
     void setArg( int index, const Image2D& mem )
-    {        
+    {
         if( index<0 || index>=(int)data().arg_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index>=0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
 
@@ -1725,7 +1879,7 @@ public:
 
     template<typename T>
     void setArg( int index, const T& val )
-    {        
+    {
         if( index<0 || index>=(int)data().arg_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( sizeof(val)>16 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
         if( data().arg_[index].cb_index<0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
@@ -1742,8 +1896,8 @@ public:
     void setArg( int index, const T* pval, int size=0 )
     {
         if( index<0 || index>=(int)data().arg_.size() ) throw Error(CAL_RESULT_INVALID_PARAMETER);
-        if( data().arg_[index].cb_index<0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);        
-        
+        if( data().arg_[index].cb_index<0 ) throw Error(CAL_RESULT_INVALID_PARAMETER);
+
         data().arg_[index].ptr = (detail::byte_type*)pval;
         if( size>0 ) data().arg_[index].cb_size = size;
     }
@@ -1761,8 +1915,11 @@ namespace detail {
 class CommandQueueData
 {
 public:
-    CALcontext  handle_;
-    Device      device_;
+    CALcontext   handle_;
+    Device       device_;
+#ifdef __CAL_THREADSAFE
+    boost::mutex lock_;
+#endif
 
 public:
     CommandQueueData() : handle_(0) {}
@@ -1772,7 +1929,7 @@ public:
             CALcontext_helper::release(handle_);
             calCtxDestroy(handle_);
         }
-    }    
+    }
 };
 }
 
@@ -1789,6 +1946,9 @@ public:
 
     CommandQueue( Context& context, const Device& device ) : detail::shared_data<detail::CommandQueueData>(1)
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::recursive_mutex> guard(const_cast<boost::recursive_mutex&>(device.data().lock_));
+#endif
         CALresult   r;
         CALcontext  ctx;
 
@@ -1801,6 +1961,10 @@ public:
 
     void enqueueNDRangeKernel( Kernel& kernel, const NDRange& global, const NDRange& local, Event* event = NULL)
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex>           guard_queue(data().lock_);
+        boost::lock_guard<boost::recursive_mutex> guard_device(data().device_.data().lock_);
+#endif
         CALevent        _event;
         CALresult       r;
         CALprogramGrid  grid;
@@ -1813,7 +1977,7 @@ public:
         grid.gridBlock       = local;
         grid.gridSize.width  = (global.width+local.width-1)/local.width;
         grid.gridSize.height = (global.height+local.height-1)/local.height;
-        grid.gridSize.depth  = (global.depth+local.depth-1)/local.depth;        
+        grid.gridSize.depth  = (global.depth+local.depth-1)/local.depth;
         grid.flags           = 0;
 
         r = calCtxRunProgramGrid(&_event,data().handle_,&grid);
@@ -1824,6 +1988,10 @@ public:
 
     void enqueueNDRangeKernel( Kernel& kernel, const NDRange& global, Event* event = NULL)
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex>           guard_queue(data().lock_);
+        boost::lock_guard<boost::recursive_mutex> guard_device(data().device_.data().lock_);
+#endif
         CALevent        _event;
         CALresult       r;
         CALfunc         func;
@@ -1846,6 +2014,10 @@ public:
 
     void enqueueCopyBuffer( const Memory& src, Memory& dst, Event* event )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex>           guard_queue(data().lock_);
+        boost::lock_guard<boost::recursive_mutex> guard_device(data().device_.data().lock_);
+#endif
         CALevent    _event;
         CALresult   r;
 
@@ -1874,6 +2046,10 @@ public:
 
         if( !event() ) return;
 
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(data().lock_);
+#endif
+
 #ifdef __CAL_USE_BLOCKING_WAIT
         if( detail::cal_extension_table<0>::data.calCtxWaitForEvents ) {
             r = detail::cal_extension_table<0>::data.calCtxWaitForEvents(data().handle_,(CALevent*)&event(),1,0);
@@ -1885,6 +2061,9 @@ public:
         while( 1 ) {
             r = calCtxIsEventDone(data().handle_,event());
             if( r!=CAL_RESULT_PENDING ) break;
+#ifdef __CAL_THREADSAFE
+            boost::this_thread::yield();
+#endif
         }
 
         if( r!=CAL_RESULT_OK ) throw Error(r);
@@ -1892,6 +2071,10 @@ public:
 
     void waitForEvents( const std::vector<Event>& events )
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(data().lock_);
+#endif
+
 #ifdef __CAL_USE_BLOCKING_WAIT
         if( detail::cal_extension_table<0>::data.calCtxWaitForEvents ) {
             CALresult r = detail::cal_extension_table<0>::data.calCtxWaitForEvents(data().handle_,(CALevent*)&events[0],events.size(),0);
@@ -1905,6 +2088,9 @@ public:
             r = calCtxIsEventDone(data().handle_,events[i]());
             if( r!=CAL_RESULT_OK && r!=CAL_RESULT_PENDING ) throw Error(r);
             if( r==CAL_RESULT_PENDING ) i--;
+#ifdef __CAL_THREADSAFE
+            boost::this_thread::yield();
+#endif
         }
     }
 
@@ -1914,6 +2100,9 @@ public:
 
         if( !event() ) return true;
 
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(data().lock_);
+#endif
         r = calCtxIsEventDone(data().handle_,event());
         if( r!=CAL_RESULT_PENDING && r!=CAL_RESULT_OK ) throw Error(r);
 
@@ -1922,6 +2111,9 @@ public:
 
     void flush()
     {
+#ifdef __CAL_THREADSAFE
+        boost::lock_guard<boost::mutex> guard(data().lock_);
+#endif
         CALresult   r;
         r = calCtxFlush(data().handle_);
         if( r!=CAL_RESULT_OK ) throw Error(r);
@@ -2000,7 +2192,7 @@ public:
 
         kernel_.setArg(0,a1);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2013,7 +2205,7 @@ public:
         kernel_.setArg(0,a1);
         kernel_.setArg(1,a2);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2042,7 +2234,7 @@ public:
         kernel_.setArg(2,a3);
         kernel_.setArg(3,a4);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2058,7 +2250,7 @@ public:
         kernel_.setArg(3,a4);
         kernel_.setArg(4,a5);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2075,7 +2267,7 @@ public:
         kernel_.setArg(4,a5);
         kernel_.setArg(5,a6);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2095,7 +2287,7 @@ public:
         kernel_.setArg(5,a6);
         kernel_.setArg(6,a7);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2116,7 +2308,7 @@ public:
         kernel_.setArg(6,a7);
         kernel_.setArg(7,a8);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2138,7 +2330,7 @@ public:
         kernel_.setArg(7,a8);
         kernel_.setArg(8,a9);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2161,7 +2353,7 @@ public:
         kernel_.setArg(8,a9);
         kernel_.setArg(9,a10);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2186,7 +2378,7 @@ public:
         kernel_.setArg(9,a10);
         kernel_.setArg(10,a11);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2212,7 +2404,7 @@ public:
         kernel_.setArg(10,a11);
         kernel_.setArg(11,a12);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2240,7 +2432,7 @@ public:
         kernel_.setArg(11,a12);
         kernel_.setArg(12,a13);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2269,7 +2461,7 @@ public:
         kernel_.setArg(12,a13);
         kernel_.setArg(13,a14);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2299,7 +2491,7 @@ public:
         kernel_.setArg(13,a14);
         kernel_.setArg(14,a15);
 
-        run(event);        
+        run(event);
 
         return event;
     }
@@ -2318,6 +2510,10 @@ inline KernelFunctor Kernel::bind( const CommandQueue& queue, const NDRange& glo
 template<int Name>
 typename detail::param_traits<detail::CAL_TYPE_CALMODULE,Name>::param_type Kernel::getInfo( const CommandQueue& queue )
 {
+#ifdef __CAL_THREADSAFE
+    boost::lock_guard<boost::mutex> guard(queue.data().lock_);
+#endif
+
     typename detail::param_traits<detail::CAL_TYPE_CALMODULE,Name>::param_type value;
 
     detail::KernelData::state_data& state(data().loadState(queue(),queue.data().device_()));
