@@ -439,7 +439,9 @@ struct CALcontext_helper
     struct release_callback
     {
         static callback_container data;
+#ifdef __CAL_THREADSAFE
         static boost::mutex       data_mutex;
+#endif
     };
 
     static void release(CALcontext context)
@@ -479,8 +481,10 @@ struct CALcontext_helper
 
 template<int N>
 CALcontext_helper::callback_container   CALcontext_helper::release_callback<N>::data;
+#ifdef __CAL_THREADSAFE
 template<int N>
 boost::mutex                            CALcontext_helper::release_callback<N>::data_mutex;
+#endif
 
 template<int N>
 struct cal_extension_table
@@ -753,7 +757,9 @@ public:
     int                             width_,height_;
     std::map<CALdevice,map_info>    map_;
     bool                            remote_;
+#ifdef __CAL_THREADSAFE
     boost::recursive_mutex          lock_;
+#endif
 
 protected:
     void registerContext( CALcontext context ) const
