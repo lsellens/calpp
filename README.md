@@ -1,3 +1,4 @@
+Fork of haseman's CAL++ http://calpp.sourceforge.net
 This is CAL++, library for efficient use of ATI CAL with C++.
 The library consist of 2 main parts. First is C++ wrapper for CAL
 and second is implementation of OpenCL like language for efficient coding of CAL kernels.
