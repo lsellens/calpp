@@ -9,12 +9,12 @@ CAL++ library depends on boost library ( www.boost.org ). To generate build file
 
 INSTALLATION ( Windows + Visual C++ )
 
-    Install ATI stream SDK ( http://developer.amd.com/gpu/ATIStreamSDK/Pages/default.aspx )
+    Install AMDAPP SDK ( http://developer.amd.com/tools-and-sdks/opencl-zone/amd-accelerated-parallel-processing-app-sdk/ )
     Install cmake ( http://www.cmake.org/ )
     Install boost ( http://www.boostpro.com/download ) ( CALPP examples require data_time component )
 
-    Ensure that enviroment variable ATISTREAMSDKROOT points to ATI stream SDK directory. 
-    Sometimes there is problem if directory in ATISTREAMSDKROOT doesn't end with '\'
+    Ensure that enviroment variable AMDAPPSDKROOT points to ATI APP SDK directory. 
+    Sometimes there is problem if directory in AMDAPPSDKROOT doesn't end with '\'
 
     Start cmake-gui. Choose CAL++ directory as source code path and build the binaries path.
     Press Configure ( select Visual Studio as generator ).
@@ -23,11 +23,11 @@ INSTALLATION ( Windows + Visual C++ )
     Start Visual C++ and open CALPP project file.  Compile examples using build command.
 
 INSTALLATION ( Linux )
-    Install ATI stream SDK ( http://developer.amd.com/gpu/ATIStreamSDK/Pages/default.aspx )
+    Install AMDAPP SDK ( http://developer.amd.com/tools-and-sdks/opencl-zone/amd-accelerated-parallel-processing-app-sdk/ )
     Install cmake and boost.
 
-    Ensure that enviroment variable ATISTREAMSDKROOT points to ATI stream SDK directory.
-    Sometimes there is problem if directory in ATISTREAMSDKROOT doesn't end with '/'
+    Ensure that enviroment variable AMDAPPSDKROOT points to ATI APP SDK directory.
+    Sometimes there is problem if directory in AMDAPPSDKROOT doesn't end with '/'
 
     Go to CAL++ directory 
     From command line enter commands
